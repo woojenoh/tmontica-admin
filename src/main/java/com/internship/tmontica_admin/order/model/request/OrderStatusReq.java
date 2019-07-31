@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class OrderStatusReq {
     @NotEmpty
-    List<Integer> orderIds;
+    private List<Integer> orderIds;
     @NotEmpty
     private String status;
 }
