@@ -1,23 +1,21 @@
-import React, { Component } from "react";
-import "bootstrap/dist/css/bootstrap.css";
-import "./styles.scss";
+import Header from "./Header";
+import { connect } from "react-redux";
+import * as userActionCreators from "../../redux/actionCreators/user";
+import { Dispatch } from "redux";
+import * as rootTypes from "../../types/index";
 
-interface Props {
-  hide?: boolean;
-  title: string;
-}
-interface State {}
+const mapStateToProps = (state: rootTypes.IRootState) => ({
+  isSignin: state.user.isSignin,
+  isAdmin: state.user.isAdmin
+});
 
-export default class Header extends Component<Props, State> {
-  state = {};
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    fetchSignin: () => dispatch(userActionCreators.signout())
+  };
+};
 
-  render() {
-    const { title, hide } = this.props;
-    return (
-      <header className={`bg-dark text-light flex-row ${hide ? "hide" : ""}`}>
-        <i className="fas fa-bars menu-icon" />
-        <h1 className="title">{title}</h1>
-      </header>
-    );
-  }
-}
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Header);
