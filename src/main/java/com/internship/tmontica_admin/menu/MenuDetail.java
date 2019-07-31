@@ -1,6 +1,7 @@
 package com.internship.tmontica_admin.menu;
 
-import com.internship.tmontica.option.Option;
+
+import com.internship.tmontica_admin.option.Option;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

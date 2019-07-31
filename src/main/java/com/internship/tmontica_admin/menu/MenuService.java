@@ -31,7 +31,7 @@ public class MenuService {
 
     private final ModelMapper modelMapper;
 
-    private final JwtService jwtService;
+    // private final JwtService jwtService;
 
     @Value("${menu.imagepath}")
     private static String location;
@@ -43,7 +43,9 @@ public class MenuService {
         menu.setImgUrl(imgUrl);
 
         // 등록인 정보 가져오기
-        menu.setCreatorId(JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id"));
+        // TODO : 관리자 확인 , 유저 정보 확인
+        menu.setCreatorId("admin");
+        //menu.setCreatorId(JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id"));
         menu.setCreatedDate(new Date());
         menuDao.addMenu(menu);
 
@@ -141,8 +143,9 @@ public class MenuService {
     public void updateMenu(Menu menu, MultipartFile imgFile){
         if(!existMenu(menu.getId()))
             return;
-
-        menu.setUpdaterId(JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id"));
+        // TODO : 관리자 확인 , 유저 정보 확인
+        menu.setUpdaterId("admin");
+        //menu.setUpdaterId(JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id"));
 
         if(imgFile!=null){
             String img = saveImg(imgFile, menu.getNameEng());
