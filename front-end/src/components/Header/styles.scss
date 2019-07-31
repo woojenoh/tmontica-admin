@@ -1,10 +1,9 @@
 header {
-  display: flex;
+  height: 65px;
 }
 
 header.bg-dark.text-light.flex-row {
   padding: 10px 15px;
-  align-items: center;
 }
 
 header .menu-icon {

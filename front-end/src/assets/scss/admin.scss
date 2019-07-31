@@ -16,6 +16,7 @@ body,
   .main-wrapper {
     display: flex;
     flex-wrap: wrap;
+    height: calc(100% - 65px);
   }
 
   .content-head h3 {

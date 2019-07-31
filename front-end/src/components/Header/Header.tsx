@@ -20,7 +20,7 @@ export default class Header extends Component<Props, State> {
     const { title, hide, isSignin, isAdmin, fetchSignin } = this.props;
     return (
       <header
-        className={`bg-dark text-light flex-row d-flex justify-content-between ${
+        className={`bg-dark text-light flex-row d-flex justify-content-between align-items-center${
           hide ? "hide" : ""
         }`}
       >

@@ -9,7 +9,7 @@ export default class Nav extends Component<Props, State> {
 
   render() {
     return (
-      <nav className="col-md-2 d-none d-md-block bg-light sidebar">
+      <nav className="col-md-2 d-none d-md-block bg-light sidebar pt-3">
         <div className="sidebar-sticky">
           <ul className="nav flex-column">
             <li className="nav-item">
