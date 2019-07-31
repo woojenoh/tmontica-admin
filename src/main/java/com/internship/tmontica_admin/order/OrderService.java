@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class OrderService {
     private final OptionDao optionDao;
 
     // 주문 상태 변경 api(관리자)
-    public void updateOrderStatusApi(int orderId, OrderStatusReq orderStatusReq){
+    public void updateOrderStatusApi(OrderStatusReq orderStatusReq){
 //        String userId = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"),"id");
 //        // 관리자 권한 검사
 //        String role = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"),"role");
@@ -32,13 +33,22 @@ public class OrderService {
 //        }
         // TODO: 관리자 아이디 받아오기
         String userId = "admin";
+        // orderId 리스트 가져오기
+        List<Integer> orderIds = orderStatusReq.getOrderIds();
+        for (int orderId : orderIds) {
+            // orders 테이블에서 status 수정
+            orderDao.updateOrderStatus(orderId, orderStatusReq.getStatus());
+            // order_status_log 테이블에도 로그 추가
+            OrderStatusLog orderStatusLog = new OrderStatusLog(orderStatusReq.getStatus(), userId, orderId);
+            orderDao.addOrderStatusLog(orderStatusLog);
 
-        // orders 테이블에서 status 수정
-        orderDao.updateOrderStatus(orderId, orderStatusReq.getStatus());
-        // order_status_log 테이블에도 로그 추가
-        OrderStatusLog orderStatusLog = new OrderStatusLog(orderStatusReq.getStatus(), userId, orderId);
-        orderDao.addOrderStatusLog(orderStatusLog);
+            // "픽업완료" 상태로 바뀌면 포인트 적립
+            if(orderStatusReq.getStatus().equals(OrderStatusType.PICK_UP.getStatus())){
+                // TODO : 포인트 결제금액의 10% 적립
+            }
+        }
     }
+
 
     // 주문 상태별로 주문정보 가져오기 api(관리자)
     public List<OrdersByStatusResp> getOrderByStatusApi(String status) {
@@ -59,7 +69,7 @@ public class OrderService {
                     String convert = convertOptionStringToCli(option); // 변환할 문자열
                     menu.setOption(convert);
                 }
-
+                // 이미지 url 셋팅
                 menu.setImgUrl("/images/".concat(menu.getImgUrl()));
             }
             OrdersByStatusResp obs = new OrdersByStatusResp(order.getId(), order.getOrderDate(), order.getPayment(),
@@ -88,6 +98,7 @@ public class OrderService {
                 String convert = convertOptionStringToCli(option); // 변환할 문자열
                 menu.setOption(convert);
             }
+            // 이미지 url 셋팅
             menu.setImgUrl("/images/".concat(menu.getImgUrl()));
         }
         List<OrderStatusLogResp> orderStatusLogs = orderDao.getOrderStatusLogByOrderId(orderId);

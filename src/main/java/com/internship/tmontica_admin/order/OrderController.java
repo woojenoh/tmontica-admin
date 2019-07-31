@@ -21,12 +21,12 @@ public class OrderController {
     private OrderService orderService;
 
     /** 주문 상태 바꾸기(관리자) */
-    @PutMapping("/{orderId}/status")
-    public ResponseEntity updateOrderStatus(@PathVariable("orderId")int orderId, @RequestBody @Valid OrderStatusReq orderStatusReq, BindingResult bindingResult){
+    @PutMapping("/status")
+    public ResponseEntity updateOrderStatus(@RequestBody @Valid OrderStatusReq orderStatusReq, BindingResult bindingResult){
         if(bindingResult.hasErrors()) {
             throw new OrderValidException(OrderExceptionType.INVALID_STATUS_FORM, bindingResult);
         }
-        orderService.updateOrderStatusApi(orderId, orderStatusReq);
+        orderService.updateOrderStatusApi(orderStatusReq);
         return new ResponseEntity(HttpStatus.OK);
     }
 
