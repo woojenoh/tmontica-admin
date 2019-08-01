@@ -1,8 +1,8 @@
 package com.internship.tmontica_admin.security;
 
-import com.internship.tmontica.security.exception.UnauthorizedException;
-import com.internship.tmontica.user.model.response.UserTokenInfoDTO;
-import com.internship.tmontica.util.UserConfigValueName;
+import com.internship.tmontica_admin.security.exception.UnauthorizedException;
+import com.internship.tmontica_admin.user.model.response.UserTokenInfoDTO;
+import com.internship.tmontica_admin.util.UserConfigValueName;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

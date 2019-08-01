@@ -1,9 +1,12 @@
 package com.internship.tmontica_admin.user;
 
+import com.internship.tmontica_admin.security.JwtServiceImpl;
 import com.internship.tmontica_admin.user.exception.UserException;
 import com.internship.tmontica_admin.user.exception.UserExceptionType;
-import com.internship.tmontica_admin.user.model.request.AdminSignInReqDTO;
+import com.internship.tmontica_admin.user.model.response.AdminSignInRespDTO;
+import com.internship.tmontica_admin.user.model.response.UserTokenInfoDTO;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,13 +14,26 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserDao userDao;
+    private final JwtServiceImpl jwtService;
+    private final ModelMapper modelMapper;
 
-    public void signIn(AdminSignInReqDTO adminSignInReqDTO) {
+    public void signInCheck(User user) {
 
-        User user = userDao.getUserByUserId(adminSignInReqDTO.getId());
-        checkUserIdNotFoundException(adminSignInReqDTO.getId());
-        checkPasswordMismatchException(adminSignInReqDTO.getPassword(), user.getPassword());
+        User data = userDao.getUserByUserId(user.getId());
+        checkUserIdNotFoundException(user.getId());
+        checkPasswordMismatchException(user.getPassword(), data.getPassword());
         checkAdminRoleException(user.getRole());
+    }
+
+    public AdminSignInRespDTO makeJwtToken(User user){
+
+        return new AdminSignInRespDTO(jwtService.getToken(makeTokenUser(user.getId())));
+    }
+
+    private UserTokenInfoDTO makeTokenUser(String id){
+
+        User user = userDao.getUserByUserId(id);
+        return modelMapper.map(user, UserTokenInfoDTO.class);
     }
 
     private boolean isExistUser(String id){

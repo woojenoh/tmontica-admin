@@ -1,7 +1,7 @@
 package com.internship.tmontica_admin.security;
 
-import com.internship.tmontica.security.exception.UnauthorizedException;
-import com.internship.tmontica.util.UserConfigValueName;
+import com.internship.tmontica_admin.security.exception.UnauthorizedException;
+import com.internship.tmontica_admin.util.UserConfigValueName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;

@@ -1,6 +1,6 @@
 package com.internship.tmontica_admin.security;
 
-import com.internship.tmontica.user.model.response.UserTokenInfoDTO;
+import com.internship.tmontica_admin.user.model.response.UserTokenInfoDTO;
 
 public interface JwtService {
 
