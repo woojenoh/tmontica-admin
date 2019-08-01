@@ -2,10 +2,10 @@ package com.internship.tmontica_admin.menu;
 
 import com.internship.tmontica_admin.menu.exception.MenuException;
 import com.internship.tmontica_admin.menu.exception.MenuExceptionType;
-import com.internship.tmontica_admin.menu.exception.SaveImgException;
 import com.internship.tmontica_admin.menu.model.response.MenuDetailResp;
 import com.internship.tmontica_admin.menu.model.response.MenuOptionResp;
 import com.internship.tmontica_admin.option.Option;
+import com.internship.tmontica_admin.util.SaveImageFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -15,11 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,7 +37,7 @@ public class MenuService {
     // 메뉴 추가
     @Transactional
     public int addMenu(Menu menu, List<Integer>optionIds, MultipartFile imgFile){
-        String imgUrl = saveImg(imgFile, menu.getNameEng());
+        String imgUrl = SaveImageFile.saveImg(imgFile, menu.getNameEng(), location);
         menu.setImgUrl(imgUrl);
 
         // 등록인 정보 가져오기
@@ -148,7 +146,7 @@ public class MenuService {
         //menu.setUpdaterId(JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id"));
 
         if(imgFile!=null){
-            String img = saveImg(imgFile, menu.getNameEng());
+            String img = SaveImageFile.saveImg(imgFile, menu.getNameEng(), location);
             menu.setImgUrl(img);
         }else{
             Menu beforeMenu = getMenuById(menu.getId());
@@ -173,50 +171,6 @@ public class MenuService {
         return (menuDao.getMenuById(id) == null) ? false : true;
     }
 
-    // 이미지 파일 저장
-    public String saveImg(MultipartFile imgFile, String name){
-
-        // file url : imagefile/년/월/일/파일이름
-        StringBuilder sb = new StringBuilder("imagefile/");
-        Calendar calendar = Calendar.getInstance();
-        sb.append(calendar.get(Calendar.YEAR)).append("/");
-        sb.append(calendar.get(Calendar.MONTH) + 1).append("/");
-        sb.append(calendar.get(Calendar.DAY_OF_MONTH)).append("/");
-        // 실제 저장되는 path
-        File dirFile = new File(location + sb.toString());
-        dirFile.mkdirs(); // 디렉토리가 없을 경우 만든다.
-
-        sb.append(name).append("_").append(UUID.randomUUID().toString()); // 유일한 식별자
-        // 확장자 가져오기.
-        String extension = getExtensionByStringHandling(imgFile.getOriginalFilename())
-                .orElseThrow(() -> new SaveImgException());
-        sb.append(".").append(extension);
-
-        log.info("img type : {}", extension);
-
-        String dir = sb.toString();
-        log.info("location : {}" , location);
-        log.info("img dir : {}", dir);
-        try(FileOutputStream fos = new FileOutputStream(location.concat(dir));
-            InputStream in = imgFile.getInputStream()){
-            byte[] buffer = new byte[1024];
-            int readCount = 0;
-            while((readCount = in.read(buffer)) != -1){
-                fos.write(buffer, 0, readCount);
-            }
-        }catch(Exception ex){
-            throw new SaveImgException();
-        }
-
-        return dir;
-    }
-
-    // 파일 이름에서 확장자 가져오기
-    public Optional<String> getExtensionByStringHandling(String filename) {
-        return Optional.ofNullable(filename)
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
-    }
 
     // 올바른 카테고리 이름인지 확인
     public void checkCategoryName(String categoryName){
