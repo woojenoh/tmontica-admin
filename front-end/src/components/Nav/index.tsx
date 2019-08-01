@@ -9,37 +9,37 @@ export default class Nav extends Component<Props, State> {
 
   render() {
     return (
-      <nav className="col-md-2 d-none d-md-block bg-light sidebar pt-3">
+      <nav className="col-md-2 d-none d-md-block bg-light border-right sidebar pt-3">
         <div className="sidebar-sticky">
           <ul className="nav flex-column">
             <li className="nav-item">
-              <Link to="" className="nav-link">
+              <Link to="/" className="nav-link">
                 <i className="fas fa-shopping-cart feather" />
-                주문 관리
+                <h5>주문 관리</h5>
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="" className="nav-link">
+              <Link to="/menus" className="nav-link">
                 <i className="fas fa-coffee feather" />
-                메뉴 관리
+                <h5>메뉴 관리</h5>
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="" className="nav-link">
+              <Link to="/" className="nav-link">
                 <i className="far fa-flag feather" />
-                배너 관리
+                <h5>배너 관리</h5>
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="" className="nav-link">
+              <Link to="/" className="nav-link">
                 <i className="fas fa-user feather" />
-                사용자 관리
+                <h5>사용자 관리</h5>
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="" className="nav-link">
+              <Link to="/" className="nav-link">
                 <i className="far fa-chart-bar feather" />
-                통계
+                <h5>통계</h5>
               </Link>
             </li>
           </ul>

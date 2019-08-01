@@ -101,7 +101,7 @@ class Orders extends React.Component<IOrdersProps, IOrdersState> {
             {/* <!-- 주문내역 --> */}
             <section className="order-list__section">
               <div className="content-head d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mt-4 mb-3">
-                <h4>주문내역</h4>
+                <h4>주문내역 - {selectedTodayStatus ? selectedTodayStatus : "전체"}</h4>
                 <div className="order-select d-flex">
                   <select
                     className="mr-2"
