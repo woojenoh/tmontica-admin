@@ -1,4 +1,5 @@
 import * as React from "react";
+import { DropdownButton, Dropdown } from "react-bootstrap";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import OrdersRow from "../../components/OrdersRow";
@@ -8,11 +9,15 @@ export interface IOrdersProps {}
 
 export interface IOrdersState {
   isModalOpen: boolean;
+  selectedStatus: string | null;
 }
 
 export default class Orders extends React.Component<IOrdersProps, IOrdersState> {
+  status = ["미결제", "결제완료", "제작중", "준비완료", "픽업완료", "주문취소"];
+
   state = {
-    isModalOpen: false
+    isModalOpen: false,
+    selectedStatus: this.status[0]
   };
 
   handleModalOpen = () => {
@@ -27,9 +32,15 @@ export default class Orders extends React.Component<IOrdersProps, IOrdersState> 
     });
   };
 
+  handleChangeStatus = (e: React.FormEvent<HTMLSelectElement>) => {
+    this.setState({
+      selectedStatus: e.currentTarget.value
+    });
+  };
+
   public render() {
-    const { isModalOpen } = this.state;
-    const { handleModalOpen, handleModalClose } = this;
+    const { isModalOpen, selectedStatus } = this.state;
+    const { handleModalOpen, handleModalClose, handleChangeStatus } = this;
 
     return (
       <>
@@ -40,7 +51,7 @@ export default class Orders extends React.Component<IOrdersProps, IOrdersState> 
             {/* <!-- 오늘의 현황 --> */}
             <section className="today-board__section">
               <div className="content-head d-flex flex-wrap flex-md-nowrap align-items-center pt-3 mb-3 border-bottom">
-                <h4>오늘의 현황</h4>
+                <h4 className="mb-3">오늘의 현황</h4>
               </div>
               <div className="today-board-list">
                 <div className="order-circle btn-warning">
@@ -84,8 +95,24 @@ export default class Orders extends React.Component<IOrdersProps, IOrdersState> 
 
             {/* <!-- 주문내역 --> */}
             <section className="order-list__section">
-              <div className="content-head d-flex flex-wrap flex-md-nowrap align-items-center pt-3 mt-4">
+              <div className="content-head d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mt-4 mb-3">
                 <h4>주문내역</h4>
+                <div className="order-select d-flex">
+                  <select
+                    className="mr-2"
+                    value={selectedStatus}
+                    onChange={e => handleChangeStatus(e)}
+                  >
+                    {this.status.map((s, index) => {
+                      return (
+                        <option key={index} value={s}>
+                          {s}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <button className="btn btn-primary">적용</button>
+                </div>
               </div>
               <table className="content-table table table-striped table-sm mb-0">
                 <thead>
