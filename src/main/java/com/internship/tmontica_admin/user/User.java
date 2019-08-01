@@ -29,6 +29,7 @@ public class User {
     @NotNull
     @Pattern(regexp="^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,19}")
     private String password;
+    private String passwordCheck;
     private String role;
     private Date createdDate;
     @Min(0)
