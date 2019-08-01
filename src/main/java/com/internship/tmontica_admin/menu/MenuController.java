@@ -45,7 +45,7 @@ public class MenuController {
         dataBinder.addValidators(menuValidator);
     }
 
-    /** 전체 메뉴 가져오기 **/
+    /** 전체 메뉴 가져오기 (관리자용) **/
     @GetMapping()
     public ResponseEntity<List<Menu>> getAllMenus(@RequestParam(value = "page", required = false, defaultValue = "1")int page,
                                                   @RequestParam(value = "size", required = false, defaultValue = "10")int size){
@@ -58,7 +58,7 @@ public class MenuController {
 
     }
 
-    /** 카테고리 별 메뉴 가져오기 **/
+    /** 카테고리 별 메뉴 가져오기 (관리자용) **/
     @GetMapping("/{category:[a-z-]+}")
     public ResponseEntity<MenuCategoryResp> getMenusByCategory(@PathVariable("category")String category,
                                                                @RequestParam(value = "page", required = false) int page,
@@ -98,7 +98,6 @@ public class MenuController {
     /** 메뉴 추가하기 **/
     @PostMapping
     public ResponseEntity addMenu(@ModelAttribute @Valid MenuReq menuReq, BindingResult bindingResult){
-        // TODO : validation : web binder **
         if(bindingResult.hasErrors()) {
             throw new MenuValidException("Menu Create Form", "메뉴 추가 폼 데이터가 올바르지 않습니다.", bindingResult);
         }

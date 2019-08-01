@@ -34,7 +34,7 @@ public class MenuService {
     // private final JwtService jwtService;
 
     @Value("${menu.imagepath}")
-    private static String location;
+    private String location;
 
     // 메뉴 추가
     @Transactional
@@ -81,14 +81,14 @@ public class MenuService {
 
     }
 
-    // 메뉴 정보 가져오기 (전체)
+    // 사용 가능한 메뉴 정보 가져오기 (전체)
     public List<Menu> getAllMenus(int page, int size){
         int offset = (page - 1) * size;
         return menuDao.getAllMenusByPage(size, offset);
 
     }
 
-    // 메뉴 정보 가져오기 (전체)
+    // 사용 가능한 메뉴 정보 가져오기 (전체)
     public List<Menu> getAllUsableMenus(int page, int size){
         // 페이지에 맞는 메뉴들만 리턴한다.
         List<Menu> usableMenus = MenuScheduler.getUsableMenus();
@@ -193,7 +193,10 @@ public class MenuService {
         sb.append(".").append(extension);
 
         log.info("img type : {}", extension);
+
         String dir = sb.toString();
+        log.info("location : {}" , location);
+        log.info("img dir : {}", dir);
         try(FileOutputStream fos = new FileOutputStream(location.concat(dir));
             InputStream in = imgFile.getInputStream()){
             byte[] buffer = new byte[1024];
@@ -202,18 +205,20 @@ public class MenuService {
                 fos.write(buffer, 0, readCount);
             }
         }catch(Exception ex){
-            ex.printStackTrace();
+            throw new SaveImgException();
         }
 
         return dir;
     }
 
+    // 파일 이름에서 확장자 가져오기
     public Optional<String> getExtensionByStringHandling(String filename) {
         return Optional.ofNullable(filename)
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 
+    // 올바른 카테고리 이름인지 확인
     public void checkCategoryName(String categoryName){
 
         for(CategoryName element : CategoryName.values()){
@@ -221,7 +226,7 @@ public class MenuService {
                 return;
             }
         }
-
+        // 아니면 exception
         throw new MenuException(MenuExceptionType.CATEGORY_NAME_MISMATCH_EXCEPTION);
     }
 

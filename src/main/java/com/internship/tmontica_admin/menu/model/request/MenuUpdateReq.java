@@ -11,7 +11,6 @@ import java.util.List;
 
 @Data
 public class MenuUpdateReq {
-    //TODO : validation..
     @NotNull
     private int menuId;
     @NotEmpty

@@ -1,6 +1,5 @@
 package com.internship.tmontica_admin.menu;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,10 +10,14 @@ import java.util.List;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class MenuScheduler {
-    private final MenuDao menuDao;
+    private MenuDao menuDao;
     private static List<Menu> usableMenus;
+
+    public MenuScheduler(MenuDao menuDao){
+        this.menuDao = menuDao;
+        usableMenus = new ArrayList<>();
+    }
 
     @Scheduled(cron = "0 * * * * *")
     public void filteredMenu(){

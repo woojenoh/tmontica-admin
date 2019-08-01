@@ -20,7 +20,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class MenuReq {
-    //TODO : validation..
     @NotEmpty(message = "메뉴이름(영어)가 명시되어야 합니다.")
     private String nameEng;
     @NotEmpty(message = "메뉴이름이 명시되어야 합니다.")
