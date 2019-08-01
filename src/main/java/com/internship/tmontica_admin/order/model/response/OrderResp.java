@@ -4,15 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDetailResp {
-    private String userId; // 주문한 유저 아이디
+public class OrderResp {
+
     private int orderId;
+    private Date orderDate;
+    private String payment;
     private int totalPrice;
+    private int usedPoint;
+    private int realPrice;
+    private String status;
+    private String userId;
     private List<Order_MenusResp> menus;
-    private List<OrderStatusLogResp> orderStatusLogs;
 }
