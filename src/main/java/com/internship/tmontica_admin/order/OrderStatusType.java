@@ -11,7 +11,8 @@ public enum OrderStatusType {
     IN_PRODUCTION("제작중"),
     READY("준비완료"),
     PICK_UP("픽업완료"),
-    CANCEL("주문취소");
+    CANCEL("주문취소"),
+    ALL("모두");
 
     private String status;
 

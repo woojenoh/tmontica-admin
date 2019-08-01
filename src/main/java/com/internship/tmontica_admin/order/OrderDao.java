@@ -2,6 +2,7 @@ package com.internship.tmontica_admin.order;
 
 import com.internship.tmontica_admin.order.model.response.OrderStatusLogResp;
 import com.internship.tmontica_admin.order.model.response.Order_MenusResp;
+import com.internship.tmontica_admin.order.model.response.StatusCountResp;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -34,7 +35,19 @@ public interface OrderDao {
     @Select("select status, editor_id, modified_date from order_status_logs where order_id=#{orderId}")
     List<OrderStatusLogResp> getOrderStatusLogByOrderId(int orderId);
 
-    // order Status로 주문정보 가져오기
-    @Select("select * from orders where status = #{status}")
-    List<Order> getOrderByStatus(String status);
+    // order Status로 오늘의 주문현황 가져오기
+    @Select("select * from orders where status = #{status} and order_date > curdate()")
+    List<Order> getTodayOrderByStatus(String status);
+
+    // 오늘의 order 정보 모두 가져오기
+    @Select("select * from orders where order_date > curdate()")
+    List<Order> getTodayOrders();
+
+    // 오늘의 order 상태별 개수 가져오기
+    @Select("select count(if(status=\"미결제\", status, null)) beforePayment, count(if(status=\"결제완료\", status, null)) afterPayment, " +
+            "       count(if(status=\"제작중\", status, null)) inProduction,count(if(status=\"준비완료\", status, null)) ready, " +
+            "        count(if(status=\"픽업완료\", status, null)) pickUp,count(if(status=\"주문취소\", status, null)) cancel " +
+            "from orders " +
+            "where order_date > curdate()")
+    StatusCountResp getTodayStatusCount();
 }
