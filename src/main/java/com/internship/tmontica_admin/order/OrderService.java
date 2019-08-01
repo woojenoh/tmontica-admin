@@ -12,13 +12,13 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class OrderService {
 
     private final OrderDao orderDao;
     private final OptionDao optionDao;
 
     // 주문 상태 변경 api(관리자)
+    @Transactional
     public void updateOrderStatusApi(OrderStatusReq orderStatusReq){
 //        String userId = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"),"id");
 //        // 관리자 권한 검사
@@ -59,26 +59,22 @@ public class OrderService {
 
         // DB에서 오늘의 (상태별) 주문현황 가져오기
         List<Order> orders;
-        // 상태 문자열을 보내줬을 경우
         if(!status.equals(OrderStatusType.ALL.toString())){
+            // 상태 문자열을 보내줬을 경우
             orders = orderDao.getTodayOrderByStatus(OrderStatusType.valueOf(status).getStatus());
         }else {
             // 상태 문자열이 default "ALL" 인 경우
             orders = orderDao.getTodayOrders();
         }
 
+        // 디비에서 가져온 리스트 orders -> orderResps 리스트에 매핑
         for(Order order : orders){
+            // orderId로 주문 상세 정보 리스트 가져오기
             List<Order_MenusResp> menus = orderDao.getOrderDetailByOrderId(order.getId());
-            for (Order_MenusResp menu : menus) {
-                //메뉴 옵션 "1__1/4__2" => "HOT/샷추가(2개)" 로 바꾸는 작업
-                if(!menu.getOption().equals("")){
-                    String option = menu.getOption();
-                    String convert = convertOptionStringToCli(option); // 변환할 문자열
-                    menu.setOption(convert);
-                }
-                // 이미지 url 셋팅
-                menu.setImgUrl("/images/".concat(menu.getImgUrl()));
-            }
+
+            // menus리스트 안의 옵션 문자열과 이미지url 셋팅 작업
+            setMenuOptionAndImgurl(menus);
+
             OrderResp orderResp = new OrderResp(order.getId(), order.getOrderDate(), order.getPayment(), order.getTotalPrice(),
                                     order.getUsedPoint(), order.getRealPrice(), order.getStatus(), order.getUserId(), menus);
             orderResps.add(orderResp);
@@ -97,19 +93,15 @@ public class OrderService {
 //        if(!role.equals(UserRole.ADMIN.toString())){
 //            throw new UserException(UserExceptionType.INVALID_USER_ROLE_EXCEPTION);
 //        }
-
+        // orderId로 주문 정보 1개 가져오기
         Order order = orderDao.getOrderByOrderId(orderId);
+        // orderId로 주문 상세 정보 리스트 가져오기
         List<Order_MenusResp> menus = orderDao.getOrderDetailByOrderId(orderId);
-        for (Order_MenusResp menu : menus) {
-            //메뉴 옵션 "1__1/4__2" => "HOT/샷추가(2개)" 로 바꾸는 작업
-            if(!menu.getOption().equals("")){
-                String option = menu.getOption();
-                String convert = convertOptionStringToCli(option); // 변환할 문자열
-                menu.setOption(convert);
-            }
-            // 이미지 url 셋팅
-            menu.setImgUrl("/images/".concat(menu.getImgUrl()));
-        }
+
+        // menus리스트 안의 옵션 문자열과 이미지url 셋팅 작업
+        setMenuOptionAndImgurl(menus);
+
+        // orderId로 주문상태 로그 리스트 가져오기
         List<OrderStatusLogResp> orderStatusLogs = orderDao.getOrderStatusLogByOrderId(orderId);
 
         OrderDetailResp orderDetailResp = new OrderDetailResp(order.getUserId(), orderId, order.getTotalPrice(),menus, orderStatusLogs);
@@ -121,19 +113,14 @@ public class OrderService {
     public Map<String, List<OrderResp>> getOrderHistory(String searchType, String searchValue, String startDate, String endDate) {
         List<Order> orders = orderDao.searchOrder(searchType,searchValue,startDate,endDate);
         List<OrderResp> orderResps = new ArrayList<>();
-
+        // TODO: searchType 정의 (한글로 받을껀지, 영어로 받을껀지)
+        // 디비에서 가져온 리스트 orders -> orderResps 리스트에 매핑
         for(Order order : orders){
+            // orderId로 주문 상세 정보 리스트 가져오기
             List<Order_MenusResp> menus = orderDao.getOrderDetailByOrderId(order.getId());
-            for (Order_MenusResp menu : menus) {
-                //메뉴 옵션 "1__1/4__2" => "HOT/샷추가(2개)" 로 바꾸는 작업
-                if(!menu.getOption().equals("")){
-                    String option = menu.getOption();
-                    String convert = convertOptionStringToCli(option); // 변환할 문자열
-                    menu.setOption(convert);
-                }
-                // 이미지 url 셋팅
-                menu.setImgUrl("/images/".concat(menu.getImgUrl()));
-            }
+
+            // menus리스트 안의 옵션 문자열과 이미지url 셋팅 작업
+            setMenuOptionAndImgurl(menus);
 
             OrderResp orderResp = new OrderResp(order.getId(), order.getOrderDate(), order.getPayment(), order.getTotalPrice(),
                     order.getUsedPoint(), order.getRealPrice(), order.getStatus(), order.getUserId(), menus);
@@ -169,5 +156,19 @@ public class OrderService {
         return convert.toString();
     }
 
+
+    // menus리스트 안의 옵션 문자열과 이미지url 셋팅 작업
+    public void setMenuOptionAndImgurl(List<Order_MenusResp> menus){
+        for (Order_MenusResp menu : menus) {
+            //메뉴 옵션 "1__1/4__2" => "HOT/샷추가(2개)" 로 바꾸는 작업
+            if(!menu.getOption().equals("")){
+                String option = menu.getOption();
+                String convert = convertOptionStringToCli(option); // 변환할 문자열
+                menu.setOption(convert);
+            }
+            // 이미지 url 셋팅
+            menu.setImgUrl("/images/".concat(menu.getImgUrl()));
+        }
+    }
 
 }
