@@ -8,8 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -118,7 +117,34 @@ public class OrderService {
     }
 
 
+    // 주문 내역 검색 api(관리자)
+    public Map<String, List<OrderResp>> getOrderHistory(String searchType, String searchValue, String startDate, String endDate) {
+        List<Order> orders = orderDao.searchOrder(searchType,searchValue,startDate,endDate);
+        List<OrderResp> orderResps = new ArrayList<>();
 
+        for(Order order : orders){
+            List<Order_MenusResp> menus = orderDao.getOrderDetailByOrderId(order.getId());
+            for (Order_MenusResp menu : menus) {
+                //메뉴 옵션 "1__1/4__2" => "HOT/샷추가(2개)" 로 바꾸는 작업
+                if(!menu.getOption().equals("")){
+                    String option = menu.getOption();
+                    String convert = convertOptionStringToCli(option); // 변환할 문자열
+                    menu.setOption(convert);
+                }
+                // 이미지 url 셋팅
+                menu.setImgUrl("/images/".concat(menu.getImgUrl()));
+            }
+
+            OrderResp orderResp = new OrderResp(order.getId(), order.getOrderDate(), order.getPayment(), order.getTotalPrice(),
+                    order.getUsedPoint(), order.getRealPrice(), order.getStatus(), order.getUserId(), menus);
+
+            orderResps.add(orderResp);
+        }
+
+        Map<String, List<OrderResp>> map = new HashMap<>();
+        map.put("orders", orderResps);
+        return map;
+    }
 
 
     // DB의 옵션 문자열을 변환하는 메서드
@@ -142,4 +168,6 @@ public class OrderService {
         }
         return convert.toString();
     }
+
+
 }
