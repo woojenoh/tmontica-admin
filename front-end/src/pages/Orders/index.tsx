@@ -9,14 +9,24 @@ export interface IOrdersProps {}
 
 export interface IOrdersState {
   isModalOpen: boolean;
-  selectedStatus: string | null;
+  selectedTodayStatus: string | null;
+  selectedStatus: string;
 }
 
 class Orders extends React.Component<IOrdersProps, IOrdersState> {
   status = ["미결제", "결제완료", "제작중", "준비완료", "픽업완료", "주문취소"];
+  statusToEnglish = {
+    미결제: "BEFORE_PAYMENT",
+    결제완료: "AFTER_PAYMENT",
+    제작중: "IN_PRODUCTION",
+    준비완료: "READY",
+    픽업완료: "PICK_UP",
+    주문취소: "CANCEL"
+  };
 
   state = {
     isModalOpen: false,
+    selectedTodayStatus: null,
     selectedStatus: this.status[0]
   };
 
@@ -32,6 +42,18 @@ class Orders extends React.Component<IOrdersProps, IOrdersState> {
     });
   };
 
+  handleClickTodayStatus = (statusName: string) => {
+    this.setState({
+      selectedTodayStatus: statusName
+    });
+  };
+
+  initializeTodayStatus = () => {
+    this.setState({
+      selectedTodayStatus: null
+    });
+  };
+
   handleChangeStatus = (e: React.FormEvent<HTMLSelectElement>) => {
     this.setState({
       selectedStatus: e.currentTarget.value
@@ -39,8 +61,15 @@ class Orders extends React.Component<IOrdersProps, IOrdersState> {
   };
 
   public render() {
-    const { isModalOpen, selectedStatus } = this.state;
-    const { handleModalOpen, handleModalClose, handleChangeStatus } = this;
+    const { isModalOpen, selectedStatus, selectedTodayStatus } = this.state;
+    const {
+      status,
+      handleModalOpen,
+      handleModalClose,
+      handleChangeStatus,
+      handleClickTodayStatus,
+      initializeTodayStatus
+    } = this;
 
     return (
       <>
@@ -54,12 +83,18 @@ class Orders extends React.Component<IOrdersProps, IOrdersState> {
                 <h4 className="mb-3">오늘의 현황</h4>
               </div>
               <div className="today-board-list">
-                <OrdersStatusCircle statusName="미결제" statusCount={3} />
-                <OrdersStatusCircle statusName="결제완료" statusCount={3} />
-                <OrdersStatusCircle statusName="제작중" statusCount={3} isActive={true} />
-                <OrdersStatusCircle statusName="준비완료" statusCount={3} />
-                <OrdersStatusCircle statusName="픽업완료" statusCount={3} />
-                <OrdersStatusCircle statusName="주문취소" statusCount={3} />
+                {status.map((s: string, index: number) => {
+                  return (
+                    <OrdersStatusCircle
+                      key={index}
+                      statusName={s}
+                      statusCount={index}
+                      handleClickTodayStatus={handleClickTodayStatus}
+                      initializeTodayStatus={initializeTodayStatus}
+                      isActive={s === selectedTodayStatus}
+                    />
+                  );
+                })}
               </div>
             </section>
 
@@ -73,7 +108,7 @@ class Orders extends React.Component<IOrdersProps, IOrdersState> {
                     value={selectedStatus}
                     onChange={e => handleChangeStatus(e)}
                   >
-                    {this.status.map((s, index) => {
+                    {status.map((s: string, index: number) => {
                       return (
                         <option key={index} value={s}>
                           {s}

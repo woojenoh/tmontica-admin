@@ -4,13 +4,24 @@ export interface IOrderStatusCircleProps {
   statusName: string;
   statusCount: number;
   isActive?: boolean;
+  initializeTodayStatus(): void;
+  handleClickTodayStatus(statusName: string): void;
 }
 
 function OrderStatusCircle(props: IOrderStatusCircleProps) {
-  const { statusName, statusCount, isActive } = props;
+  const {
+    statusName,
+    statusCount,
+    isActive,
+    handleClickTodayStatus,
+    initializeTodayStatus
+  } = props;
 
   return (
-    <div className={`order-circle border ${isActive ? "btn-success text-white" : "btn-light"}`}>
+    <div
+      className={`order-circle border ${isActive ? "btn-success text-white" : "btn-light"}`}
+      onClick={() => (isActive ? initializeTodayStatus() : handleClickTodayStatus(statusName))}
+    >
       <div className="order-circle-name">{statusName}</div>
       <div>
         <span className="order-cnt">{statusCount}건</span>
