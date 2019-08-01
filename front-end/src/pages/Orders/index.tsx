@@ -1,9 +1,9 @@
 import * as React from "react";
-import { DropdownButton, Dropdown } from "react-bootstrap";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import OrdersRow from "../../components/OrdersRow";
 import OrdersModal from "../../components/OrdersModal";
+import OrdersStatusCircle from "../../components/OrdersStatusCircle";
 
 export interface IOrdersProps {}
 
@@ -12,7 +12,7 @@ export interface IOrdersState {
   selectedStatus: string | null;
 }
 
-export default class Orders extends React.Component<IOrdersProps, IOrdersState> {
+class Orders extends React.Component<IOrdersProps, IOrdersState> {
   status = ["미결제", "결제완료", "제작중", "준비완료", "픽업완료", "주문취소"];
 
   state = {
@@ -54,42 +54,12 @@ export default class Orders extends React.Component<IOrdersProps, IOrdersState> 
                 <h4 className="mb-3">오늘의 현황</h4>
               </div>
               <div className="today-board-list">
-                <div className="order-circle btn-warning">
-                  <div className="order-circle-name">미결제</div>
-                  <div>
-                    <span className="order-cnt">3</span>건
-                  </div>
-                </div>
-                <div className="order-circle btn-info">
-                  <div className="order-circle-name">결제완료</div>
-                  <div>
-                    <span className="order-cnt">10</span>건
-                  </div>
-                </div>
-                <div className="order-circle btn-warning">
-                  <div className="order-circle-name">제작중</div>
-                  <div>
-                    <span className="order-cnt">3</span>건
-                  </div>
-                </div>
-                <div className="order-circle btn-info">
-                  <div className="order-circle-name">준비완료</div>
-                  <div>
-                    <span className="order-cnt">3</span>건
-                  </div>
-                </div>
-                <div className="order-circle btn-warning">
-                  <div className="order-circle-name">픽업완료</div>
-                  <div>
-                    <span className="order-cnt">3</span>건
-                  </div>
-                </div>
-                <div className="order-circle btn-danger">
-                  <div className="order-circle-name">주문취소</div>
-                  <div>
-                    <span className="order-cnt">2</span>건
-                  </div>
-                </div>
+                <OrdersStatusCircle statusName="미결제" statusCount={3} />
+                <OrdersStatusCircle statusName="결제완료" statusCount={3} />
+                <OrdersStatusCircle statusName="제작중" statusCount={3} isActive={true} />
+                <OrdersStatusCircle statusName="준비완료" statusCount={3} />
+                <OrdersStatusCircle statusName="픽업완료" statusCount={3} />
+                <OrdersStatusCircle statusName="주문취소" statusCount={3} />
               </div>
             </section>
 
@@ -114,6 +84,8 @@ export default class Orders extends React.Component<IOrdersProps, IOrdersState> 
                   <button className="btn btn-primary">적용</button>
                 </div>
               </div>
+
+              {/* <!-- 주문내역 목록 --> */}
               <table className="content-table table table-striped table-sm mb-0">
                 <thead>
                   <tr>
@@ -142,3 +114,5 @@ export default class Orders extends React.Component<IOrdersProps, IOrdersState> 
     );
   }
 }
+
+export default Orders;
