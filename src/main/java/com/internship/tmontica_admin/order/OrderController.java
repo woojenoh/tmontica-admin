@@ -21,20 +21,22 @@ public class OrderController {
     private OrderService orderService;
 
     /** 주문 상태 바꾸기(관리자) */
-    @PutMapping("/{orderId}/status")
-    public ResponseEntity updateOrderStatus(@PathVariable("orderId")int orderId, @RequestBody @Valid OrderStatusReq orderStatusReq, BindingResult bindingResult){
+    @PutMapping("/status")
+    public ResponseEntity updateOrderStatus(@RequestBody @Valid OrderStatusReq orderStatusReq, BindingResult bindingResult){
         if(bindingResult.hasErrors()) {
             throw new OrderValidException(OrderExceptionType.INVALID_STATUS_FORM, bindingResult);
         }
-        orderService.updateOrderStatusApi(orderId, orderStatusReq);
+        orderService.updateOrderStatusApi(orderStatusReq);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    /** 오늘의 주문 상태별로 주문 정보 가져오기(관리자) */
-    @GetMapping("/{status:[A-Z]+_?[A-Z]+}")
-    public ResponseEntity<List<OrdersByStatusResp>> getOrderByStatus(@PathVariable("status")String status){
-        List<OrdersByStatusResp> ordersByStatusResps = orderService.getOrderByStatusApi(status);
-        return new ResponseEntity<>(ordersByStatusResps, HttpStatus.OK);
+    /** 오늘의 상태별 주문 현황 가져오기(관리자) */
+    @GetMapping("/today")
+    public ResponseEntity<OrdersByStatusResp> getTodayOrderByStatus(@RequestParam(value = "status", defaultValue = "ALL")String status,
+                                                                          @RequestParam(value = "size", required = false)int size,
+                                                                          @RequestParam(value = "page", required = false)int page){
+        OrdersByStatusResp ordersByStatusResp = orderService.getTodayOrderByStatusApi(status, size, page);
+        return new ResponseEntity<>(ordersByStatusResp, HttpStatus.OK);
     }
 
     /** 주문 상세 정보 가져오기(관리자) */
