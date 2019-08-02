@@ -22,7 +22,7 @@ public class UserService {
         User data = userDao.getUserByUserId(user.getId());
         checkUserIdNotFoundException(user.getId());
         checkPasswordMismatchException(user.getPassword(), data.getPassword());
-        checkAdminRoleException(user.getRole());
+        checkAdminRoleException(data.getRole());
     }
 
     public AdminSignInRespDTO makeJwtToken(User user){
@@ -56,14 +56,13 @@ public class UserService {
         throw new UserException(UserExceptionType.PASSWORD_MISMATCH_EXCEPTION);
     }
 
-    private void checkAdminRoleException(String role){
+    public void checkAdminRoleException(String role){
 
         for(AdminRole adminRole : AdminRole.values()){
             if(role.equals(adminRole.getRole())){
                 return;
             }
         }
-
         throw new UserException(UserExceptionType.NOT_ADMIN_EXCEPTION);
     }
 
