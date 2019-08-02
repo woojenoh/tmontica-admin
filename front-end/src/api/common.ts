@@ -1,5 +1,6 @@
 import { TMessageError } from "../types/error";
 
+export const ADMIN_API_URL = "http://tmonticaadmin-idev.tmon.co.kr/api";
 export const API_URL = "http://tmontica-idev.tmon.co.kr/api";
 
 async function fetchTMON<SuccessDataType, ErrorType extends TMessageError>(
