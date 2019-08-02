@@ -29,159 +29,162 @@ body,
 }
 
 /* 모달 공통 */
-.modal .modal-dialog {
-  max-width: none;
-  margin: 0;
-}
 
-.modal .row {
-  margin: 0;
-}
-
-.modal .input-group * {
-  border-radius: 0;
-  border-color: #6c757d;
-}
-
-.modal .input-group {
-  margin-bottom: 2px;
-}
-
-.modal > .input-group:last-child {
-  margin-bottom: 0;
-}
-
-.modal .modal-content {
-  flex-direction: row;
-  justify-content: space-between;
-  background: none;
-}
-
-/* 주문 모달 */
-#orderModal {
-  width: 757px;
-  background: hsla(207, 90%, 54%, 0.8);
-  padding: 21px;
-  position: fixed;
-  left: calc((100% - 757px) / 2);
-  height: auto;
-  top: calc((100% - 500px) / 2);
-  border-radius: 11px;
-}
-
-#orderModal .input-group-prepend {
-  width: 9%;
-  min-width: 87px;
-}
-
-#orderModal .input-group-prepend .input-group-text {
-  width: 100%;
-  justify-content: center;
-}
-
-#orderModal .input-group-wrap {
-  width: 100%;
-}
-
-#orderModal.modal.fade .modal-dialog {
-  /* transition: -webkit-transform .3s ease-out;
-    transition: transform .3s ease-out;
-    transition: transform .3s ease-out,-webkit-transform .3s ease-out;
-    -webkit-transform: translate(0,0);
-    transform: translate(0,0); */
-}
-
-/* 메뉴 모달 */
 #menuModal {
-  width: 757px;
-  background: hsla(207, 90%, 54%, 0.8);
-  padding: 21px;
-  position: fixed;
-  left: calc((100% - 757px) / 2);
-  height: auto;
-  top: calc((100% - 500px) / 2);
-  border-radius: 11px;
-}
+  .modal .modal-dialog {
+    max-width: none;
+    margin: 0;
+  }
 
-#menuModal .input-group-prepend {
-  width: 9%;
-  min-width: 87px;
-}
+  .modal .row {
+    margin: 0;
+  }
 
-#menuModal .input-group-prepend .input-group-text {
-  width: 100%;
-  /* text-align: center; */
-  display: flex;
-  justify-content: center;
-}
+  .modal .input-group * {
+    border-radius: 0;
+    border-color: #6c757d;
+  }
 
-#menuModal .menu-image {
-  width: 230px;
-}
+  .modal .input-group {
+    margin-bottom: 2px;
+  }
 
-#menuModal .input-group-wrap {
-  width: 430px;
-}
-img {
-  width: 100%;
-}
+  .modal > .input-group:last-child {
+    margin-bottom: 0;
+  }
 
-.half {
-  width: 50%;
-}
+  .modal .modal-content {
+    flex-direction: row;
+    justify-content: space-between;
+    background: none;
+  }
 
-#menuModal .category .input-group-append .dropdown-toggle {
-  display: block;
-  width: 100%;
-  background: white;
-}
+  /* 주문 모달 */
+  #orderModal {
+    width: 757px;
+    background: hsla(207, 90%, 54%, 0.8);
+    padding: 21px;
+    position: fixed;
+    left: calc((100% - 757px) / 2);
+    height: auto;
+    top: calc((100% - 500px) / 2);
+    border-radius: 11px;
+  }
 
-#menuModal .category .input-group-append {
-  width: calc(100% - 87px);
-  margin-left: 0;
-}
+  #orderModal .input-group-prepend {
+    width: 9%;
+    min-width: 87px;
+  }
 
-#menuModal .category .btn-outline-secondary:hover {
-  color: #6c757d;
-}
+  #orderModal .input-group-prepend .input-group-text {
+    width: 100%;
+    justify-content: center;
+  }
 
-#menuModal label.choice {
-  margin-right: 0;
-  margin-bottom: 0;
-}
+  #orderModal .input-group-wrap {
+    width: 100%;
+  }
 
-#menuModal .form-control {
-  display: flex;
-  align-items: center;
-  /* justify-content: space-between; */
-}
+  #orderModal.modal.fade .modal-dialog {
+    /* transition: -webkit-transform .3s ease-out;
+      transition: transform .3s ease-out;
+      transition: transform .3s ease-out,-webkit-transform .3s ease-out;
+      -webkit-transform: translate(0,0);
+      transform: translate(0,0); */
+  }
 
-#menuModal .monthly .input-group {
-  width: 68px;
-  /* display: flex; */
-  /* justify-content: space-between; */
-  margin-right: 17px;
-  line-height: 1.15;
-}
+  /* 메뉴 모달 */
+  #menuModal {
+    width: 757px;
+    background: hsla(207, 90%, 54%, 0.8);
+    padding: 21px;
+    position: fixed;
+    left: calc((100% - 757px) / 2);
+    height: auto;
+    top: calc((100% - 500px) / 2);
+    border-radius: 11px;
+  }
 
-#menuModal .monthly .input-group input[type="radio"] {
-  margin-right: 9px;
-}
+  .input-group-prepend {
+    width: 9%;
+    min-width: 87px;
+  }
 
-#menuModal .left-wrap .reg-image__button {
-  width: 100%;
-  margin-top: 5px;
-}
+  .input-group-prepend .input-group-text {
+    width: 100%;
+    /* text-align: center; */
+    display: flex;
+    justify-content: center;
+  }
 
-#menuModal .modal-footer {
-  border-top: 0;
-  padding-bottom: 0;
-  padding-right: 0;
-  padding-left: 0;
-}
+  .menu-image {
+    width: 230px;
+  }
 
-#menuModal .modal-footer .btn {
-  width: 105px;
+  .input-group-wrap {
+    width: 430px;
+  }
+  img {
+    width: 100%;
+  }
+
+  .half {
+    width: 50%;
+  }
+
+  .category .input-group-append .dropdown-toggle {
+    display: block;
+    width: 100%;
+    background: white;
+  }
+
+  .category .input-group-append {
+    width: calc(100% - 87px);
+    margin-left: 0;
+  }
+
+  .category .btn-outline-secondary:hover {
+    color: #6c757d;
+  }
+
+  label.choice {
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+
+  .form-control {
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; */
+  }
+
+  .monthly .input-group {
+    width: 68px;
+    /* display: flex; */
+    /* justify-content: space-between; */
+    margin-right: 17px;
+    line-height: 1.15;
+  }
+
+  .monthly .input-group input[type="radio"] {
+    margin-right: 9px;
+  }
+
+  .left-wrap .reg-image__button {
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .modal-footer {
+    border-top: 0;
+    padding-bottom: 0;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .modal-footer .btn {
+    width: 105px;
+  }
 }
 
 /* 주문관리 */

@@ -20,7 +20,7 @@ function TodayOrderStatus(props: ITodayOrderStatusProps) {
 
   return (
     <div
-      className={`order-circle cursor-pointer border btn ${
+      className={`order-circle cursor-pointer border rounded-circle d-flex align-items-center btn ${
         isActive ? "btn-success text-white" : "btn-light"
       }`}
       onClick={() => (isActive ? initializeTodayStatus() : handleClickTodayStatus(statusName))}
