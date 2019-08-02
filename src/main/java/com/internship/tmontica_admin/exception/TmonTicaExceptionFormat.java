@@ -21,7 +21,7 @@ public class TmonTicaExceptionFormat {
         this.message = message;
     }
 
-    public TmonTicaExceptionFormat(String field, String exceptionMessage, List<FieldError> errors){
+    public TmonTicaExceptionFormat(String field, String message, List<FieldError> errors){
         this.field = field;
         this.message = message;
         this.errors = errors;
