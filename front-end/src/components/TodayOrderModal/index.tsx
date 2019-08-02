@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Modal } from "react-bootstrap";
 
-export interface IOrdersModalProps {
+export interface ITodayOrderModalProps {
   isModalOpen: boolean;
   handleModalClose(): void;
 }
 
-function OrdersModal(props: IOrdersModalProps) {
+function TodayOrderModal(props: ITodayOrderModalProps) {
   const { isModalOpen, handleModalClose } = props;
 
   return (
@@ -86,4 +86,4 @@ function OrdersModal(props: IOrdersModalProps) {
   );
 }
 
-export default OrdersModal;
+export default TodayOrderModal;

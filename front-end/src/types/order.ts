@@ -1,4 +1,4 @@
-export interface IOrders {
+export interface IOrder {
   orderId: number;
   orderDate: string;
   payment: string;
@@ -7,10 +7,10 @@ export interface IOrders {
   realPrice: number;
   status: string;
   userId: string;
-  menus: IOrdersMenu[];
+  menus: IOrderMenu[];
 }
 
-export interface IOrdersMenu {
+export interface IOrderMenu {
   menuId: number;
   nameEng: string;
   nameKo: string;

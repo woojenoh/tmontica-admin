@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export interface IOrderStatusCircleProps {
+export interface ITodayOrderStatusProps {
   statusName: string;
   statusCount: number;
   isActive?: boolean;
@@ -8,7 +8,7 @@ export interface IOrderStatusCircleProps {
   handleClickTodayStatus(statusName: string): void;
 }
 
-function OrderStatusCircle(props: IOrderStatusCircleProps) {
+function TodayOrderStatus(props: ITodayOrderStatusProps) {
   const {
     statusName,
     statusCount,
@@ -30,4 +30,4 @@ function OrderStatusCircle(props: IOrderStatusCircleProps) {
   );
 }
 
-export default OrderStatusCircle;
+export default TodayOrderStatus;

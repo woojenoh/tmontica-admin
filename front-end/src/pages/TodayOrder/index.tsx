@@ -1,22 +1,22 @@
 import * as React from "react";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
-import OrdersRow from "../../components/OrdersRow";
-import OrdersModal from "../../components/OrdersModal";
-import OrdersStatusCircle from "../../components/OrdersStatusCircle";
+import TodayOrderRow from "../../components/TodayOrderRow";
+import TodayOrderModal from "../../components/TodayOrderModal";
+import TodayOrderStatus from "../../components/TodayOrderStatus";
 import * as orderTypes from "../../types/order";
 
-export interface IOrdersProps {}
+export interface ITodayOrderProps {}
 
-export interface IOrdersState {
-  orders: orderTypes.IOrders[] | null;
+export interface ITodayOrderState {
+  orders: orderTypes.IOrder[] | null;
   ordersStatus: orderTypes.IOrderStatusCount | null;
   isModalOpen: boolean;
   selectedTodayStatus: string | null;
   selectedStatus: string;
 }
 
-class Orders extends React.Component<IOrdersProps, IOrdersState> {
+class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   status = ["미결제", "결제완료", "제작중", "준비완료", "픽업완료", "주문취소"];
   statusToEnglish = {
     미결제: "beforePayment",
@@ -90,7 +90,7 @@ class Orders extends React.Component<IOrdersProps, IOrdersState> {
               <div className="today-board-list">
                 {status.map((s: string, index: number) => {
                   return (
-                    <OrdersStatusCircle
+                    <TodayOrderStatus
                       key={index}
                       statusName={s}
                       statusCount={index}
@@ -142,13 +142,13 @@ class Orders extends React.Component<IOrdersProps, IOrdersState> {
                   </tr>
                 </thead>
                 <tbody>
-                  <OrdersRow handleModalOpen={handleModalOpen} />
+                  <TodayOrderRow handleModalOpen={handleModalOpen} />
                 </tbody>
               </table>
             </section>
 
             {/* <!-- 주문 상세 모달 --> */}
-            <OrdersModal isModalOpen={isModalOpen} handleModalClose={handleModalClose} />
+            <TodayOrderModal isModalOpen={isModalOpen} handleModalClose={handleModalClose} />
           </main>
         </div>
       </>
@@ -156,4 +156,4 @@ class Orders extends React.Component<IOrdersProps, IOrdersState> {
   }
 }
 
-export default Orders;
+export default TodayOrder;

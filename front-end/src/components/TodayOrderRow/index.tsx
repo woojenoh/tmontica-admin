@@ -1,10 +1,10 @@
 import * as React from "react";
 
-export interface IOrdersRowProps {
+export interface ITodayOrderRowProps {
   handleModalOpen(): void;
 }
 
-function OrdersRow(props: IOrdersRowProps) {
+function TodayOrderRow(props: ITodayOrderRowProps) {
   const { handleModalOpen } = props;
 
   return (
@@ -23,4 +23,4 @@ function OrdersRow(props: IOrdersRowProps) {
   );
 }
 
-export default OrdersRow;
+export default TodayOrderRow;
