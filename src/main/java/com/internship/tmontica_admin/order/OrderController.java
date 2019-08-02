@@ -4,6 +4,7 @@ import com.internship.tmontica_admin.order.exception.OrderExceptionType;
 import com.internship.tmontica_admin.order.exception.OrderValidException;
 import com.internship.tmontica_admin.order.model.request.OrderStatusReq;
 import com.internship.tmontica_admin.order.model.response.OrderDetailResp;
+import com.internship.tmontica_admin.order.model.response.OrderResp;
 import com.internship.tmontica_admin.order.model.response.OrdersByStatusResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -33,8 +36,8 @@ public class OrderController {
     /** 오늘의 상태별 주문 현황 가져오기(관리자) */
     @GetMapping("/today")
     public ResponseEntity<OrdersByStatusResp> getTodayOrderByStatus(@RequestParam(value = "status", defaultValue = "ALL")String status,
-                                                                          @RequestParam(value = "size", required = false)int size,
-                                                                          @RequestParam(value = "page", required = false)int page){
+                                                                    @RequestParam(value = "size", required = false)int size,
+                                                                    @RequestParam(value = "page", required = false)int page){
         OrdersByStatusResp ordersByStatusResp = orderService.getTodayOrderByStatusApi(status, size, page);
         return new ResponseEntity<>(ordersByStatusResp, HttpStatus.OK);
     }
@@ -44,5 +47,17 @@ public class OrderController {
     public ResponseEntity<OrderDetailResp> getOrderDetail(@PathVariable("orderId")int orderId){
         OrderDetailResp orderDetailResp = orderService.getOrderDetailApi(orderId);
         return new ResponseEntity<>(orderDetailResp, HttpStatus.OK);
+    }
+
+    /** 주문 내역 검색(관리자) */
+    @GetMapping("/history")
+    public ResponseEntity<Map<String, List<OrderResp>>> getOrderHistory(@RequestParam(value = "searchType", required = true)String searchType,
+                                                                      @RequestParam(value = "searchValue", required = true)String searchValue,
+                                                                      @RequestParam(value = "startDate", required = true) String startDate,
+                                                                      @RequestParam(value = "endDate", required = true)String endDate,
+                                                                      @RequestParam(value = "size", required = false)int size,
+                                                                      @RequestParam(value = "page", required = false)int page){
+        Map<String, List<OrderResp>> map = orderService.getOrderHistory(searchType, searchValue,startDate, endDate);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 }

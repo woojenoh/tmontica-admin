@@ -1,5 +1,7 @@
 package com.internship.tmontica_admin;
 
+import com.internship.tmontica_admin.security.JwtService;
+import com.internship.tmontica_admin.security.JwtServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +16,11 @@ public class TmonticaAdminApplication {
 
 	@Bean
 	public ModelMapper modelMapper(){	return new ModelMapper(); }
+
+	@Bean
+	public JwtService jwtService() {
+		return new JwtServiceImpl();
+	}
 
 	@Bean
 	public TaskScheduler taskScheduler() {

@@ -5,6 +5,7 @@ import com.internship.tmontica_admin.order.model.response.Order_MenusResp;
 import com.internship.tmontica_admin.order.model.response.StatusCountResp;
 import org.apache.ibatis.annotations.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -50,4 +51,10 @@ public interface OrderDao {
             "from orders " +
             "where order_date > curdate()")
     StatusCountResp getTodayStatusCount();
+
+    // 주문내역 검색하기
+    @Select("select * from orders " +
+            "where ${searchType} like '%${searchValue}%' " +
+            "   and order_date between date(#{startDate}) and date(#{endDate})+1")
+    List<Order> searchOrder(String searchType, String searchValue, String startDate, String endDate);
 }
