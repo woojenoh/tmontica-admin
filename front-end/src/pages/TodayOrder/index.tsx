@@ -1,5 +1,6 @@
 import * as React from "react";
 import axios, { AxiosResponse, AxiosError } from "axios";
+import _ from "underscore";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import TodayOrderRow from "../../components/TodayOrderRow";
@@ -40,7 +41,14 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       });
   }
 
-  status = ["미결제", "결제완료", "제작중", "준비완료", "픽업완료", "주문취소"];
+  status = [
+    "미결제",
+    "결제완료",
+    "제작중",
+    "준비완료",
+    "픽업완료",
+    "주문취소"
+  ] as orderTypes.TOrderStatusKor[];
   statusEng = [
     "beforePayment",
     "afterPayment",
@@ -49,6 +57,14 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     "pickUp",
     "cancel"
   ] as orderTypes.TOrderStatusEng[];
+  statusToEng = {
+    미결제: "beforePayment",
+    결제완료: "afterPayment",
+    제작중: "inProduction",
+    준비완료: "ready",
+    픽업완료: "pickUp",
+    주문취소: "cancel"
+  };
 
   state = {
     orders: null,
@@ -206,6 +222,48 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     }
   };
 
+  handleChangeStatusSubmit = () => {
+    const { orders, selectedSelectStatus, statusCount } = this.state;
+    const { statusToEng } = this;
+
+    if (orders && statusCount) {
+      const newStatusCount = _(statusCount).clone() as orderTypes.IOrderStatusCount;
+      const checkedOrderIds = orders
+        .filter(o => {
+          if (o.checked) {
+            // newStatusCount[statusToEng["주문취소"]] -= 1;
+            return true;
+          } else {
+            return false;
+          }
+        })
+        .map(o => {
+          return o.orderId;
+        });
+      axios
+        .put("http://tmonticaadmin-idev.tmon.co.kr/api/orders/status", {
+          orderIds: checkedOrderIds,
+          status: selectedSelectStatus
+        })
+        .then((res: AxiosResponse) => console.log(res))
+        .catch((err: AxiosError) => alert(err.response));
+      const newOrders = orders.map(o => {
+        if (o.checked) {
+          o.status = selectedSelectStatus;
+          return o;
+        } else {
+          return o;
+        }
+      });
+      this.setState({
+        orders: newOrders
+      });
+      alert("주문상태가 변경되었습니다.");
+    } else {
+      alert("문제가 발생했습니다.");
+    }
+  };
+
   render() {
     const {
       isModalOpen,
@@ -227,7 +285,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       handleCheckRowAll,
       handleUncheckRowAll,
       handleCheckRow,
-      handleUncheckRow
+      handleUncheckRow,
+      handleChangeStatusSubmit
     } = this;
 
     return (
@@ -278,7 +337,9 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                       );
                     })}
                   </select>
-                  <button className="btn btn-primary">적용</button>
+                  <button className="btn btn-primary" onClick={() => handleChangeStatusSubmit()}>
+                    적용
+                  </button>
                 </div>
               </div>
 

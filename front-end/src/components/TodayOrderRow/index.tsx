@@ -19,8 +19,8 @@ function TodayOrderRow(props: ITodayOrderRowProps) {
       <td className="order__td check">
         <input
           type="checkbox"
-          checked={order.checked}
-          onClick={() =>
+          checked={order.checked ? order.checked : false}
+          onChange={() =>
             order.checked ? handleUncheckRow(order.orderId) : handleCheckRow(order.orderId)
           }
         />
