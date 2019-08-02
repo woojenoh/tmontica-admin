@@ -52,7 +52,7 @@ function TodayOrderModal(props: ITodayOrderModalProps) {
                 <tfoot>
                   <tr>
                     <td colSpan={3} className="text-right">
-                      총 결제금액:
+                      총 결제금액:{" "}
                       <span className="total-price">
                         {numberCommaRegex(orderDetail.totalPrice)}
                       </span>

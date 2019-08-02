@@ -227,13 +227,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                       return (
                         <TodayOrderRow
                           key={o.orderId}
-                          id={o.orderId}
-                          user={o.userId}
-                          status={o.status}
-                          menus={o.menus}
-                          payment={o.payment}
-                          price={o.totalPrice}
-                          date={o.orderDate}
+                          order={o}
                           handleModalOpen={handleModalOpen}
                         />
                       );
