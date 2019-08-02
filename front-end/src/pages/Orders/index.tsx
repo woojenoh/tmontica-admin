@@ -4,10 +4,13 @@ import Nav from "../../components/Nav";
 import OrdersRow from "../../components/OrdersRow";
 import OrdersModal from "../../components/OrdersModal";
 import OrdersStatusCircle from "../../components/OrdersStatusCircle";
+import * as orderTypes from "../../types/order";
 
 export interface IOrdersProps {}
 
 export interface IOrdersState {
+  orders: orderTypes.IOrders[] | null;
+  ordersStatus: orderTypes.IOrderStatusCount | null;
   isModalOpen: boolean;
   selectedTodayStatus: string | null;
   selectedStatus: string;
@@ -16,15 +19,17 @@ export interface IOrdersState {
 class Orders extends React.Component<IOrdersProps, IOrdersState> {
   status = ["미결제", "결제완료", "제작중", "준비완료", "픽업완료", "주문취소"];
   statusToEnglish = {
-    미결제: "BEFORE_PAYMENT",
-    결제완료: "AFTER_PAYMENT",
-    제작중: "IN_PRODUCTION",
-    준비완료: "READY",
-    픽업완료: "PICK_UP",
-    주문취소: "CANCEL"
+    미결제: "beforePayment",
+    결제완료: "afterPayment",
+    제작중: "inProduction",
+    준비완료: "ready",
+    픽업완료: "pickUp",
+    주문취소: "cancel"
   };
 
   state = {
+    orders: null,
+    ordersStatus: null,
     isModalOpen: false,
     selectedTodayStatus: null,
     selectedStatus: this.status[0]
@@ -130,6 +135,7 @@ class Orders extends React.Component<IOrdersProps, IOrdersState> {
                     <th>주문번호</th>
                     <th>주문자</th>
                     <th>주문상태</th>
+                    <th>주문메뉴</th>
                     <th>결제방법</th>
                     <th>결제금액</th>
                     <th>주문일시</th>
