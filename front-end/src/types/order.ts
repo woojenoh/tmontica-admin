@@ -8,6 +8,7 @@ export interface IOrder {
   status: string;
   userId: string;
   menus: IOrderMenu[];
+  checked?: boolean;
 }
 
 export interface IOrderMenu {

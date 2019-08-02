@@ -7,14 +7,23 @@ import "./styles.scss";
 export interface ITodayOrderRowProps {
   order: orderTypes.IOrder;
   handleModalOpen(orderId: number): void;
+  handleCheckRow(orderId: number): void;
+  handleUncheckRow(orderId: number): void;
 }
 
 function TodayOrderRow(props: ITodayOrderRowProps) {
-  const { order, handleModalOpen } = props;
+  const { order, handleModalOpen, handleCheckRow, handleUncheckRow } = props;
+
   return (
     <tr className="text-center">
       <td className="order__td check">
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          checked={order.checked}
+          onClick={() =>
+            order.checked ? handleUncheckRow(order.orderId) : handleCheckRow(order.orderId)
+          }
+        />
       </td>
       <td className="order__td order-id" onClick={() => handleModalOpen(order.orderId)}>
         {order.orderId}

@@ -17,6 +17,7 @@ export interface ITodayOrderState {
   selectedTodayStatus: string | null;
   selectedSelectStatus: string;
   selectedOrderId: number | null;
+  isCheckedAll: boolean;
 }
 
 class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
@@ -56,7 +57,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     isModalOpen: false,
     selectedTodayStatus: null,
     selectedSelectStatus: this.status[0],
-    selectedOrderId: null
+    selectedOrderId: null,
+    isCheckedAll: false
   } as ITodayOrderState;
 
   handleModalOpen = (orderId: number) => {
@@ -134,14 +136,85 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     });
   };
 
-  public render() {
+  handleCheckRowAll = () => {
+    const { orders } = this.state;
+    if (orders) {
+      const newOrders = orders.map(o => {
+        o.checked = true;
+        return o;
+      });
+      this.setState({
+        orders: newOrders,
+        isCheckedAll: true
+      });
+    } else {
+      alert("문제가 발생했습니다.");
+    }
+  };
+
+  handleUncheckRowAll = () => {
+    const { orders } = this.state;
+    if (orders) {
+      const newOrders = orders.map(o => {
+        o.checked = false;
+        return o;
+      });
+      this.setState({
+        orders: newOrders,
+        isCheckedAll: false
+      });
+    } else {
+      alert("문제가 발생했습니다.");
+    }
+  };
+
+  handleCheckRow = (orderId: number) => {
+    const { orders } = this.state;
+    if (orders) {
+      const newOrders = orders.map(o => {
+        if (o.orderId === orderId) {
+          o.checked = true;
+          return o;
+        } else {
+          return o;
+        }
+      });
+      this.setState({
+        orders: newOrders
+      });
+    } else {
+      alert("문제가 발생했습니다.");
+    }
+  };
+
+  handleUncheckRow = (orderId: number) => {
+    const { orders } = this.state;
+    if (orders) {
+      const newOrders = orders.map(o => {
+        if (o.orderId === orderId) {
+          o.checked = false;
+          return o;
+        } else {
+          return o;
+        }
+      });
+      this.setState({
+        orders: newOrders
+      });
+    } else {
+      alert("문제가 발생했습니다.");
+    }
+  };
+
+  render() {
     const {
       isModalOpen,
       selectedSelectStatus,
       selectedTodayStatus,
       statusCount,
       orders,
-      orderDetail
+      orderDetail,
+      isCheckedAll
     } = this.state;
     const {
       status,
@@ -150,7 +223,11 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       handleModalClose,
       handleChangeSelectStatus,
       handleClickTodayStatus,
-      initializeTodayStatus
+      initializeTodayStatus,
+      handleCheckRowAll,
+      handleUncheckRowAll,
+      handleCheckRow,
+      handleUncheckRow
     } = this;
 
     return (
@@ -210,7 +287,10 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                 <thead>
                   <tr className="text-center">
                     <th>
-                      <input type="checkbox" aria-label="Checkbox for following text input" />
+                      <input
+                        type="checkbox"
+                        onClick={() => (isCheckedAll ? handleUncheckRowAll() : handleCheckRowAll())}
+                      />
                     </th>
                     <th>주문번호</th>
                     <th>주문자</th>
@@ -229,6 +309,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                           key={o.orderId}
                           order={o}
                           handleModalOpen={handleModalOpen}
+                          handleCheckRow={handleCheckRow}
+                          handleUncheckRow={handleUncheckRow}
                         />
                       );
                     })
