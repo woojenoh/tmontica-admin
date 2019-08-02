@@ -17,7 +17,6 @@ export interface ITodayOrderRowProps {
 
 function TodayOrderRow(props: ITodayOrderRowProps) {
   const { id, user, status, menus, payment, price, date, handleModalOpen } = props;
-  console.log(menus);
   return (
     <tr className="text-center">
       <td className="order__td check">

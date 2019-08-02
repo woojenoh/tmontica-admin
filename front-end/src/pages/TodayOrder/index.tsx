@@ -1,5 +1,5 @@
 import * as React from "react";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse, AxiosError } from "axios";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import TodayOrderRow from "../../components/TodayOrderRow";
@@ -19,7 +19,6 @@ export interface ITodayOrderState {
 
 class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   componentDidMount() {
-    // 초기에는 전체 목록을 불러온다.
     axios
       .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
         params: {
@@ -33,7 +32,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
           statusCount: res.data.statusCount
         });
       })
-      .catch(err => {
+      .catch((err: AxiosError) => {
         alert(err);
       });
   }
@@ -167,23 +166,27 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                   </tr>
                 </thead>
                 <tbody>
-                  {orders
-                    ? orders.map(o => {
-                        return (
-                          <TodayOrderRow
-                            key={o.orderId}
-                            id={o.orderId}
-                            user={o.userId}
-                            status={o.status}
-                            menus={o.menus}
-                            payment={o.payment}
-                            price={o.totalPrice}
-                            date={o.orderDate}
-                            handleModalOpen={handleModalOpen}
-                          />
-                        );
-                      })
-                    : "로딩 중입니다."}
+                  {orders ? (
+                    orders.map(o => {
+                      return (
+                        <TodayOrderRow
+                          key={o.orderId}
+                          id={o.orderId}
+                          user={o.userId}
+                          status={o.status}
+                          menus={o.menus}
+                          payment={o.payment}
+                          price={o.totalPrice}
+                          date={o.orderDate}
+                          handleModalOpen={handleModalOpen}
+                        />
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td>로딩 중입니다.</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </section>
