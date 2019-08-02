@@ -4,6 +4,9 @@ import com.internship.tmontica_admin.option.Option;
 import com.internship.tmontica_admin.option.OptionDao;
 import com.internship.tmontica_admin.order.model.request.OrderStatusReq;
 import com.internship.tmontica_admin.order.model.response.*;
+import com.internship.tmontica_admin.point.Point;
+import com.internship.tmontica_admin.point.PointLogType;
+import com.internship.tmontica_admin.point.PointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,8 @@ public class OrderService {
 
     private final OrderDao orderDao;
     private final OptionDao optionDao;
+    private static final double RESERVE_RATE = 10.0;
+    private final PointService pointService;
 
     // 주문 상태 변경 api(관리자)
     public void updateOrderStatusApi(OrderStatusReq orderStatusReq){
@@ -39,7 +44,10 @@ public class OrderService {
 
             // "픽업완료" 상태로 바뀌면 포인트 적립
             if(orderStatusReq.getStatus().equals(OrderStatusType.PICK_UP.getStatus())){
-                // TODO : 포인트 결제금액의 10% 적립
+                Order order = orderDao.getOrderByOrderId(orderId);
+                Point point = new Point(order.getUserId(), PointLogType.GET_POINT.getType(),
+                        String.valueOf((order.getTotalPrice()*(100-RESERVE_RATE)/100)), "결제 적립금 적립.");
+                pointService.updateUserPoint(point);
             }
         }
     }
