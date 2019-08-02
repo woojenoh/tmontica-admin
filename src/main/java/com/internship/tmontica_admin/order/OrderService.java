@@ -111,7 +111,7 @@ public class OrderService {
 
     // 주문 내역 검색 api(관리자)
     public Map<String, List<OrderResp>> getOrderHistory(String searchType, String searchValue, String startDate, String endDate) {
-        List<Order> orders = orderDao.searchOrder(searchType,searchValue,startDate,endDate);
+        List<Order> orders = orderDao.searchOrder(OrderSearchType.getBysearchType(searchType),searchValue,startDate,endDate);
         List<OrderResp> orderResps = new ArrayList<>();
         // 디비에서 가져온 리스트 orders -> orderResps 리스트에 매핑
         for(Order order : orders){
