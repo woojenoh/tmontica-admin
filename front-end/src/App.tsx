@@ -11,7 +11,7 @@ import { connect } from "react-redux";
 import * as rootTypes from "./types/index";
 import Signin from "./pages/Signin";
 import Menus from "./pages/Menus";
-import Orders from "./pages/Orders";
+import TodayOrder from "./pages/TodayOrder";
 
 export interface IAppProps extends RouteComponentProps {
   isSignin: boolean;
@@ -78,10 +78,10 @@ class App extends React.Component<IAppProps> {
     return (
       <>
         <Switch>
-          <AdminRoute exact path="/orders" component={Orders} />
+          <AdminRoute exact path="/todayOrder" component={TodayOrder} />
           <AdminRoute exact path="/menus" component={Menus} />
           <AdminRoute exact path="/menus/:menuId([0-9]+)" component={Menus} />
-          <AdminRoute exact path="/" component={Orders} />
+          <AdminRoute exact path="/" component={TodayOrder} />
           <PublicRoute exact path="/signin" component={Signin} />
         </Switch>
       </>

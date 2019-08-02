@@ -1,8 +1,19 @@
-import React, { Component, FormEvent } from "react";
+import React, {
+  Component,
+  FormEvent,
+  MouseEvent,
+  RefObject,
+  SyntheticEvent,
+  BaseSyntheticEvent,
+  ChangeEvent
+} from "react";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import { Table, Modal, Dropdown } from "react-bootstrap";
 import DatePicker from "react-datepicker";
+import { handleChange, formatDate } from "../../utils";
+import "react-datepicker/dist/react-datepicker.css";
+import "./styles.scss";
 
 interface IMenusProps {}
 interface IMenusState {
@@ -28,13 +39,17 @@ interface IMenuModalState {
   sellPrice: number;
   discountRate: number;
   stock: number;
-  optionIds: Array<number>;
+  optionIds: Set<number>;
   usable: boolean;
   startDate: string;
   endDate: string;
+  imgFile: string;
+  imgUrl: string;
 }
 
 class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
+  fileInput: React.RefObject<HTMLInputElement> = React.createRef();
+
   state = {
     isReg: true,
     nameKo: "",
@@ -47,19 +62,41 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
     sellPrice: 0,
     discountRate: 0,
     stock: 0,
-    optionIds: [],
+    optionIds: new Set([]) as Set<number>,
     usable: false,
-    startDate: "",
-    endDate: ""
+    startDate: formatDate(new Date()),
+    endDate: formatDate(new Date()),
+    imgFile: "",
+    imgUrl: ""
   };
 
-  input = React.createRef();
+  // triggerInputFile = () => this.fileInput.click();
+
+  clickFileInput() {
+    if (this.fileInput.current) {
+      this.fileInput.current.click();
+    }
+  }
+
+  constructor(props: IMenuModalProps, state: IMenuModalState) {
+    super(props, state);
+
+    this.fileInput = React.createRef<HTMLInputElement>();
+    this.clickFileInput = this.clickFileInput.bind(this);
+  }
 
   handleUpdate() {}
 
   handleReg(e: FormEvent) {}
 
-  handleChange() {}
+  // 이미지 파일 미리보기
+  handleImageFileChange(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) {
+      this.setState({
+        imgUrl: URL.createObjectURL(e.target.files[0])
+      });
+    }
+  }
 
   render() {
     const { menuId, show, handleClose } = this.props;
@@ -83,7 +120,12 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
 
     return (
       <Modal id="menuModal" show={show} onHide={handleClose}>
-        <form name="menuForm" onSubmit={e => e.preventDefault()}>
+        <form
+          name="menuForm"
+          onSubmit={e => {
+            e.preventDefault();
+          }}
+        >
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="input-group-wrap">
@@ -91,7 +133,14 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   <div className="input-group-prepend">
                     <span className="input-group-text">메뉴명</span>
                   </div>
-                  <input value={nameKo} type="text" className="form-control" placeholder="메뉴명" />
+                  <input
+                    value={nameKo}
+                    name="nameKo"
+                    type="text"
+                    className="form-control"
+                    placeholder="메뉴명"
+                    onChange={handleChange.bind(this)}
+                  />
                 </div>
                 <div className="input-group en-name">
                   <div className="input-group-prepend">
@@ -99,9 +148,11 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   </div>
                   <input
                     value={nameEng}
+                    name="nameEng"
                     type="text"
                     className="form-control"
                     placeholder="영문명"
+                    onChange={handleChange.bind(this)}
                   />
                 </div>
                 <div className="input-group category">
@@ -109,15 +160,37 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                     <span className="input-group-text">카테고리</span>
                   </div>
                   <div className="input-group-append">
-                    <Dropdown>
+                    <select
+                      name="categoryEng"
+                      value={categoryEng}
+                      onChange={e => {
+                        this.setState({
+                          categoryEng: e.target.value
+                        });
+                      }}
+                    >
+                      <option value="">카테고리</option>
+                      <option value="coffee">커피</option>
+                      <option value="ade">에이드</option>
+                      <option value="bread">빵</option>
+                    </select>
+                    {/* <Dropdown>
                       <Dropdown.Toggle
                         variant="secondary"
                         id="category-dropdown"
                         className="btn btn-outline-secondary"
+                        onSelect={(e: any) => {
+                          console.log(e);
+                        }}
+                        onChange={(e: any) => console.log(e)}
                       >
                         카테고리
                       </Dropdown.Toggle>
-                      <Dropdown.Menu>
+                      <Dropdown.Menu
+                        onSelect={(e: any) => {
+                          debugger;
+                        }}
+                      >
                         <Dropdown.Item as="button" eventKey="coffee" active>
                           커피
                         </Dropdown.Item>
@@ -128,14 +201,20 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                           빵
                         </Dropdown.Item>
                       </Dropdown.Menu>
-                    </Dropdown>
+                    </Dropdown> */}
                   </div>
                 </div>
                 <div className="input-group description">
                   <div className="input-group-prepend">
                     <span className="input-group-text">설명</span>
                   </div>
-                  <textarea className="form-control" placeholder="설명입니다." />
+                  <textarea
+                    className="form-control"
+                    placeholder="설명입니다."
+                    name="description"
+                    value={description}
+                    onChange={handleChange.bind(this)}
+                  />
                 </div>
                 <div className="input-group monthly">
                   <div className="input-group-prepend">
@@ -143,7 +222,18 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   </div>
                   <div className="form-control">
                     <div className="input-group">
-                      <input type="radio" name="monthlymenu" checked={monthlyMenu ? true : false} />
+                      <input
+                        type="radio"
+                        name="monthlymenu"
+                        checked={monthlyMenu ? true : false}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            this.setState({
+                              monthlyMenu: true
+                            });
+                          }
+                        }}
+                      />
                       <label className="choice yes">예</label>
                     </div>
                     <div className="input-group">
@@ -151,6 +241,13 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                         type="radio"
                         name="monthlymenu"
                         checked={!monthlyMenu ? true : false}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            this.setState({
+                              monthlyMenu: false
+                            });
+                          }
+                        }}
                       />
                       <label className="choice no">아니오</label>
                     </div>
@@ -166,6 +263,7 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                       className="form-control"
                       placeholder="0,000(원)"
                       value={productPrice}
+                      onChange={handleChange.bind(this)}
                     />
                   </div>
                   <div className="input-group discount-rate half">
@@ -173,10 +271,12 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                       <span className="input-group-text">할인율</span>
                     </div>
                     <input
+                      value={discountRate}
+                      name="discountRate"
                       type="text"
                       className="form-control"
                       placeholder="00(%)"
-                      value={discountRate}
+                      onChange={handleChange.bind(this)}
                     />
                   </div>
                 </div>
@@ -186,10 +286,12 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                       <span className="input-group-text">판매가</span>
                     </div>
                     <input
+                      value={sellPrice}
+                      name="sellPrice"
                       type="text"
                       className="form-control"
                       placeholder="0,000(원)"
-                      value={sellPrice}
+                      onChange={handleChange.bind(this)}
                     />
                   </div>
                   <div className="input-group quantity half">
@@ -197,10 +299,12 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                       <span className="input-group-text">재고</span>
                     </div>
                     <input
+                      value={stock}
+                      name="stock"
                       type="text"
                       className="form-control"
                       placeholder="0(수량)"
-                      value={stock}
+                      onChange={handleChange.bind(this)}
                     />
                   </div>
                 </div>
@@ -212,16 +316,32 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   <div className="form-control">
                     <DatePicker
                       selected={new Date(startDate)}
-                      onChange={this.handleChange}
+                      name="startDate"
+                      onChange={date =>
+                        this.setState({
+                          startDate: formatDate(date)
+                        })
+                      }
+                      showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={30}
+                      dateFormat="yyyy-MM-dd HH:mm:ss"
+                      timeCaption="time"
+                    />
+                    <DatePicker
+                      selected={new Date(endDate)}
+                      name="endDate"
+                      onChange={date =>
+                        this.setState({
+                          endDate: formatDate(date)
+                        })
+                      }
                       showTimeSelect
                       timeFormat="HH:mm"
                       timeIntervals={15}
-                      dateFormat="MMMM d, yyyy h:mm aa"
+                      dateFormat="yyyy-MM-dd HH:mm:ss"
                       timeCaption="time"
                     />
-
-                    <input type="datetime" name="startDate" value={startDate} />
-                    <input type="datetime" name="endDate" value={endDate} />
                   </div>
                 </div>
 
@@ -231,19 +351,87 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   </div>
                   <div className="form-control">
                     <div className="input-group align-items-center pr-1">
-                      <input type="checkbox" className="option__checkbox mr-1" />
+                      <input
+                        name="optionIds[]"
+                        value="1"
+                        checked={optionIds.has(1) ? true : false}
+                        type="checkbox"
+                        className="option__checkbox mr-1"
+                        onChange={e => {
+                          const value = parseInt(e.target.value);
+                          if (e.target.checked) {
+                            optionIds.add(value);
+                          } else {
+                            optionIds.delete(value);
+                          }
+                          this.setState({
+                            optionIds
+                          });
+                        }}
+                      />
                       <label className="option-name m-0">HOT</label>
                     </div>
                     <div className="input-group align-items-center pr-1">
-                      <input type="checkbox" className="option__checkbox mr-1" />
+                      <input
+                        name="optionIds[]"
+                        value="2"
+                        checked={optionIds.has(2) ? true : false}
+                        type="checkbox"
+                        className="option__checkbox mr-1"
+                        onChange={e => {
+                          const value = parseInt(e.target.value);
+                          if (e.target.checked) {
+                            optionIds.add(value);
+                          } else {
+                            optionIds.delete(value);
+                          }
+                          this.setState({
+                            optionIds
+                          });
+                        }}
+                      />
                       <label className="option-name m-0">ICE</label>
                     </div>
                     <div className="input-group align-items-center pr-1">
-                      <input type="checkbox" className="option__checkbox mr-1" />
+                      <input
+                        name="optionIds[]"
+                        value="3"
+                        checked={optionIds.has(3) ? true : false}
+                        type="checkbox"
+                        className="option__checkbox mr-1"
+                        onChange={e => {
+                          const value = parseInt(e.target.value);
+                          if (e.target.checked) {
+                            optionIds.add(value);
+                          } else {
+                            optionIds.delete(value);
+                          }
+                          this.setState({
+                            optionIds
+                          });
+                        }}
+                      />
                       <label className="option-name m-0">샷추가</label>
                     </div>
                     <div className="input-group align-items-center">
-                      <input type="checkbox" className="option__checkbox mr-1" />
+                      <input
+                        name="optionIds[]"
+                        value="4"
+                        checked={optionIds.has(4) ? true : false}
+                        type="checkbox"
+                        className="option__checkbox mr-1"
+                        onChange={e => {
+                          const value = parseInt(e.target.value);
+                          if (e.target.checked) {
+                            optionIds.add(value);
+                          } else {
+                            optionIds.delete(value);
+                          }
+                          this.setState({
+                            optionIds
+                          });
+                        }}
+                      />
                       <label className="option-name m-0">시럽추가</label>
                     </div>
                   </div>
@@ -255,11 +443,21 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   </div>
                   <div className="form-control">
                     <div className="input-group">
-                      <input type="radio" name="usable" checked={usable ? true : false} />
+                      <input
+                        type="radio"
+                        name="usable"
+                        checked={usable ? true : false}
+                        onChange={e => console.log(e)}
+                      />
                       <label className="choice yes">사용</label>
                     </div>
                     <div className="input-group">
-                      <input type="radio" name="usable" checked={!usable ? true : false} />
+                      <input
+                        type="radio"
+                        name="usable"
+                        checked={!usable ? true : false}
+                        onChange={e => console.log(e)}
+                      />
                       <label className="choice no">미사용</label>
                     </div>
                   </div>
@@ -272,8 +470,16 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                     alt="메뉴 이미지"
                   />
                 </div>
-                <button className="reg-image__button btn btn-warning">이미지 등록</button>
-                <input type="file" className="hide" hidden />
+                <button className="reg-image__button btn btn-warning" onClick={this.clickFileInput}>
+                  이미지 등록
+                </button>
+                <input
+                  type="file"
+                  ref={this.fileInput}
+                  className="hide"
+                  hidden
+                  onChange={e => e.preventDefault()}
+                />
               </div>
             </div>
             <div className="modal-footer">
@@ -284,11 +490,7 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                 onSubmit={e => e.preventDefault()}
               />
 
-              <button
-                type="button"
-                className="cancle-menu__button btn btn-danger"
-                data-dismiss="modal"
-              >
+              <button className="cancle-menu__button btn btn-danger" onClick={handleClose}>
                 취소
               </button>
             </div>
@@ -323,7 +525,7 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
     });
   };
 
-  handleShow = () => {
+  handleShow = (e: MouseEvent<HTMLButtonElement>) => {
     this.setState({
       show: true
     });
@@ -350,7 +552,11 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
                 <thead>
                   <tr>
                     <th>
-                      <input type="checkbox" aria-label="Checkbox for following text input" />
+                      <input
+                        type="checkbox"
+                        aria-label="Checkbox for following text input"
+                        onChange={handleChange.bind(this)}
+                      />
                     </th>
                     <th>미리보기</th>
                     <th>카테고리</th>

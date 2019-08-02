@@ -1,14 +1,15 @@
 import * as React from "react";
 
-export interface IOrderStatusCircleProps {
+export interface ITodayOrderStatusProps {
+  index: number;
   statusName: string;
-  statusCount: number;
+  statusCount: Number;
   isActive?: boolean;
   initializeTodayStatus(): void;
   handleClickTodayStatus(statusName: string): void;
 }
 
-function OrderStatusCircle(props: IOrderStatusCircleProps) {
+function TodayOrderStatus(props: ITodayOrderStatusProps) {
   const {
     statusName,
     statusCount,
@@ -19,7 +20,9 @@ function OrderStatusCircle(props: IOrderStatusCircleProps) {
 
   return (
     <div
-      className={`order-circle border ${isActive ? "btn-success text-white" : "btn-light"}`}
+      className={`order-circle cursor-pointer border rounded-circle d-flex align-items-center btn ${
+        isActive ? "btn-success text-white" : "btn-light"
+      }`}
       onClick={() => (isActive ? initializeTodayStatus() : handleClickTodayStatus(statusName))}
     >
       <div className="order-circle-name">{statusName}</div>
@@ -30,4 +33,4 @@ function OrderStatusCircle(props: IOrderStatusCircleProps) {
   );
 }
 
-export default OrderStatusCircle;
+export default TodayOrderStatus;
