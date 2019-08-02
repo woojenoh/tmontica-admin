@@ -61,7 +61,7 @@ public class OrderService {
         List<Order> orders;
         if(!status.equals(OrderStatusType.ALL.toString())){
             // 상태 문자열을 보내줬을 경우
-            orders = orderDao.getTodayOrderByStatus(OrderStatusType.valueOf(status).getStatus());
+            orders = orderDao.getTodayOrderByStatus(status);
         }else {
             // 상태 문자열이 default "ALL" 인 경우
             orders = orderDao.getTodayOrders();
@@ -113,7 +113,6 @@ public class OrderService {
     public Map<String, List<OrderResp>> getOrderHistory(String searchType, String searchValue, String startDate, String endDate) {
         List<Order> orders = orderDao.searchOrder(searchType,searchValue,startDate,endDate);
         List<OrderResp> orderResps = new ArrayList<>();
-        // TODO: searchType 정의 (한글로 받을껀지, 영어로 받을껀지)
         // 디비에서 가져온 리스트 orders -> orderResps 리스트에 매핑
         for(Order order : orders){
             // orderId로 주문 상세 정보 리스트 가져오기
