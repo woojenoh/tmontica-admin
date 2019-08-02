@@ -1,6 +1,6 @@
 package com.internship.tmontica_admin.point.model.request;
 
-import com.internship.tmontica.point.PointLogType;
+import com.internship.tmontica_admin.point.PointLogType;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
