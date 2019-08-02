@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/44afc802d5.js"></script>
+  <link href="header.css" rel="stylesheet">
+  <link href="sidebar.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+  <title>티몽티카[관리자]</title>
+</head>
+<body>
+  <header class="bg-dark text-light flex-row">
+    <i class="fas fa-bars menu-icon"></i>
+    <h1 class="title">주문 관리</h1>
+  </header>
+  <div class="main-wrapper">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+              <ul class="nav flex-column">
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="fas fa-shopping-cart feather"></i>
+                    주문 관리
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="fas fa-coffee feather"></i>
+                    메뉴 관리
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="far fa-flag feather"></i>
+                    배너 관리
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="fas fa-user feather"></i>
+                    사용자 관리
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="far fa-chart-bar feather"></i>
+                    통계
+                  </a>
+                </li>
+              </ul>
+          </div>
+      </nav>
+      <main class="col-md-10">
+        <!-- 오늘의 현황 -->
+        <section class="today-board__section">
+          <div class="content-head d-flex flex-wrap flex-md-nowrap align-items-center pt-3 mb-3 border-bottom">
+            <h4>오늘의 현황</h4>
+          </div>
+          <div class="today-board-list">
+            <div class="order-circle btn-warning">
+              <div class="order-circle-name">미결제</div>
+              <div><span class="order-cnt">3</span>건</div>
+            </div>
+            <div class="order-circle btn-info">
+              <div class="order-circle-name">결제완료</div>
+              <div><span class="order-cnt">10</span>건</div>
+            </div>
+            <div class="order-circle btn-warning">
+              <div class="order-circle-name">제작중</div>
+              <div><span class="order-cnt">3</span>건</div>
+            </div>
+            <div class="order-circle btn-info">
+              <div class="order-circle-name">준비완료</div>
+              <div><span class="order-cnt">3</span>건</div>
+            </div>
+            <div class="order-circle btn-warning">
+              <div class="order-circle-name">픽업완료</div>
+              <div><span class="order-cnt">3</span>건</div>
+            </div>
+            <div class="order-circle btn-danger">
+              <div class="order-circle-name">주문취소</div>
+              <div><span class="order-cnt">2</span>건</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 주문내역 -->
+        <section class="order-list__section">
+          <div class="content-head d-flex flex-wrap flex-md-nowrap align-items-center pt-3 mt-4">
+            <h4>주문내역</h4>
+          </div>
+          <table class="content-table table table-striped table-sm mb-0">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" aria-label="Checkbox for following text input">
+                </th>
+                <th>주문번호</th>
+                <th>주문자</th>
+                <th>주문상태</th>
+                <th>결제방법</th>
+                <th>결제금액</th>
+                <th>주문일시</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-toggle="modal" data-target="#orderModal">
+                <td class="menu__td check">
+                  <input type="checkbox" aria-label="Checkbox for following text input">
+                </td>
+                <td class="menu__td order-num"></td>
+                <td class="menu__td orderer"></td>
+                <td class="menu__td order-status"></td>
+                <td class="menu__td payment"></td>
+                <td class="menu__td order-price"></td>
+                <td class="menu__td order-date"></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- 주문 상세 모달 -->
+        <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content d-flex flex-column bg-white border-right-1 border-left-1 border-top-0 border-bottom-1 border-dark">
+                <div id="order-detail" class="input-group-wrap">
+                  <!-- 주문번호/주문인 -->
+                  <div class="row">
+                    <div class="input-group order-num half">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text border-left-0">주문번호</span>
+                        </div>
+                        <span class="form-control border-right-0" id="basic-url" aria-describedby="basic-addon3" placeholder="메뉴명"></span>
+                    </div>
+                    <div class="input-group orderer half">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">주문인</span>
+                      </div>
+                      <span class="form-control border-right-0" id="basic-url" aria-describedby="basic-addon3" placeholder="메뉴명"></span>
+                    </div>
+                  </div>
+                  <!-- 설명 -->
+                  <div class="row">
+                    <div class="input-group description mb-0">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text border-left-0 border-bottom-0">설명</span>
+                      </div>
+                    </div>
+                    <table class="table table-sm bg-white table-bordered">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th>메뉴명</th>
+                          <th>옵션</th>
+                          <th>결제금액</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>아메리카노</td>
+                          <td>HOT/시럽추가(1개)</td>
+                          <td>1,300원</td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="3" class="" style="text-align: right;">
+                            총 결제금액: <span class="total-price">1,300</span>원
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+                <div class="">
+                  <h4 class="m-2">주문기록</h4>
+                  <table class="table table-sm bg-white table-bordered mb-0 border-bottom-0">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th>번호</th>
+                          <th>주문상태</th>
+                          <th>변경인</th>
+                          <th>변경일</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td>결제완료</td>
+                          <td>티몽이</td>
+                          <td>2019.07.15 11:13:02</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
+              </div>
+              <div class="modal-footer pl-0 pr-0 pb-0">
+                  <button class="close__button btn btn-primary pl-4 pr-4" data-dismiss="modal">닫기</button>
+              </div>
+          </div>
+        </div>
+      </main>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

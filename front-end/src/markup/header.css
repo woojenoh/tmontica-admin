@@ -1,0 +1,18 @@
+header {
+  display: flex;
+}
+
+header.bg-dark.text-light.flex-row {
+  padding: 10px 15px;
+  align-items: center;
+}
+
+header .menu-icon {
+  font-size: 37px;
+  margin-right: 17px;
+}
+
+header .title {
+  margin-bottom: 0;
+  font-size: 37px;
+}
