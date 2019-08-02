@@ -13,6 +13,6 @@ public enum UserExceptionType {
     USER_ID_NOT_FOUND_EXCEPTION("userId", "아이디를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
     private String field;
-    private String errorMessage;
+    private String message;
     private HttpStatus responseType;
 }

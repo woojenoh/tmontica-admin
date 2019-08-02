@@ -36,13 +36,13 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(UserValidException.class)
     public TmonTicaExceptionFormat handleUserValidException(UserValidException e) {
         log.info("UserValidExceptionMessage : {}" , e.getMessage());
-        return new TmonTicaExceptionFormat(e.getField(), e.getErrorMessage(), e.getBindingResult());
+        return new TmonTicaExceptionFormat(e.getField(), e.getMessage(), e.getBindingResult());
     }
 
     @ExceptionHandler(UserException.class)
     public ResponseEntity<TmonTicaExceptionFormat> handleUserException(UserException e) {
-        log.debug("UserExceptionMessage : {}", e.getErrorMessage());
-        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getErrorMessage()), e.getUserExceptionType().getResponseType());
+        log.debug("UserExceptionMessage : {}", e.getMessage());
+        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getMessage()), e.getUserExceptionType().getResponseType());
     }
 
     // 오더
