@@ -12,6 +12,10 @@ body,
   background-color: rgba(250, 250, 250, 0.5);
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .main-wrapper {
   display: flex;
   flex-wrap: wrap;
