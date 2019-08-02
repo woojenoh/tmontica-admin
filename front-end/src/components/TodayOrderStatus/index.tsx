@@ -11,7 +11,6 @@ export interface ITodayOrderStatusProps {
 
 function TodayOrderStatus(props: ITodayOrderStatusProps) {
   const {
-    index,
     statusName,
     statusCount,
     isActive,
@@ -21,7 +20,9 @@ function TodayOrderStatus(props: ITodayOrderStatusProps) {
 
   return (
     <div
-      className={`order-circle border ${isActive ? "btn-success text-white" : "btn-light"}`}
+      className={`order-circle cursor-pointer border btn ${
+        isActive ? "btn-success text-white" : "btn-light"
+      }`}
       onClick={() => (isActive ? initializeTodayStatus() : handleClickTodayStatus(statusName))}
     >
       <div className="order-circle-name">{statusName}</div>

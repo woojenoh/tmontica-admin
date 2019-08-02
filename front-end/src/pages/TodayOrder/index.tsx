@@ -68,15 +68,44 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   };
 
   handleClickTodayStatus = (statusName: string) => {
-    this.setState({
-      selectedTodayStatus: statusName
-    });
+    axios
+      .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
+        params: {
+          page: 1,
+          size: 30,
+          status: statusName
+        }
+      })
+      .then((res: AxiosResponse) => {
+        this.setState({
+          orders: res.data.orders,
+          statusCount: res.data.statusCount,
+          selectedTodayStatus: statusName
+        });
+      })
+      .catch((err: AxiosError) => {
+        alert(err);
+      });
   };
 
   initializeTodayStatus = () => {
-    this.setState({
-      selectedTodayStatus: null
-    });
+    axios
+      .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
+        params: {
+          page: 1,
+          size: 30
+        }
+      })
+      .then((res: AxiosResponse) => {
+        this.setState({
+          orders: res.data.orders,
+          statusCount: res.data.statusCount,
+          selectedTodayStatus: null
+        });
+      })
+      .catch((err: AxiosError) => {
+        alert(err);
+      });
   };
 
   handleChangeStatus = (e: React.FormEvent<HTMLSelectElement>) => {
@@ -130,7 +159,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
             {/* <!-- 주문내역 --> */}
             <section className="order-list__section">
               <div className="content-head d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mt-4 mb-3">
-                <h4>주문내역 - {selectedTodayStatus ? selectedTodayStatus : "전체"}</h4>
+                <h4>주문내역({selectedTodayStatus ? selectedTodayStatus : "전체"})</h4>
                 <div className="order-select d-flex">
                   <select
                     className="mr-2"
