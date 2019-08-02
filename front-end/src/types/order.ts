@@ -21,10 +21,18 @@ export interface IOrderMenu {
 }
 
 export interface IOrderStatusCount {
-  beforePaymane: number;
+  beforePayment: number;
   afterPayment: number;
   inProduction: number;
   ready: number;
   pickUp: number;
   cancel: number;
 }
+
+export type TOrderStatusEng =
+  | "beforePayment"
+  | "afterPayment"
+  | "inProduction"
+  | "ready"
+  | "pickUp"
+  | "cancel";

@@ -1,4 +1,5 @@
 import * as React from "react";
+import axios from "axios";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import TodayOrderRow from "../../components/TodayOrderRow";
@@ -10,26 +11,35 @@ export interface ITodayOrderProps {}
 
 export interface ITodayOrderState {
   orders: orderTypes.IOrder[] | null;
-  ordersStatus: orderTypes.IOrderStatusCount | null;
+  statusCount: orderTypes.IOrderStatusCount | null;
   isModalOpen: boolean;
   selectedTodayStatus: string | null;
   selectedStatus: string;
 }
 
 class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
+  componentDidMount() {
+    // 초기에는 전체 목록을 불러온다.
+    axios
+      .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
+        params: {
+          page: 1,
+          size: 30
+        }
+      })
+      .then(res => {
+        this.setState({
+          orders: res.data.orders,
+          statusCount: res.data.statusCount
+        });
+      });
+  }
+
   status = ["미결제", "결제완료", "제작중", "준비완료", "픽업완료", "주문취소"];
-  statusToEnglish = {
-    미결제: "beforePayment",
-    결제완료: "afterPayment",
-    제작중: "inProduction",
-    준비완료: "ready",
-    픽업완료: "pickUp",
-    주문취소: "cancel"
-  };
 
   state = {
     orders: null,
-    ordersStatus: null,
+    statusCount: null,
     isModalOpen: false,
     selectedTodayStatus: null,
     selectedStatus: this.status[0]
@@ -66,7 +76,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   };
 
   public render() {
-    const { isModalOpen, selectedStatus, selectedTodayStatus } = this.state;
+    const { isModalOpen, selectedStatus, selectedTodayStatus, statusCount } = this.state;
     const {
       status,
       handleModalOpen,
@@ -92,8 +102,9 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                   return (
                     <TodayOrderStatus
                       key={index}
+                      index={index}
                       statusName={s}
-                      statusCount={index}
+                      statusCount={statusCount}
                       handleClickTodayStatus={handleClickTodayStatus}
                       initializeTodayStatus={initializeTodayStatus}
                       isActive={s === selectedTodayStatus}
