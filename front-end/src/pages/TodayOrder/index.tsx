@@ -1,5 +1,5 @@
 import * as React from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import TodayOrderRow from "../../components/TodayOrderRow";
@@ -27,11 +27,14 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
           size: 30
         }
       })
-      .then(res => {
+      .then((res: AxiosResponse) => {
         this.setState({
           orders: res.data.orders,
           statusCount: res.data.statusCount
         });
+      })
+      .catch(err => {
+        alert(err);
       });
   }
 
@@ -43,7 +46,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     isModalOpen: false,
     selectedTodayStatus: null,
     selectedStatus: this.status[0]
-  };
+  } as ITodayOrderState;
 
   handleModalOpen = () => {
     this.setState({
@@ -76,7 +79,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   };
 
   public render() {
-    const { isModalOpen, selectedStatus, selectedTodayStatus, statusCount } = this.state;
+    const { isModalOpen, selectedStatus, selectedTodayStatus, statusCount, orders } = this.state;
     const {
       status,
       handleModalOpen,
@@ -139,21 +142,37 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
               {/* <!-- 주문내역 목록 --> */}
               <table className="content-table table table-striped table-sm mb-0">
                 <thead>
-                  <tr>
+                  <tr className="text-center">
                     <th>
                       <input type="checkbox" aria-label="Checkbox for following text input" />
                     </th>
                     <th>주문번호</th>
                     <th>주문자</th>
-                    <th>주문상태</th>
                     <th>주문메뉴</th>
                     <th>결제방법</th>
                     <th>결제금액</th>
                     <th>주문일시</th>
+                    <th>주문상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <TodayOrderRow handleModalOpen={handleModalOpen} />
+                  {orders
+                    ? orders.map(o => {
+                        return (
+                          <TodayOrderRow
+                            key={o.orderId}
+                            id={o.orderId}
+                            user={o.userId}
+                            status={o.status}
+                            menus={o.menus}
+                            payment={o.payment}
+                            price={o.totalPrice}
+                            date={o.orderDate}
+                            handleModalOpen={handleModalOpen}
+                          />
+                        );
+                      })
+                    : "로딩 중입니다."}
                 </tbody>
               </table>
             </section>
