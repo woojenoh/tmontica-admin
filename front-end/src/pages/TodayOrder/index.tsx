@@ -12,9 +12,11 @@ export interface ITodayOrderProps {}
 export interface ITodayOrderState {
   orders: orderTypes.IOrder[] | null;
   statusCount: orderTypes.IOrderStatusCount | null;
+  orderDetail: orderTypes.IOrderDetail | null;
   isModalOpen: boolean;
   selectedTodayStatus: string | null;
-  selectedStatus: string;
+  selectedSelectStatus: string;
+  selectedOrderId: number | null;
 }
 
 class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
@@ -50,15 +52,33 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   state = {
     orders: null,
     statusCount: null,
+    orderDetail: null,
     isModalOpen: false,
     selectedTodayStatus: null,
-    selectedStatus: this.status[0]
+    selectedSelectStatus: this.status[0],
+    selectedOrderId: null
   } as ITodayOrderState;
 
-  handleModalOpen = () => {
-    this.setState({
-      isModalOpen: true
-    });
+  handleModalOpen = (orderId: number) => {
+    const { selectedOrderId } = this.state;
+    if (orderId !== selectedOrderId) {
+      axios
+        .get(`http://tmonticaadmin-idev.tmon.co.kr/api/orders/detail/${orderId}`)
+        .then((res: AxiosResponse) => {
+          this.setState({
+            orderDetail: res.data,
+            selectedOrderId: orderId,
+            isModalOpen: true
+          });
+        })
+        .catch((err: AxiosError) => {
+          alert(err);
+        });
+    } else {
+      this.setState({
+        isModalOpen: true
+      });
+    }
   };
 
   handleModalClose = () => {
@@ -108,20 +128,27 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       });
   };
 
-  handleChangeStatus = (e: React.FormEvent<HTMLSelectElement>) => {
+  handleChangeSelectStatus = (e: React.FormEvent<HTMLSelectElement>) => {
     this.setState({
-      selectedStatus: e.currentTarget.value
+      selectedSelectStatus: e.currentTarget.value
     });
   };
 
   public render() {
-    const { isModalOpen, selectedStatus, selectedTodayStatus, statusCount, orders } = this.state;
+    const {
+      isModalOpen,
+      selectedSelectStatus,
+      selectedTodayStatus,
+      statusCount,
+      orders,
+      orderDetail
+    } = this.state;
     const {
       status,
       statusEng,
       handleModalOpen,
       handleModalClose,
-      handleChangeStatus,
+      handleChangeSelectStatus,
       handleClickTodayStatus,
       initializeTodayStatus
     } = this;
@@ -163,8 +190,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                 <div className="order-select d-flex">
                   <select
                     className="mr-2"
-                    value={selectedStatus}
-                    onChange={e => handleChangeStatus(e)}
+                    value={selectedSelectStatus}
+                    onChange={e => handleChangeSelectStatus(e)}
                   >
                     {status.map((s: string, index: number) => {
                       return (
@@ -221,7 +248,11 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
             </section>
 
             {/* <!-- 주문 상세 모달 --> */}
-            <TodayOrderModal isModalOpen={isModalOpen} handleModalClose={handleModalClose} />
+            <TodayOrderModal
+              isModalOpen={isModalOpen}
+              handleModalClose={handleModalClose}
+              orderDetail={orderDetail}
+            />
           </main>
         </div>
       </>

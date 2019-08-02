@@ -29,6 +29,20 @@ export interface IOrderStatusCount {
   cancel: number;
 }
 
+export interface IOrderDetail {
+  menus: IOrderMenu[];
+  orderId: number;
+  orderStatusLogs: IOrderStatusLog[];
+  totalPrice: number;
+  userId: string;
+}
+
+export interface IOrderStatusLog {
+  editorId: string;
+  modifiedDate: string;
+  status: string;
+}
+
 export type TOrderStatusEng =
   | "beforePayment"
   | "afterPayment"

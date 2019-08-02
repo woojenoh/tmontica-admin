@@ -12,7 +12,7 @@ export interface ITodayOrderRowProps {
   payment: string;
   price: number;
   date: string;
-  handleModalOpen(): void;
+  handleModalOpen(orderId: number): void;
 }
 
 function TodayOrderRow(props: ITodayOrderRowProps) {
@@ -22,7 +22,7 @@ function TodayOrderRow(props: ITodayOrderRowProps) {
       <td className="order__td check">
         <input type="checkbox" />
       </td>
-      <td className="order__td order-id" onClick={() => handleModalOpen()}>
+      <td className="order__td order-id" onClick={() => handleModalOpen(id)}>
         {id}
       </td>
       <td className="order__td order-user">{user}</td>
