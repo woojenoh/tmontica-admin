@@ -1,7 +1,10 @@
 package com.internship.tmontica_admin.security;
 
 import com.internship.tmontica_admin.security.exception.UnauthorizedException;
+import com.internship.tmontica_admin.user.AdminRole;
+import com.internship.tmontica_admin.user.UserService;
 import com.internship.tmontica_admin.user.model.response.UserTokenInfoDTO;
+import com.internship.tmontica_admin.util.JsonUtil;
 import com.internship.tmontica_admin.util.UserConfigValueName;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +51,18 @@ public class JwtServiceImpl implements JwtService{
         }
     }
 
+    @Override
+    public boolean isAdmin(String jwt){
+
+        String tokenRoleInfo = JsonUtil.getJsonElementValue(Jwts.parser().setSigningKey(KEY).parseClaimsJws(jwt).getBody().get("userInfo", String.class),"role");
+        for(AdminRole adminRole : AdminRole.values()){
+            if(adminRole.getRole().equals(tokenRoleInfo)){
+                return true;
+            }
+        }
+
+        return false;
+    }
     public String getUserInfo(String key){
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();

@@ -1,5 +1,7 @@
 package com.internship.tmontica_admin.exception.handler;
 
+import com.internship.tmontica_admin.banner.exception.BannerException;
+import com.internship.tmontica_admin.banner.exception.BannerValidException;
 import com.internship.tmontica_admin.exception.TmonTicaExceptionFormat;
 import com.internship.tmontica_admin.menu.exception.MenuException;
 import com.internship.tmontica_admin.menu.exception.MenuValidException;
@@ -74,6 +76,19 @@ public class GlobalExceptionAdvice {
     public ResponseEntity<TmonTicaExceptionFormat> handleMenuException(MenuException e){
         log.info("MenuException : {}" , e.getErrorMessage());
         return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getErrorMessage()), e.getMenuExceptionType().getResponseType());
+    }
+
+    // 배너
+    @ExceptionHandler(BannerValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public TmonTicaExceptionFormat handleBannerValidException(BannerValidException e){
+        return new TmonTicaExceptionFormat(e.getField(), e.getExceptionMessage(), e.getBindingResult());
+    }
+
+    @ExceptionHandler(BannerException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<TmonTicaExceptionFormat> handleBannerException(BannerException e){
+        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getErrorMessage()), e.getBannerExceptionType().getResponseType());
     }
 
 }

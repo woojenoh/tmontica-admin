@@ -20,11 +20,10 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         final String token = request.getHeader(UserConfigValueName.JWT_TOKEN_HEADER_KEY);
 
-        if(token != null && jwtService.isUsable(token)){
+        if(token != null && jwtService.isUsable(token) && jwtService.isAdmin(token)){
             return true;
         }
 
         throw new UnauthorizedException();
-
     }
 }

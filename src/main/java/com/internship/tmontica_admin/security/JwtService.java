@@ -7,4 +7,5 @@ public interface JwtService {
     String getToken(UserTokenInfoDTO userTokenInfoDTO);
     boolean isUsable(String jwt);
     String getUserInfo(String key);
+    boolean isAdmin(String jwt);
 }
