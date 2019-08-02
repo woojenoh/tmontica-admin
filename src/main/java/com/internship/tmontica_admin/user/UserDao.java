@@ -8,4 +8,8 @@ public interface UserDao {
 
     @Select("SELECT * FROM users WHERE id = #{id}")
     User getUserByUserId(String id);
+    @Update("UPDATE users SET point = #{point} where id = #{id}")
+    int updateUserPoint(int point, String id);
+    @Select("SELECT point FROM users WHERE id = #{id}")
+    int getUserPointByUserId(String id);
 }
