@@ -8,8 +8,8 @@ import com.internship.tmontica_admin.menu.model.request.MenuReq;
 import com.internship.tmontica_admin.menu.model.request.MenuUpdateReq;
 import com.internship.tmontica_admin.menu.model.response.MenuCategoryResp;
 import com.internship.tmontica_admin.menu.model.response.MenuDetailResp;
-import com.internship.tmontica_admin.menu.model.response.MenuMainResp;
 import com.internship.tmontica_admin.menu.model.response.MenuSimpleResp;
+import com.internship.tmontica_admin.menu.validaton.MenuUpdateValidator;
 import com.internship.tmontica_admin.menu.validaton.MenuValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +37,21 @@ public class MenuController {
 
     private final MenuValidator menuValidator;
 
+    private final MenuUpdateValidator menuUpdateValidator;
+
     @Value("${menu.imagepath}")
     private String location;
 
-    @InitBinder
-    private void initBinder(WebDataBinder dataBinder){
+    @InitBinder("menuReq")
+    private void initMenuBinder(WebDataBinder dataBinder){
         dataBinder.addValidators(menuValidator);
     }
+
+    @InitBinder("menuUpdateReq")
+    private void initMenuUpdateBinder(WebDataBinder dataBinder){
+        dataBinder.addValidators(menuUpdateValidator);
+    }
+
 
     /** 전체 메뉴 가져오기 (관리자용) **/
     @GetMapping()
@@ -114,18 +122,18 @@ public class MenuController {
 
     /** 메뉴 수정하기 **/
     @PutMapping
-    public ResponseEntity updateMenu(@ModelAttribute @Valid MenuUpdateReq menuReq, BindingResult bindingResult){
+    public ResponseEntity updateMenu(@ModelAttribute @Valid MenuUpdateReq menuUpdateReq, BindingResult bindingResult){
         if(bindingResult.hasErrors()) {
             throw new MenuValidException("Menu Update Form", "메뉴 수정 폼 데이터가 올바르지 않습니다.", bindingResult);
         }
         log.info("[menu api] 메뉴 수정하기");
-        log.info("menuReq : {}", menuReq.toString());
+        log.info("menuReq : {}", menuUpdateReq.toString());
 
         Menu menu = new Menu();
-        menu.setId(menuReq.getMenuId());
-        modelMapper.map(menuReq, menu);
+        menu.setId(menuUpdateReq.getMenuId());
+        modelMapper.map(menuUpdateReq, menu);
 
-        menuService.updateMenu(menu, menuReq.getImgFile());
+        menuService.updateMenu(menu, menuUpdateReq.getImgFile());
 
         return new ResponseEntity(HttpStatus.OK);
     }

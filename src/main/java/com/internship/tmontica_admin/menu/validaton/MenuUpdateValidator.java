@@ -9,15 +9,15 @@ import org.springframework.validation.Validator;
 import java.util.Date;
 
 @Component
-public class MenuValidator implements Validator {
+public class MenuUpdateValidator implements Validator {
     @Override
     public boolean supports(Class<?> aClass) {
-        return MenuReq.class.isAssignableFrom(aClass);
+        return MenuUpdateReq.class.isAssignableFrom(aClass);
     }
 
     @Override
     public void validate(Object obj, Errors errors) {
-        MenuReq menuReq = (MenuReq) obj;
+        MenuUpdateReq menuReq = (MenuUpdateReq) obj;
 
         // 1. sellPrice
         if(menuReq.getSellPrice() != menuReq.getProductPrice() * (100 - menuReq.getDiscountRate())/100 ){
@@ -38,13 +38,5 @@ public class MenuValidator implements Validator {
             }
         }
 
-        // 4. 이미지 파일
-        if(menuReq.getImgFile().isEmpty()){
-            errors.rejectValue("imgFile", "wrongValue", "이미지 파일은 필수입니다.");
-        }
-
-        if(!menuReq.getImgFile().getContentType().startsWith("image")){
-            errors.rejectValue("imgFile", "wrongValue", "올바른 이미지 타입이 아닙니다.");
-        }
     }
 }

@@ -98,7 +98,7 @@ public class MenuService {
 
     }
 
-    // 카테고리 별 메뉴 정보 가져오기
+    // 카테고리 별 사용 가능한 메뉴 정보 가져오기
     public List<Menu> getUsableMenusByCategory(String category, int page, int size){
         // 카테고리 이름 체크
         checkCategoryName(category);
@@ -145,12 +145,12 @@ public class MenuService {
         menu.setUpdaterId("admin");
         //menu.setUpdaterId(JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id"));
 
-        if(imgFile!=null){
-            String img = SaveImageFile.saveImg(imgFile, menu.getNameEng(), location);
-            menu.setImgUrl(img);
-        }else{
+        if(imgFile==null || imgFile.isEmpty()){
             Menu beforeMenu = getMenuById(menu.getId());
             menu.setImgUrl(beforeMenu.getImgUrl());
+        }else{
+            String img = SaveImageFile.saveImg(imgFile, menu.getNameEng(), location);
+            menu.setImgUrl(img);
         }
         menu.setUpdatedDate(new Date());
         menuDao.updateMenu(menu);
