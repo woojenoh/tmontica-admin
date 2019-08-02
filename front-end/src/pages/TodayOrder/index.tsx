@@ -39,6 +39,14 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   }
 
   status = ["미결제", "결제완료", "제작중", "준비완료", "픽업완료", "주문취소"];
+  statusEng = [
+    "beforePayment",
+    "afterPayment",
+    "inProduction",
+    "ready",
+    "pickUp",
+    "cancel"
+  ] as orderTypes.TOrderStatusEng[];
 
   state = {
     orders: null,
@@ -82,6 +90,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     const { isModalOpen, selectedStatus, selectedTodayStatus, statusCount, orders } = this.state;
     const {
       status,
+      statusEng,
       handleModalOpen,
       handleModalClose,
       handleChangeStatus,
@@ -101,19 +110,21 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                 <h4 className="mb-3">오늘의 현황</h4>
               </div>
               <div className="today-board-list">
-                {status.map((s: string, index: number) => {
-                  return (
-                    <TodayOrderStatus
-                      key={index}
-                      index={index}
-                      statusName={s}
-                      statusCount={statusCount}
-                      handleClickTodayStatus={handleClickTodayStatus}
-                      initializeTodayStatus={initializeTodayStatus}
-                      isActive={s === selectedTodayStatus}
-                    />
-                  );
-                })}
+                {statusCount
+                  ? status.map((s: string, index: number) => {
+                      return (
+                        <TodayOrderStatus
+                          key={index}
+                          index={index}
+                          statusName={s}
+                          statusCount={statusCount[statusEng[index]]}
+                          handleClickTodayStatus={handleClickTodayStatus}
+                          initializeTodayStatus={initializeTodayStatus}
+                          isActive={s === selectedTodayStatus}
+                        />
+                      );
+                    })
+                  : "로딩 중입니다."}
               </div>
             </section>
 
