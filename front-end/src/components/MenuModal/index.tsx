@@ -33,27 +33,31 @@ interface IMenuModalState {
   imgUrl: string | ArrayBuffer | null;
 }
 
+const initState = {
+  nameKo: "",
+  nameEng: "",
+  description: "",
+  monthlyMenu: false,
+  categoryKo: "에이드",
+  categoryEng: "",
+  productPrice: 0,
+  sellPrice: 0,
+  discountRate: 0,
+  stock: 0,
+  optionIds: new Set([]) as Set<number>,
+  usable: false,
+  startDate: formatDate(new Date()),
+  endDate: formatDate(new Date()),
+  imgFile: "",
+  imgUrl: "https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica"
+};
+
 export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
   fileInput: React.RefObject<HTMLInputElement> = React.createRef();
   form?: HTMLFormElement;
   state = {
     isReg: true,
-    nameKo: "",
-    nameEng: "",
-    description: "",
-    monthlyMenu: false,
-    categoryKo: "에이드",
-    categoryEng: "",
-    productPrice: 0,
-    sellPrice: 0,
-    discountRate: 0,
-    stock: 0,
-    optionIds: new Set([]) as Set<number>,
-    usable: false,
-    startDate: formatDate(new Date()),
-    endDate: formatDate(new Date()),
-    imgFile: "",
-    imgUrl: "https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica"
+    ...initState
   };
 
   // triggerInputFile = () => this.fileInput.click();
@@ -560,7 +564,8 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   };
 
                   axios.post(`${API_URL}/menus`, data, options).then(res => {
-                    debugger;
+                    alert("메뉴가 등록되었습니다.");
+                    this.setState({ ...initState });
                   });
                 }}
               />
