@@ -6,22 +6,23 @@ import "./styles.scss";
 
 export interface ITodayOrderRowProps {
   order: orderTypes.IOrder;
+  isChecked: boolean;
   handleModalOpen(orderId: number): void;
   handleCheckRow(orderId: number): void;
   handleUncheckRow(orderId: number): void;
 }
 
 function TodayOrderRow(props: ITodayOrderRowProps) {
-  const { order, handleModalOpen, handleCheckRow, handleUncheckRow } = props;
+  const { order, isChecked, handleModalOpen, handleCheckRow, handleUncheckRow } = props;
 
   return (
     <tr className="text-center">
       <td className="order__td check">
         <input
           type="checkbox"
-          checked={order.checked ? order.checked : false}
+          checked={isChecked}
           onChange={() =>
-            order.checked ? handleUncheckRow(order.orderId) : handleCheckRow(order.orderId)
+            isChecked ? handleUncheckRow(order.orderId) : handleCheckRow(order.orderId)
           }
         />
       </td>

@@ -19,6 +19,7 @@ export interface ITodayOrderState {
   selectedSelectStatus: orderTypes.TOrderStatusKor;
   selectedOrderId: number | null;
   isCheckedAll: boolean;
+  checkedOrderIds: number[];
 }
 
 class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
@@ -74,7 +75,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     selectedTodayStatus: null,
     selectedSelectStatus: this.status[0],
     selectedOrderId: null,
-    isCheckedAll: false
+    isCheckedAll: false,
+    checkedOrderIds: []
   } as ITodayOrderState;
 
   handleModalOpen = (orderId: number) => {
@@ -155,12 +157,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   handleCheckRowAll = () => {
     const { orders } = this.state;
     if (orders) {
-      const newOrders = orders.map(o => {
-        o.checked = true;
-        return o;
-      });
       this.setState({
-        orders: newOrders,
+        checkedOrderIds: orders.map(o => o.orderId),
         isCheckedAll: true
       });
     } else {
@@ -169,68 +167,37 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   };
 
   handleUncheckRowAll = () => {
-    const { orders } = this.state;
-    if (orders) {
-      const newOrders = orders.map(o => {
-        o.checked = false;
-        return o;
-      });
-      this.setState({
-        orders: newOrders,
-        isCheckedAll: false
-      });
-    } else {
-      alert("문제가 발생했습니다.");
-    }
+    this.setState({
+      checkedOrderIds: [],
+      isCheckedAll: false
+    });
   };
 
   handleCheckRow = (orderId: number) => {
-    const { orders } = this.state;
-    if (orders) {
-      const newOrders = orders.map(o => {
-        if (o.orderId === orderId) {
-          o.checked = true;
-          return o;
-        } else {
-          return o;
-        }
-      });
-      this.setState({
-        orders: newOrders
-      });
-    } else {
-      alert("문제가 발생했습니다.");
-    }
+    const { checkedOrderIds } = this.state;
+    this.setState({
+      checkedOrderIds: checkedOrderIds.concat(orderId)
+    });
   };
 
   handleUncheckRow = (orderId: number) => {
-    const { orders } = this.state;
-    if (orders) {
-      const newOrders = orders.map(o => {
-        if (o.orderId === orderId) {
-          o.checked = false;
-          return o;
-        } else {
-          return o;
-        }
-      });
-      this.setState({
-        orders: newOrders
-      });
-    } else {
-      alert("문제가 발생했습니다.");
-    }
+    const { checkedOrderIds } = this.state;
+    this.setState({
+      checkedOrderIds: checkedOrderIds.filter(i => i !== orderId)
+    });
   };
 
   handleChangeStatusSubmit = () => {
-    const { orders, selectedSelectStatus, statusCount, selectedTodayStatus } = this.state;
-    const { statusToEng } = this;
+    const {
+      orders,
+      selectedSelectStatus,
+      statusCount,
+      selectedTodayStatus,
+      checkedOrderIds
+    } = this.state;
+    const { statusToEng, handleUncheckRow, handleUncheckRowAll } = this;
 
     if (orders && statusCount) {
-      // 체크된 OrderId만 추린다.
-      const checkedOrderIds = orders.filter(o => o.checked).map(o => o.orderId);
-
-      // 추려진 Id들로 API를 호출한다.
       axios
         .put("http://tmonticaadmin-idev.tmon.co.kr/api/orders/status", {
           orderIds: checkedOrderIds,
@@ -242,43 +209,43 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
           // 현재 보고있는 주문내역이 전체일 경우, 체크된 Row의 주문상태를 변경한다.
           if (selectedTodayStatus === null) {
             const newOrders = orders.map(o => {
-              if (o.checked) {
+              if (checkedOrderIds.indexOf(o.orderId) !== -1) {
                 // 체크된 Row에 해당하는 StatusCount를 변경한다.
                 if (o.status !== selectedSelectStatus) {
                   newStatusCount[statusToEng[selectedSelectStatus]] += 1;
                   newStatusCount[statusToEng[o.status]] -= 1;
                 }
                 o.status = selectedSelectStatus;
-                o.checked = false;
+                handleUncheckRow(o.orderId);
                 return o;
               } else {
                 return o;
               }
             });
+            handleUncheckRowAll();
             this.setState({
               orders: newOrders,
               statusCount: newStatusCount,
-              isCheckedAll: false,
               // orderDetail의 새로고침을 위해 null로 초기화.
               orderDetail: null
             });
           } else {
             // 현재 보고있는 주문내역이 전체가 아닐 경우, 다른 상태로 이동한 Row를 지워준다.
             const newOrders = orders.filter(o => {
-              if (o.checked) {
+              if (checkedOrderIds.indexOf(o.orderId) !== -1) {
                 // 체크된 Row에 해당하는 StatusCount를 변경한다.
                 newStatusCount[statusToEng[selectedSelectStatus]] += 1;
                 newStatusCount[statusToEng[o.status]] -= 1;
                 return false;
               } else {
-                o.checked = false;
+                handleUncheckRow(o.orderId);
                 return true;
               }
             });
+            handleUncheckRowAll();
             this.setState({
               orders: newOrders,
               statusCount: newStatusCount,
-              isCheckedAll: false,
               // orderDetail의 새로고침을 위해 null로 초기화.
               orderDetail: null
             });
@@ -299,7 +266,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       statusCount,
       orders,
       orderDetail,
-      isCheckedAll
+      isCheckedAll,
+      checkedOrderIds
     } = this.state;
     const {
       status,
@@ -402,6 +370,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                           handleModalOpen={handleModalOpen}
                           handleCheckRow={handleCheckRow}
                           handleUncheckRow={handleUncheckRow}
+                          isChecked={checkedOrderIds.indexOf(o.orderId) !== -1}
                         />
                       );
                     })
