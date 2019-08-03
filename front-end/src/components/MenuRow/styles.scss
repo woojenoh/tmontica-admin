@@ -1,0 +1,24 @@
+#menus {
+  .preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      max-width: 52px;
+    }
+  }
+
+  .table th,
+  .table td {
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    cursor: pointer;
+  }
+
+  tbody tr:hover {
+    background: #dee2e6 !important;
+  }
+}

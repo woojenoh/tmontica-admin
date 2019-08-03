@@ -11,11 +11,11 @@ import { Indexable } from "../../types/index";
 interface IMenuModalProps {
   show: boolean;
   menuId: number;
+  isReg: boolean;
   handleClose(): void;
 }
 
 interface IMenuModalState {
-  isReg: boolean;
   nameKo: string;
   nameEng: string;
   description: string;
@@ -59,7 +59,6 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> imple
   form?: HTMLFormElement;
 
   state = {
-    isReg: true,
     ...initState
   };
 
