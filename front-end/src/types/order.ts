@@ -5,7 +5,7 @@ export interface IOrder {
   totalPrice: number;
   usedPoint: number;
   realPrice: number;
-  status: string;
+  status: TOrderStatusKor;
   userId: string;
   menus: IOrderMenu[];
   checked?: boolean;
@@ -41,7 +41,7 @@ export interface IOrderDetail {
 export interface IOrderStatusLog {
   editorId: string;
   modifiedDate: string;
-  status: string;
+  status: TOrderStatusKor;
 }
 
 export type TOrderStatusKor =
