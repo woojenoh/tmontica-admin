@@ -47,7 +47,7 @@ export interface IOrderStatusLog {
 export type TOrderStatusKor =
   | "미결제"
   | "결제완료"
-  | "제작중"
+  | "준비중"
   | "준비완료"
   | "픽업완료"
   | "주문취소";
