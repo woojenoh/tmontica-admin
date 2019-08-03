@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
 import { API_URL } from "../../api/common";
 import axios from "axios";
+import { Indexable } from "../../types/index";
 
 interface IMenuModalProps {
   show: boolean;
@@ -52,15 +53,15 @@ const initState = {
   imgUrl: "https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica"
 };
 
-export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
+export class MenuModal extends Component<IMenuModalProps, IMenuModalState> implements Indexable {
+  [key: string]: any;
   fileInput: React.RefObject<HTMLInputElement> = React.createRef();
   form?: HTMLFormElement;
+
   state = {
     isReg: true,
     ...initState
   };
-
-  // triggerInputFile = () => this.fileInput.click();
 
   clickFileInput() {
     if (this.fileInput.current) {
@@ -71,13 +72,8 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
   constructor(props: IMenuModalProps, state: IMenuModalState) {
     super(props, state);
 
-    this.fileInput = React.createRef<HTMLInputElement>();
     this.clickFileInput = this.clickFileInput.bind(this);
   }
-
-  handleUpdate() {}
-
-  handleReg(e: FormEvent) {}
 
   // 이미지 파일 미리보기
   handleImageFileChange(e: ChangeEvent<HTMLInputElement>) {
@@ -128,6 +124,9 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   <input
                     value={nameKo}
                     name="nameKo"
+                    ref={el => {
+                      this["nameKo"] = el;
+                    }}
                     type="text"
                     className="form-control"
                     placeholder="메뉴명"
@@ -141,6 +140,9 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   <input
                     value={nameEng}
                     name="nameEng"
+                    ref={el => {
+                      this["nameEng"] = el;
+                    }}
                     type="text"
                     className="form-control"
                     placeholder="영문명"
@@ -154,6 +156,9 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   <div className="input-group-append">
                     <select
                       name="categoryEng"
+                      ref={el => {
+                        this["categoryEng"] = el;
+                      }}
                       value={categoryEng}
                       onChange={e => {
                         this.setState({
@@ -166,34 +171,6 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                       <option value="ade">에이드</option>
                       <option value="bread">빵</option>
                     </select>
-                    {/* <Dropdown>
-                      <Dropdown.Toggle
-                        variant="secondary"
-                        id="category-dropdown"
-                        className="btn btn-outline-secondary"
-                        onSelect={(e: any) => {
-                          console.log(e);
-                        }}
-                        onChange={(e: any) => console.log(e)}
-                      >
-                        카테고리
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu
-                        onSelect={(e: any) => {
-                          debugger;
-                        }}
-                      >
-                        <Dropdown.Item as="button" eventKey="coffee" active>
-                          커피
-                        </Dropdown.Item>
-                        <Dropdown.Item as="button" eventKey="ade">
-                          에이드
-                        </Dropdown.Item>
-                        <Dropdown.Item as="button" eventKey="bread">
-                          빵
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown> */}
                   </div>
                 </div>
                 <div className="input-group description">
@@ -204,6 +181,9 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                     className="form-control"
                     placeholder="설명입니다."
                     name="description"
+                    ref={el => {
+                      this["description"] = el;
+                    }}
                     value={description}
                     onChange={handleChange.bind(this)}
                   />
@@ -216,7 +196,7 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                     <div className="input-group">
                       <input
                         type="radio"
-                        name="monthlymenu"
+                        name="monthlyMenu"
                         checked={monthlyMenu ? true : false}
                         onChange={e => {
                           if (e.target.checked) {
@@ -231,7 +211,7 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                     <div className="input-group">
                       <input
                         type="radio"
-                        name="monthlymenu"
+                        name="monthlyMenu"
                         checked={!monthlyMenu ? true : false}
                         onChange={e => {
                           if (e.target.checked) {
@@ -253,6 +233,9 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                     <input
                       type="text"
                       name="productPrice"
+                      ref={el => {
+                        this["productPrice"] = el;
+                      }}
                       className="form-control"
                       placeholder="0,000(원)"
                       value={Number(productPrice).toLocaleString()}
@@ -277,6 +260,9 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                     <input
                       value={Number(discountRate).toLocaleString()}
                       name="discountRate"
+                      ref={el => {
+                        this["discountRate"] = el;
+                      }}
                       type="text"
                       className="form-control"
                       placeholder="00(%)"
@@ -307,6 +293,9 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                     <input
                       value={sellPrice.toLocaleString()}
                       name="sellPrice"
+                      ref={el => {
+                        this["sellPrice"] = el;
+                      }}
                       type="text"
                       className="form-control"
                       placeholder="0,000(원)"
@@ -320,6 +309,9 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                     <input
                       value={stock}
                       name="stock"
+                      ref={el => {
+                        this["stock"] = el;
+                      }}
                       type="text"
                       className="form-control"
                       placeholder="0(수량)"
@@ -542,6 +534,25 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                 onClick={e => {
                   e.preventDefault();
                   const data = new FormData();
+                  if (!this.state.nameKo) {
+                    alert("메뉴명을 입력해주세요.");
+                    this.nameKo.focus();
+                    return;
+                  }
+                  if (!this.state.nameEng) {
+                    alert("영문명을 입력해주세요.");
+                    this.nameEng.focus();
+                    return;
+                  }
+                  if (!this.state.categoryEng) {
+                    alert("카테고리를 선택해주세요.");
+                    this.categoryEng.focus();
+                    return;
+                  }
+                  if (!this.state.imgFile) {
+                    alert("이미지를 등록해주세요.");
+                    return;
+                  }
                   data.append("nameKo", this.state.nameKo);
                   data.append("nameEng", this.state.nameEng);
                   data.append("description", this.state.description);
