@@ -20,10 +20,12 @@ export interface ITodayOrderState {
   selectedOrderId: number | null;
   isCheckedAll: boolean;
   checkedOrderIds: number[];
+  intervalId: NodeJS.Timeout | null;
 }
 
 class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   componentDidMount() {
+    // 처음에 전체내역을 한번 가져온다.
     axios
       .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
         params: {
@@ -40,7 +42,42 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       .catch((err: AxiosError) => {
         alert(err);
       });
+
+    // 실시간으로 주문내역을 확인하기 위해 반복.
+    this.startInterval(1000);
   }
+
+  // 컴포넌트가 언마운트될 때 인터벌 제거.
+  componentWillUnmount() {
+    if (this.state.intervalId) {
+      clearInterval(this.state.intervalId);
+    }
+  }
+
+  startInterval = (time: number) => {
+    const intervalId = setInterval(() => {
+      axios
+        .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
+          params: {
+            page: 1,
+            size: 30,
+            status: this.state.selectedTodayStatus
+          }
+        })
+        .then((res: AxiosResponse) => {
+          this.setState({
+            orders: res.data.orders,
+            statusCount: res.data.statusCount
+          });
+        })
+        .catch((err: AxiosError) => {
+          alert(err);
+        });
+    }, time);
+    this.setState({
+      intervalId: intervalId
+    });
+  };
 
   status = [
     "미결제",
@@ -76,7 +113,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     selectedSelectStatus: this.status[0],
     selectedOrderId: null,
     isCheckedAll: false,
-    checkedOrderIds: []
+    checkedOrderIds: [],
+    intervalId: null
   } as ITodayOrderState;
 
   handleModalOpen = (orderId: number) => {
