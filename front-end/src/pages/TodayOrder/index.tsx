@@ -41,6 +41,9 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       })
       .catch((err: AxiosError) => {
         alert(err);
+        if (this.state.intervalId) {
+          clearInterval(this.state.intervalId);
+        }
       });
 
     // 실시간으로 주문내역을 확인하기 위해 반복.
