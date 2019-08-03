@@ -6,12 +6,12 @@ import lombok.Getter;
 public class PointException  extends RuntimeException{
 
     private String field;
-    private String errorMessage;
+    private String message;
     private PointExceptionType pointExceptionType;
 
     public PointException(PointExceptionType pointExceptionType){
         this.field = pointExceptionType.getField();
-        this.errorMessage = pointExceptionType.getErrorMessage();
+        this.message = pointExceptionType.getMessage();
         this.pointExceptionType = pointExceptionType;
     }
 

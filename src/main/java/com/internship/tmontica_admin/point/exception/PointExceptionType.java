@@ -13,6 +13,6 @@ public enum PointExceptionType {
     POINT_LESS_THEN_ZERO_EXCEPTION("point", "사용하려는 포인트량이 보유한 포인트량을 초과합니다.", HttpStatus.BAD_REQUEST);
 
     private String field;
-    private String errorMessage;
+    private String message;
     private HttpStatus responseType;
 }

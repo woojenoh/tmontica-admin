@@ -27,7 +27,7 @@ public class Point {
 
     public Point(String type, String amount){
 
-        checkPointType();
+        checkPointType(type);
         this.type = type;
         this.amount = Integer.parseInt(amount);
     }
@@ -47,7 +47,7 @@ public class Point {
         return String.valueOf(amount);
     }
 
-    private void checkPointType(){
+    private void checkPointType(String type){
 
         for(PointLogType pointLogType : PointLogType.values()){
 

@@ -16,20 +16,20 @@ public class TmonTicaExceptionFormat {
     private String message;
     private List<FieldError> errors;
 
-    public TmonTicaExceptionFormat(String field, String exceptionMessage) {
+    public TmonTicaExceptionFormat(String field, String message) {
         this.field = field;
-        this.message = exceptionMessage;
+        this.message = message;
     }
 
-    public TmonTicaExceptionFormat(String field, String exceptionMessage, List<FieldError> errors){
+    public TmonTicaExceptionFormat(String field, String message, List<FieldError> errors){
         this.field = field;
-        this.message = exceptionMessage;
+        this.message = message;
         this.errors = errors;
     }
 
-    public TmonTicaExceptionFormat(String field, String exceptionMessage, BindingResult bindingResult){
+    public TmonTicaExceptionFormat(String field, String message, BindingResult bindingResult){
         this.field = field;
-        this.message = exceptionMessage;
+        this.message = message;
         this.errors = FieldError.of(bindingResult);
     }
 

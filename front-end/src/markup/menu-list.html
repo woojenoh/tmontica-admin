@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/44afc802d5.js"></script>
+  <link href="header.css" rel="stylesheet">
+  <link href="sidebar.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+  <title>티몽티카[관리자]</title>
+</head>
+<body>
+  <header class="bg-dark text-light flex-row">
+    <i class="fas fa-bars menu-icon"></i>
+    <h1 class="title">메뉴 관리</h1>
+  </header>
+  <div class="main-wrapper">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+              <ul class="nav flex-column">
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="fas fa-shopping-cart feather"></i>
+                    주문 관리
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="fas fa-coffee feather"></i>
+                    메뉴 관리
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="far fa-flag feather"></i>
+                    배너 관리
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="fas fa-user feather"></i>
+                    사용자 관리
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="far fa-chart-bar feather"></i>
+                    통계
+                  </a>
+                </li>
+              </ul>      
+          </div>
+      </nav>
+      <main class="col-md-10">
+        <section>
+            <div class="content-head d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <button class="btn btn-primary" style="margin-right: 10px;" data-toggle="modal" data-target="#menuModal">메뉴 추가</button>
+                <button class="btn btn-primary">이달의 메뉴 보기</button>
+            </div>
+            <table class="content-table table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>
+                    <input type="checkbox" aria-label="Checkbox for following text input">
+                  </th>
+                  <th>미리보기</th>
+                  <th>카테고리</th>
+                  <th>메뉴명</th>
+                  <th>설명</th>
+                  <th>이달의 메뉴</th>
+                  <th>상품가</th>
+                  <th>할인율</th>
+                  <th>판매가</th>
+                  <th>재고</th>
+                  <th>등록일</th>
+                  <th>등록인</th>
+                  <th>수정일</th>
+                  <th>수정인</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="menu__td check">
+                    <input type="checkbox" aria-label="Checkbox for following text input">
+                  </td>
+                  <td class="menu__td preview"></td>
+                  <td class="menu__td category"></td>
+                  <td class="menu__td name"></td>
+                  <td class="menu__td description"></td>
+                  <td class="menu__td monthly"></td>
+                  <td class="menu__td product-price"></td>
+                  <td class="menu__td discount-rate"></td>
+                  <td class="menu__td sales-price"></td>
+                  <td class="menu__td quantity"></td>
+                  <td class="menu__td create-date"></td>
+                  <td class="menu__td creator"></td>
+                  <td class="menu__td edit-date"></td>
+                  <td class="menu__td editor"></td>
+                </tr>
+              </tbody>
+            </table>
+        </section>
+
+        <!-- 메뉴 등록/수정 모달 -->
+        <div class="modal fade" id="menuModal" tabindex="-1" role="dialog" aria-labelledby="menuModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="input-group-wrap">
+                  <div class="input-group name">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">메뉴명</span>
+                      </div>
+                      <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="메뉴명">
+                  </div>  
+                  <div class="input-group en-name">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">영문명</span>
+                    </div>
+                    <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="영문명">
+                  </div>
+                  <div class="input-group category">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">카테고리</span>
+                    </div>
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">카테고리</button>
+                      <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">음료</a>
+                        <a class="dropdown-item" href="#">디저트</a>
+                        <!-- <div role="separator" class="dropdown-divider"></div> -->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="input-group description">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">설명</span>
+                    </div>
+                    <textarea class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="설명입니다."></textarea>
+                  </div>
+                  <div class="input-group monthly">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">이달의 메뉴</span>
+                    </div>
+                    <div class="form-control">
+                      <div class="input-group">
+                          <input type="radio" aria-label="Radio button for following text input" />
+                          <label class="choice yes">예</label>
+                      </div>
+                      <div class="input-group">
+                          <input type="radio" aria-label="Radio button for following text input" checked />
+                          <label class="choice no">아니오</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-group product-price half">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">상품가</span>
+                      </div>
+                      <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="0,000(원)">
+                    </div> 
+                    <div class="input-group discount-rate half">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">할인율</span>
+                      </div>
+                      <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="00(%)">
+                    </div>
+                  </div>
+                  <div class="row">
+                      <div class="input-group sales-price half">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">판매가</span>
+                        </div>
+                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="0,000(원)">
+                      </div>
+                      <div class="input-group quantity half">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">재고</span>
+                        </div>
+                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="0(수량)">
+                      </div>
+                  </div>
+                  <div class="input-group options">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">옵션</span>
+                    </div>
+                    <div class="form-control">
+                      <div class="input-group align-items-center pr-1">
+                        <input type="checkbox" class="option__checkbox mr-1"/><label class="option-name m-0">HOT</label>
+                      </div>
+                      <div class="input-group align-items-center pr-1">
+                        <input type="checkbox" class="option__checkbox mr-1"/><label class="option-name m-0">ICE</label>
+                      </div>
+                      <div class="input-group align-items-center pr-1">
+                        <input type="checkbox" class="option__checkbox mr-1"/><label class="option-name m-0">샷추가</label>
+                      </div>
+                      <div class="input-group align-items-center">
+                        <input type="checkbox" class="option__checkbox mr-1"/><label class="option-name m-0">시럽추가</label>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              <div class="left-wrap">
+                <div class="menu-image">
+                  <img src="https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica" alt="메뉴 이미지"/>
+                </div>
+                <button class="reg-image__button btn btn-warning">이미지 등록</button>
+                <input type="file" class="hide" hidden />
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="reg-menu__button btn btn-primary">등록</button>
+                <button type="button" class="cancle-menu__button btn btn-danger" data-dismiss="modal">취소</button>
+            </div>  
+                  
+          </div>
+        </div>
+      </main>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

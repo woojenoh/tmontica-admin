@@ -6,12 +6,12 @@ import lombok.Getter;
 public class UserException extends RuntimeException {
 
     private String field;
-    private String errorMessage;
+    private String message;
     private UserExceptionType userExceptionType;
 
     public UserException(UserExceptionType userExceptionType){
         this.field = userExceptionType.getField();
-        this.errorMessage = userExceptionType.getErrorMessage();
+        this.message = userExceptionType.getMessage();
         this.userExceptionType = userExceptionType;
     }
 }
