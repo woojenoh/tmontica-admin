@@ -1,3 +1,125 @@
 .modal-footer {
   pointer-events: auto;
 }
+
+#menuModal {
+  width: 757px;
+  background: hsla(207, 90%, 54%, 0.8);
+  padding: 21px;
+  position: fixed;
+  left: calc((100% - 757px) / 2);
+  height: auto;
+  top: calc((100% - 500px) / 2);
+  border-radius: 11px;
+
+  .row {
+    margin: 0;
+  }
+
+  .input-group * {
+    border-radius: 0;
+    border-color: #6c757d;
+  }
+
+  .input-group {
+    margin-bottom: 2px;
+  }
+
+  > .input-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .modal-content {
+    flex-direction: row;
+    justify-content: space-between;
+    background: none;
+  }
+
+  .input-group-prepend {
+    width: 9%;
+    min-width: 87px;
+  }
+
+  .input-group-prepend .input-group-text {
+    width: 100%;
+    /* text-align: center; */
+    display: flex;
+    justify-content: center;
+  }
+
+  .menu-image {
+    width: 230px;
+  }
+
+  .input-group-wrap {
+    width: 430px;
+  }
+  img {
+    width: 100%;
+  }
+
+  .half {
+    width: 50%;
+  }
+
+  .category .input-group-append .dropdown-toggle {
+    display: block;
+    width: 100%;
+    background: white;
+  }
+
+  .category .input-group-append {
+    width: calc(100% - 87px);
+    margin-left: 0;
+  }
+
+  .category .btn-outline-secondary:hover {
+    color: #6c757d;
+  }
+
+  label.choice {
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+
+  .form-control {
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; */
+  }
+
+  .monthly .input-group {
+    width: 68px;
+    /* display: flex; */
+    /* justify-content: space-between; */
+    margin-right: 17px;
+    line-height: 1.15;
+  }
+
+  .monthly .input-group input[type="radio"] {
+    margin-right: 9px;
+  }
+
+  .left-wrap .reg-image__button {
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .modal-footer {
+    border-top: 0;
+    padding-bottom: 0;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .modal-footer .btn {
+    width: 105px;
+  }
+}
+
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: none;
+    margin: 1.75rem auto;
+  }
+}
