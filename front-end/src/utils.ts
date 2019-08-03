@@ -1,5 +1,5 @@
 import history from "./history";
-import React from "react";
+import React, { Component } from "react";
 
 export const goToSignin = (message = "로그인이 필요합니다.") => {
   alert(message);
@@ -12,7 +12,9 @@ export const numberCommaRegex = (number: number | string): string => {
 };
 
 export function handleChange(this: any, e: React.BaseSyntheticEvent) {
-  let change = { [e.target.name]: e.target.value };
+  let change = {
+    [e.target.name]: e.target.value
+  };
   this.setState(change);
 }
 
@@ -32,6 +34,22 @@ function isValidDate(d: Date): boolean {
 export function formatDate(date: any, format?: string): string {
   var datetime = new Date(date);
   return isValidDate(datetime)
-    ? _formatDatetime(datetime, typeof format === "string" ? format : "yyyy-mm-dd hh:ii:ss")
+    ? _formatDatetime(datetime, typeof format === "string" ? format : "yyyy.mm.dd hh:ii:ss")
     : "";
+}
+
+// 이미지 미리보기 업로드 > IE10
+export function setImagePreview(files: FileList | null, callback: Function) {
+  if (files && files.length > 0 && /(\.jpg|\.jpeg|\.png)$/.test(files[0].name)) {
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent) => {
+      const target = e.target as FileReader;
+
+      callback(target.result);
+    };
+
+    reader.readAsDataURL(files[0]);
+  } else {
+    alert("이미지 파일을 등록해 주세요.");
+  }
 }

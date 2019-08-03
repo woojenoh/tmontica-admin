@@ -1,19 +1,14 @@
-import React, {
-  Component,
-  FormEvent,
-  MouseEvent,
-  RefObject,
-  SyntheticEvent,
-  BaseSyntheticEvent,
-  ChangeEvent
-} from "react";
+import React, { Component, FormEvent, MouseEvent, ChangeEvent } from "react";
+import qs from "qs";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
-import { Table, Modal, Dropdown } from "react-bootstrap";
+import { Table, Modal } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import { handleChange, formatDate } from "../../utils";
+import { handleChange, formatDate, setImagePreview } from "../../utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
+import { API_URL } from "../../api/common";
+import axios from "axios";
 
 interface IMenusProps {}
 interface IMenusState {
@@ -43,20 +38,20 @@ interface IMenuModalState {
   usable: boolean;
   startDate: string;
   endDate: string;
-  imgFile: string;
-  imgUrl: string;
+  imgFile: Blob | string;
+  imgUrl: string | ArrayBuffer | null;
 }
 
 class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
   fileInput: React.RefObject<HTMLInputElement> = React.createRef();
-
+  form?: HTMLFormElement;
   state = {
     isReg: true,
     nameKo: "",
     nameEng: "",
     description: "",
     monthlyMenu: false,
-    categoryKo: "",
+    categoryKo: "에이드",
     categoryEng: "",
     productPrice: 0,
     sellPrice: 0,
@@ -67,7 +62,7 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
     startDate: formatDate(new Date()),
     endDate: formatDate(new Date()),
     imgFile: "",
-    imgUrl: ""
+    imgUrl: "https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica"
   };
 
   // triggerInputFile = () => this.fileInput.click();
@@ -115,13 +110,15 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
       optionIds,
       usable,
       startDate,
-      endDate
+      endDate,
+      imgUrl
     } = this.state;
 
     return (
       <Modal id="menuModal" show={show} onHide={handleClose}>
         <form
           name="menuForm"
+          ref={el => (this.form = el ? el : undefined)}
           onSubmit={e => {
             e.preventDefault();
           }}
@@ -260,10 +257,22 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                     </div>
                     <input
                       type="text"
+                      name="productPrice"
                       className="form-control"
                       placeholder="0,000(원)"
-                      value={productPrice}
-                      onChange={handleChange.bind(this)}
+                      value={Number(productPrice).toLocaleString()}
+                      onChange={e => {
+                        const numericValue = parseInt(e.target.value.replace(/\,/g, ""));
+                        const productPrice = !Number.isNaN(numericValue) ? numericValue : 0;
+                        this.setState({
+                          productPrice,
+                          sellPrice: Number(
+                            productPrice > 0
+                              ? productPrice * ((100 - discountRate) / 100)
+                              : productPrice
+                          )
+                        });
+                      }}
                     />
                   </div>
                   <div className="input-group discount-rate half">
@@ -271,12 +280,27 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                       <span className="input-group-text">할인율</span>
                     </div>
                     <input
-                      value={discountRate}
+                      value={Number(discountRate).toLocaleString()}
                       name="discountRate"
                       type="text"
                       className="form-control"
                       placeholder="00(%)"
-                      onChange={handleChange.bind(this)}
+                      onChange={e => {
+                        const numericValue = parseInt(e.target.value);
+                        const discountRate = !Number.isNaN(numericValue) ? numericValue : 0;
+                        if (discountRate > 100) {
+                          alert("할인율은 100을 넘을 수 없습니다.");
+                          return;
+                        }
+                        this.setState({
+                          discountRate,
+                          sellPrice: Number(
+                            productPrice > 0
+                              ? productPrice * ((100 - discountRate) / 100)
+                              : productPrice
+                          )
+                        });
+                      }}
                     />
                   </div>
                 </div>
@@ -286,12 +310,12 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                       <span className="input-group-text">판매가</span>
                     </div>
                     <input
-                      value={sellPrice}
+                      value={sellPrice.toLocaleString()}
                       name="sellPrice"
                       type="text"
                       className="form-control"
                       placeholder="0,000(원)"
-                      onChange={handleChange.bind(this)}
+                      readOnly
                     />
                   </div>
                   <div className="input-group quantity half">
@@ -304,7 +328,13 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                       type="text"
                       className="form-control"
                       placeholder="0(수량)"
-                      onChange={handleChange.bind(this)}
+                      onChange={e => {
+                        const numericValue = parseInt(e.target.value.replace(/\,/g, ""));
+                        const stock = !Number.isNaN(numericValue) ? numericValue : 0;
+                        this.setState({
+                          stock
+                        });
+                      }}
                     />
                   </div>
                 </div>
@@ -316,7 +346,7 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   <div className="form-control">
                     <DatePicker
                       selected={new Date(startDate)}
-                      name="startDate"
+                      name="ㄹ"
                       onChange={date =>
                         this.setState({
                           startDate: formatDate(date)
@@ -325,7 +355,7 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                       showTimeSelect
                       timeFormat="HH:mm"
                       timeIntervals={30}
-                      dateFormat="yyyy-MM-dd HH:mm:ss"
+                      dateFormat="yyyy.MM.dd HH:mm:ss"
                       timeCaption="time"
                     />
                     <DatePicker
@@ -339,7 +369,7 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                       showTimeSelect
                       timeFormat="HH:mm"
                       timeIntervals={15}
-                      dateFormat="yyyy-MM-dd HH:mm:ss"
+                      dateFormat="yyyy.MM.dd HH:mm:ss"
                       timeCaption="time"
                     />
                   </div>
@@ -447,7 +477,13 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                         type="radio"
                         name="usable"
                         checked={usable ? true : false}
-                        onChange={e => console.log(e)}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            this.setState({
+                              usable: true
+                            });
+                          }
+                        }}
                       />
                       <label className="choice yes">사용</label>
                     </div>
@@ -456,7 +492,13 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                         type="radio"
                         name="usable"
                         checked={!usable ? true : false}
-                        onChange={e => console.log(e)}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            this.setState({
+                              usable: false
+                            });
+                          }
+                        }}
                       />
                       <label className="choice no">미사용</label>
                     </div>
@@ -466,7 +508,11 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
               <div className="left-wrap">
                 <div className="menu-image">
                   <img
-                    src="https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica"
+                    src={
+                      imgUrl
+                        ? imgUrl
+                        : "https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica"
+                    }
                     alt="메뉴 이미지"
                   />
                 </div>
@@ -478,7 +524,18 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                   ref={this.fileInput}
                   className="hide"
                   hidden
-                  onChange={e => e.preventDefault()}
+                  onChange={e => {
+                    e.preventDefault();
+                    
+                    // https://hyunseob.github.io/2018/06/24/debounce-react-synthetic-event/
+                    e.persist();
+                    setImagePreview(e.target.files, (imgUrl: any) => {
+                      this.setState({
+                        imgUrl,
+                        imgFile: e.target.files !== null ? (e.target.files[0] as Blob) : ""
+                      });
+                    });
+                  }}
                 />
               </div>
             </div>
@@ -487,7 +544,34 @@ class MenuModal extends Component<IMenuModalProps, IMenuModalState> {
                 type="submit"
                 className="reg-menu__button btn btn-primary"
                 value="등록"
-                onSubmit={e => e.preventDefault()}
+                onClick={e => {
+                  e.preventDefault();
+                  const data = new FormData();
+                  data.append("nameKo", this.state.nameKo);
+                  data.append("nameEng", this.state.nameEng);
+                  data.append("description", this.state.description);
+                  data.append("monthlyMenu", `${this.state.monthlyMenu}`);
+                  data.append("categoryKo", this.state.categoryKo);
+                  data.append("categoryEng", this.state.categoryEng);
+                  data.append("productPrice", this.state.productPrice.toString());
+                  data.append("sellPrice", this.state.sellPrice.toString());
+                  data.append("discountRate", this.state.discountRate.toString());
+                  data.append("stock", this.state.stock.toString());
+                  this.state.optionIds.forEach(v => {
+                    data.append("optionIds", v.toString());
+                  });
+                  data.append("usable", `${this.state.usable}`);
+                  data.append("startDate", this.state.startDate);
+                  data.append("endDate", this.state.endDate);
+                  data.append("imgFile", this.state.imgFile);
+                  const options = {
+                    headers: { "content-type": "multipart/form-data" }
+                  };
+
+                  axios.post(`${API_URL}/menus`, data, options).then(res => {
+                    debugger;
+                  });
+                }}
               />
 
               <button className="cancle-menu__button btn btn-danger" onClick={handleClose}>
