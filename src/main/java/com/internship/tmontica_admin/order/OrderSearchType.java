@@ -16,6 +16,7 @@ public enum OrderSearchType {
     private String searchType;
     private String columName;
 
+
     // searchType 값으로 columName 가져오는 메서드
     public static String getBysearchType(String searchType){
         for(OrderSearchType orderSearchType : OrderSearchType.values()){

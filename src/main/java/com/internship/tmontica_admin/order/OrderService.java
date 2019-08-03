@@ -4,6 +4,7 @@ import com.internship.tmontica_admin.option.Option;
 import com.internship.tmontica_admin.option.OptionDao;
 import com.internship.tmontica_admin.order.model.request.OrderStatusReq;
 import com.internship.tmontica_admin.order.model.response.*;
+import com.internship.tmontica_admin.paging.Pagination;
 import com.internship.tmontica_admin.point.Point;
 import com.internship.tmontica_admin.point.PointLogType;
 import com.internship.tmontica_admin.point.PointService;
@@ -61,19 +62,30 @@ public class OrderService {
 //            throw new UserException(UserExceptionType.INVALID_USER_ROLE_EXCEPTION);
 //        }
 
+
         List<OrderResp> orderResps = new ArrayList<>();
         // 오늘의 상태별 주문 개수 가져오기
         StatusCountResp statusCountResp = orderDao.getTodayStatusCount();
 
-        // DB에서 오늘의 (상태별) 주문현황 가져오기
         List<Order> orders;
-        if(!status.equals(OrderStatusType.ALL.toString())){
-            // 상태 문자열을 보내줬을 경우
-            orders = orderDao.getTodayOrderByStatus(status);
-        }else {
+        int totalCnt = 0;
+        Pagination pagination = new Pagination();
+
+        // DB에서 오늘의 (상태별) 주문현황 가져오기
+        if(status.equals(OrderStatusType.ALL.toString())){
             // 상태 문자열이 default "ALL" 인 경우
-            orders = orderDao.getTodayOrders();
+            totalCnt = orderDao.getTodayOrderCnt(); // 페이징을 위한 전체 데이터 개수
+            pagination.pageInfo(page, size, totalCnt); // 페이지네이션 객체 생성
+
+            orders = orderDao.getTodayOrders(pagination.getStartList(), size);
+        }else {
+            // 상태 문자열을 보내줬을 경우
+            totalCnt = orderDao.getTodayOrderCntByStatus(status); // 페이징을 위한 전체 데이터 개수
+            pagination.pageInfo(page, size, totalCnt);
+
+            orders = orderDao.getTodayOrderByStatus(status, pagination.getStartList(), size);
         }
+
 
         // 디비에서 가져온 리스트 orders -> orderResps 리스트에 매핑
         for(Order order : orders){
@@ -88,7 +100,7 @@ public class OrderService {
             orderResps.add(orderResp);
         }
 
-        OrdersByStatusResp ordersByStatusResps = new OrdersByStatusResp(statusCountResp,orderResps); // 반환할 객체
+        OrdersByStatusResp ordersByStatusResps = new OrdersByStatusResp(pagination,statusCountResp,orderResps); // 반환할 객체
 
         return ordersByStatusResps;
     }
