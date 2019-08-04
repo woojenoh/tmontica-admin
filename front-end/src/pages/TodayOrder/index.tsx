@@ -6,7 +6,9 @@ import Nav from "../../components/Nav";
 import TodayOrderRow from "../../components/TodayOrderRow";
 import TodayOrderModal from "../../components/TodayOrderModal";
 import TodayOrderStatus from "../../components/TodayOrderStatus";
+import Pagination from "../../components/Pagination";
 import * as orderTypes from "../../types/order";
+import * as commonTypes from "../../types/common";
 
 export interface ITodayOrderProps {}
 
@@ -15,36 +17,82 @@ export interface ITodayOrderState {
   statusCount: orderTypes.IOrderStatusCount | null;
   orderDetail: orderTypes.IOrderDetail | null;
   isModalOpen: boolean;
-  selectedTodayStatus: string | null;
-  selectedSelectStatus: string;
+  selectedTodayStatus: orderTypes.TOrderStatusKor | null;
+  selectedSelectStatus: orderTypes.TOrderStatusKor;
   selectedOrderId: number | null;
   isCheckedAll: boolean;
+  checkedOrderIds: number[];
+  intervalId: NodeJS.Timeout | null;
+  currentPage: number;
+  pageSize: number;
+  pagination: commonTypes.IPagination | null;
 }
 
 class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   componentDidMount() {
+    // 처음에 전체내역을 한번 가져온다.
     axios
       .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
         params: {
-          page: 1,
-          size: 30
+          page: this.state.currentPage,
+          size: this.state.pageSize
         }
       })
       .then((res: AxiosResponse) => {
         this.setState({
           orders: res.data.orders,
-          statusCount: res.data.statusCount
+          statusCount: res.data.statusCount,
+          pagination: res.data.pagination
         });
       })
       .catch((err: AxiosError) => {
         alert(err);
+        if (this.state.intervalId) {
+          clearInterval(this.state.intervalId);
+        }
       });
+
+    // 실시간으로 주문내역을 확인하기 위해 반복.
+    this.startInterval(1000);
   }
+
+  // 컴포넌트가 언마운트될 때 인터벌 제거.
+  componentWillUnmount() {
+    if (this.state.intervalId) {
+      clearInterval(this.state.intervalId);
+    }
+  }
+
+  startInterval = (time: number) => {
+    const intervalId = setInterval(() => {
+      axios
+        .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
+          params: {
+            page: this.state.currentPage,
+            size: this.state.pageSize,
+            status: this.state.selectedTodayStatus
+          }
+        })
+        .then((res: AxiosResponse) => {
+          this.setState({
+            orders: res.data.orders,
+            statusCount: res.data.statusCount,
+            pagination: res.data.pagination
+          });
+        })
+        .catch((err: AxiosError) => {
+          alert(err);
+        });
+    }, time);
+    this.setState({
+      intervalId: intervalId
+    });
+  };
 
   status = [
     "미결제",
     "결제완료",
-    "제작중",
+    "준비중",
     "준비완료",
     "픽업완료",
     "주문취소"
@@ -60,11 +108,11 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   statusToEng = {
     미결제: "beforePayment",
     결제완료: "afterPayment",
-    제작중: "inProduction",
+    준비중: "inProduction",
     준비완료: "ready",
     픽업완료: "pickUp",
     주문취소: "cancel"
-  };
+  } as { [key in orderTypes.TOrderStatusKor]: orderTypes.TOrderStatusEng };
 
   state = {
     orders: null,
@@ -74,12 +122,17 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     selectedTodayStatus: null,
     selectedSelectStatus: this.status[0],
     selectedOrderId: null,
-    isCheckedAll: false
+    isCheckedAll: false,
+    checkedOrderIds: [],
+    intervalId: null,
+    currentPage: 1,
+    pageSize: 10,
+    pagination: null
   } as ITodayOrderState;
 
   handleModalOpen = (orderId: number) => {
-    const { selectedOrderId } = this.state;
-    if (orderId !== selectedOrderId) {
+    const { selectedOrderId, orderDetail } = this.state;
+    if (orderId !== selectedOrderId || orderDetail === null) {
       axios
         .get(`http://tmonticaadmin-idev.tmon.co.kr/api/orders/detail/${orderId}`)
         .then((res: AxiosResponse) => {
@@ -105,12 +158,12 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     });
   };
 
-  handleClickTodayStatus = (statusName: string) => {
+  handleClickTodayStatus = (statusName: orderTypes.TOrderStatusKor) => {
     axios
       .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
         params: {
-          page: 1,
-          size: 30,
+          page: this.state.currentPage,
+          size: this.state.pageSize,
           status: statusName
         }
       })
@@ -118,7 +171,9 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
         this.setState({
           orders: res.data.orders,
           statusCount: res.data.statusCount,
-          selectedTodayStatus: statusName
+          selectedTodayStatus: statusName,
+          pagination: res.data.pagination,
+          currentPage: 1
         });
       })
       .catch((err: AxiosError) => {
@@ -130,15 +185,17 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     axios
       .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
         params: {
-          page: 1,
-          size: 30
+          page: this.state.currentPage,
+          size: this.state.pageSize
         }
       })
       .then((res: AxiosResponse) => {
         this.setState({
           orders: res.data.orders,
           statusCount: res.data.statusCount,
-          selectedTodayStatus: null
+          selectedTodayStatus: null,
+          pagination: res.data.pagination,
+          currentPage: 1
         });
       })
       .catch((err: AxiosError) => {
@@ -148,19 +205,15 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
 
   handleChangeSelectStatus = (e: React.FormEvent<HTMLSelectElement>) => {
     this.setState({
-      selectedSelectStatus: e.currentTarget.value
+      selectedSelectStatus: e.currentTarget.value as orderTypes.TOrderStatusKor
     });
   };
 
   handleCheckRowAll = () => {
     const { orders } = this.state;
     if (orders) {
-      const newOrders = orders.map(o => {
-        o.checked = true;
-        return o;
-      });
       this.setState({
-        orders: newOrders,
+        checkedOrderIds: orders.map(o => o.orderId),
         isCheckedAll: true
       });
     } else {
@@ -169,99 +222,101 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   };
 
   handleUncheckRowAll = () => {
-    const { orders } = this.state;
-    if (orders) {
-      const newOrders = orders.map(o => {
-        o.checked = false;
-        return o;
-      });
-      this.setState({
-        orders: newOrders,
-        isCheckedAll: false
-      });
-    } else {
-      alert("문제가 발생했습니다.");
-    }
+    this.setState({
+      checkedOrderIds: [],
+      isCheckedAll: false
+    });
   };
 
   handleCheckRow = (orderId: number) => {
-    const { orders } = this.state;
-    if (orders) {
-      const newOrders = orders.map(o => {
-        if (o.orderId === orderId) {
-          o.checked = true;
-          return o;
-        } else {
-          return o;
-        }
-      });
-      this.setState({
-        orders: newOrders
-      });
-    } else {
-      alert("문제가 발생했습니다.");
-    }
+    const { checkedOrderIds } = this.state;
+    this.setState({
+      checkedOrderIds: checkedOrderIds.concat(orderId)
+    });
   };
 
   handleUncheckRow = (orderId: number) => {
-    const { orders } = this.state;
-    if (orders) {
-      const newOrders = orders.map(o => {
-        if (o.orderId === orderId) {
-          o.checked = false;
-          return o;
-        } else {
-          return o;
-        }
-      });
-      this.setState({
-        orders: newOrders
-      });
-    } else {
-      alert("문제가 발생했습니다.");
-    }
+    const { checkedOrderIds } = this.state;
+    this.setState({
+      checkedOrderIds: checkedOrderIds.filter(i => i !== orderId)
+    });
   };
 
   handleChangeStatusSubmit = () => {
-    const { orders, selectedSelectStatus, statusCount } = this.state;
-    const { statusToEng } = this;
+    const {
+      orders,
+      selectedSelectStatus,
+      statusCount,
+      selectedTodayStatus,
+      checkedOrderIds
+    } = this.state;
+    const { statusToEng, handleUncheckRow, handleUncheckRowAll } = this;
 
     if (orders && statusCount) {
-      const newStatusCount = _(statusCount).clone() as orderTypes.IOrderStatusCount;
-      const checkedOrderIds = orders
-        .filter(o => {
-          if (o.checked) {
-            // newStatusCount[statusToEng["주문취소"]] -= 1;
-            return true;
-          } else {
-            return false;
-          }
-        })
-        .map(o => {
-          return o.orderId;
-        });
       axios
         .put("http://tmonticaadmin-idev.tmon.co.kr/api/orders/status", {
           orderIds: checkedOrderIds,
           status: selectedSelectStatus
         })
-        .then((res: AxiosResponse) => console.log(res))
+        .then(() => {
+          const newStatusCount = _(statusCount).clone() as orderTypes.IOrderStatusCount;
+          // 주문상태 변경에 따른 State 변경 로직.
+          // 현재 보고있는 주문내역이 전체일 경우, 체크된 Row의 주문상태를 변경한다.
+          if (selectedTodayStatus === null) {
+            const newOrders = orders.map(o => {
+              if (checkedOrderIds.indexOf(o.orderId) !== -1) {
+                // 체크된 Row에 해당하는 StatusCount를 변경한다.
+                if (o.status !== selectedSelectStatus) {
+                  newStatusCount[statusToEng[selectedSelectStatus]] += 1;
+                  newStatusCount[statusToEng[o.status]] -= 1;
+                }
+                o.status = selectedSelectStatus;
+                handleUncheckRow(o.orderId);
+                return o;
+              } else {
+                return o;
+              }
+            });
+            handleUncheckRowAll();
+            this.setState({
+              orders: newOrders,
+              statusCount: newStatusCount,
+              // orderDetail의 새로고침을 위해 null로 초기화.
+              orderDetail: null
+            });
+          } else {
+            // 현재 보고있는 주문내역이 전체가 아닐 경우, 다른 상태로 이동한 Row를 지워준다.
+            const newOrders = orders.filter(o => {
+              if (checkedOrderIds.indexOf(o.orderId) !== -1) {
+                // 체크된 Row에 해당하는 StatusCount를 변경한다.
+                newStatusCount[statusToEng[selectedSelectStatus]] += 1;
+                newStatusCount[statusToEng[o.status]] -= 1;
+                return false;
+              } else {
+                handleUncheckRow(o.orderId);
+                return true;
+              }
+            });
+            handleUncheckRowAll();
+            this.setState({
+              orders: newOrders,
+              statusCount: newStatusCount,
+              // orderDetail의 새로고침을 위해 null로 초기화.
+              orderDetail: null
+            });
+          }
+          alert("주문상태가 변경되었습니다.");
+        })
         .catch((err: AxiosError) => alert(err.response));
-      const newOrders = orders.map(o => {
-        if (o.checked) {
-          o.status = selectedSelectStatus;
-          return o;
-        } else {
-          return o;
-        }
-      });
-      this.setState({
-        orders: newOrders
-      });
-      alert("주문상태가 변경되었습니다.");
     } else {
       alert("문제가 발생했습니다.");
     }
+  };
+
+  handleSelectPage = (pageNumber: number) => {
+    this.setState({
+      currentPage: pageNumber
+    });
   };
 
   render() {
@@ -272,7 +327,9 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       statusCount,
       orders,
       orderDetail,
-      isCheckedAll
+      isCheckedAll,
+      checkedOrderIds,
+      pagination
     } = this.state;
     const {
       status,
@@ -286,7 +343,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       handleUncheckRowAll,
       handleCheckRow,
       handleUncheckRow,
-      handleChangeStatusSubmit
+      handleChangeStatusSubmit,
+      handleSelectPage
     } = this;
 
     return (
@@ -344,13 +402,16 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
               </div>
 
               {/* <!-- 주문내역 목록 --> */}
-              <table className="content-table table table-striped table-sm mb-0">
+              <table className="content-table table table-striped table-sm mb-4">
                 <thead>
                   <tr className="text-center">
                     <th>
                       <input
                         type="checkbox"
-                        onClick={() => (isCheckedAll ? handleUncheckRowAll() : handleCheckRowAll())}
+                        onChange={() =>
+                          isCheckedAll ? handleUncheckRowAll() : handleCheckRowAll()
+                        }
+                        checked={isCheckedAll}
                       />
                     </th>
                     <th>주문번호</th>
@@ -372,6 +433,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                           handleModalOpen={handleModalOpen}
                           handleCheckRow={handleCheckRow}
                           handleUncheckRow={handleUncheckRow}
+                          isChecked={checkedOrderIds.indexOf(o.orderId) !== -1}
                         />
                       );
                     })
@@ -382,6 +444,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                   )}
                 </tbody>
               </table>
+
+              <Pagination pagination={pagination} handleSelectPage={handleSelectPage} />
             </section>
 
             {/* <!-- 주문 상세 모달 --> */}
