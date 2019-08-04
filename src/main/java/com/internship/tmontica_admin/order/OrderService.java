@@ -81,7 +81,7 @@ public class OrderService {
         }else {
             // 상태 문자열을 보내줬을 경우
             totalCnt = orderDao.getTodayOrderCntByStatus(status); // 페이징을 위한 전체 데이터 개수
-            pagination.pageInfo(page, size, totalCnt);
+            pagination.pageInfo(page, size, totalCnt);              // 페이지네이션 객체 생성
 
             orders = orderDao.getTodayOrderByStatus(status, pagination.getStartList(), size);
         }
@@ -130,9 +130,17 @@ public class OrderService {
 
 
     // 주문 내역 검색 api(관리자)
-    public Map<String, List<OrderResp>> getOrderHistory(String searchType, String searchValue, String startDate, String endDate) {
-        List<Order> orders = orderDao.searchOrder(OrderSearchType.getBysearchType(searchType),searchValue,startDate,endDate);
+    public OrderHistoryResp getOrderHistory(String searchType, String searchValue, String startDate, String endDate, int size, int page) {
+        // 페이징을 위한 전체 데이터 개수
+        int totalCnt = orderDao.getSearchOrderCnt(OrderSearchType.getBysearchType(searchType), searchValue, startDate, endDate);
+        Pagination pagination = new Pagination();
+        pagination.pageInfo(page, size, totalCnt); // 페이지네이션 객체 생성
+
+        // 검색조건에 맞는 데이터 가져오기
+        List<Order> orders = orderDao.searchOrder(OrderSearchType.getBysearchType(searchType),searchValue,startDate,endDate,
+                                                    pagination.getStartList(), pagination.getSize());
         List<OrderResp> orderResps = new ArrayList<>();
+
         // 디비에서 가져온 리스트 orders -> orderResps 리스트에 매핑
         for(Order order : orders){
             // orderId로 주문 상세 정보 리스트 가져오기
@@ -147,9 +155,8 @@ public class OrderService {
             orderResps.add(orderResp);
         }
 
-        Map<String, List<OrderResp>> map = new HashMap<>();
-        map.put("orders", orderResps);
-        return map;
+        OrderHistoryResp orderHistoryResp = new OrderHistoryResp(pagination, orderResps);
+        return orderHistoryResp;
     }
 
 
