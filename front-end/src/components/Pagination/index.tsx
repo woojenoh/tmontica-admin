@@ -21,10 +21,11 @@ function Pagination(props: IPaginationProps) {
       ) {
         arr.push(
           <li
+            key={i}
             className={`page-item cursor-pointer ${i === pagination.page && "active"}`}
             onClick={() => handleSelectPage(i)}
           >
-            <a className="page-link">{i}</a>
+            <span className="page-link">{i}</span>
           </li>
         );
       }
@@ -44,7 +45,7 @@ function Pagination(props: IPaginationProps) {
               pagination.prev && handleSelectPage((pagination.range - 1) * pagination.rangeSize)
             }
           >
-            <a className="page-link cursor-pointer">이전</a>
+            <span className="page-link cursor-pointer">이전</span>
           </li>
           {buildPageButtons()}
           <li
@@ -53,7 +54,7 @@ function Pagination(props: IPaginationProps) {
               pagination.next && handleSelectPage(pagination.range * pagination.rangeSize + 1)
             }
           >
-            <a className="page-link cursor-pointer">다음</a>
+            <span className="page-link cursor-pointer">다음</span>
           </li>
         </ul>
       ) : (
