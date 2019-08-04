@@ -1,10 +1,10 @@
-import React, { Component, FormEvent, ChangeEvent } from "react";
+import React, { Component, FormEvent, ChangeEvent, PureComponent } from "react";
 import { Modal } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { handleChange, formatDate, setImagePreview } from "../../utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
-import { API_URL } from "../../api/common";
+import { API_URL, IMAGE_URL, BASE_URL } from "../../api/common";
 import axios from "axios";
 import { Indexable } from "../../types/index";
 
@@ -53,7 +53,8 @@ const initState = {
   imgUrl: "https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica"
 };
 
-export class MenuModal extends Component<IMenuModalProps, IMenuModalState> implements Indexable {
+export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
+  implements Indexable {
   [key: string]: any;
   fileInput: React.RefObject<HTMLInputElement> = React.createRef();
   form?: HTMLFormElement;
@@ -62,16 +63,32 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> imple
     ...initState
   };
 
+  constructor(props: IMenuModalProps, state: IMenuModalState) {
+    super(props, state);
+
+    this.clickFileInput = this.clickFileInput.bind(this);
+  }
+
+  async getMenuById() {
+    if (this.props.isReg) {
+      return;
+    }
+    const menu = await axios.get(`${API_URL}/menus/${this.props.menuId}`);
+    this.setState({
+      ...menu.data
+    });
+  }
+
   clickFileInput() {
     if (this.fileInput.current) {
       this.fileInput.current.click();
     }
   }
 
-  constructor(props: IMenuModalProps, state: IMenuModalState) {
-    super(props, state);
-
-    this.clickFileInput = this.clickFileInput.bind(this);
+  componentDidUpdate(prevProps: IMenuModalProps) {
+    if (prevProps.menuId !== this.props.menuId) {
+      this.getMenuById();
+    }
   }
 
   // 이미지 파일 미리보기
@@ -496,7 +513,7 @@ export class MenuModal extends Component<IMenuModalProps, IMenuModalState> imple
                   <img
                     src={
                       imgUrl
-                        ? imgUrl
+                        ? `${BASE_URL}/${imgUrl}`
                         : "https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica"
                     }
                     alt="메뉴 이미지"

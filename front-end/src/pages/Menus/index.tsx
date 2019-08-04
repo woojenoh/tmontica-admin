@@ -24,7 +24,7 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
     show: false,
     menuId: -1,
     menus: [],
-    isReg: false
+    isReg: true
   };
 
   componentDidMount() {
