@@ -6,7 +6,9 @@ import Nav from "../../components/Nav";
 import TodayOrderRow from "../../components/TodayOrderRow";
 import TodayOrderModal from "../../components/TodayOrderModal";
 import TodayOrderStatus from "../../components/TodayOrderStatus";
+import Pagination from "../../components/Pagination";
 import * as orderTypes from "../../types/order";
+import * as commonTypes from "../../types/common";
 
 export interface ITodayOrderProps {}
 
@@ -21,6 +23,9 @@ export interface ITodayOrderState {
   isCheckedAll: boolean;
   checkedOrderIds: number[];
   intervalId: NodeJS.Timeout | null;
+  currentPage: number;
+  pageSize: number;
+  pagination: commonTypes.IPagination | null;
 }
 
 class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
@@ -29,14 +34,15 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     axios
       .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
         params: {
-          page: 1,
-          size: 30
+          page: this.state.currentPage,
+          size: this.state.pageSize
         }
       })
       .then((res: AxiosResponse) => {
         this.setState({
           orders: res.data.orders,
-          statusCount: res.data.statusCount
+          statusCount: res.data.statusCount,
+          pagination: res.data.pagination
         });
       })
       .catch((err: AxiosError) => {
@@ -62,15 +68,16 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       axios
         .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
           params: {
-            page: 1,
-            size: 30,
+            page: this.state.currentPage,
+            size: this.state.pageSize,
             status: this.state.selectedTodayStatus
           }
         })
         .then((res: AxiosResponse) => {
           this.setState({
             orders: res.data.orders,
-            statusCount: res.data.statusCount
+            statusCount: res.data.statusCount,
+            pagination: res.data.pagination
           });
         })
         .catch((err: AxiosError) => {
@@ -117,7 +124,10 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     selectedOrderId: null,
     isCheckedAll: false,
     checkedOrderIds: [],
-    intervalId: null
+    intervalId: null,
+    currentPage: 1,
+    pageSize: 10,
+    pagination: null
   } as ITodayOrderState;
 
   handleModalOpen = (orderId: number) => {
@@ -152,8 +162,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     axios
       .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
         params: {
-          page: 1,
-          size: 30,
+          page: this.state.currentPage,
+          size: this.state.pageSize,
           status: statusName
         }
       })
@@ -161,7 +171,9 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
         this.setState({
           orders: res.data.orders,
           statusCount: res.data.statusCount,
-          selectedTodayStatus: statusName
+          selectedTodayStatus: statusName,
+          pagination: res.data.pagination,
+          currentPage: 1
         });
       })
       .catch((err: AxiosError) => {
@@ -173,15 +185,17 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     axios
       .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
         params: {
-          page: 1,
-          size: 30
+          page: this.state.currentPage,
+          size: this.state.pageSize
         }
       })
       .then((res: AxiosResponse) => {
         this.setState({
           orders: res.data.orders,
           statusCount: res.data.statusCount,
-          selectedTodayStatus: null
+          selectedTodayStatus: null,
+          pagination: res.data.pagination,
+          currentPage: 1
         });
       })
       .catch((err: AxiosError) => {
@@ -299,6 +313,12 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     }
   };
 
+  handleSelectPage = (pageNumber: number) => {
+    this.setState({
+      currentPage: pageNumber
+    });
+  };
+
   render() {
     const {
       isModalOpen,
@@ -308,7 +328,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       orders,
       orderDetail,
       isCheckedAll,
-      checkedOrderIds
+      checkedOrderIds,
+      pagination
     } = this.state;
     const {
       status,
@@ -322,7 +343,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       handleUncheckRowAll,
       handleCheckRow,
       handleUncheckRow,
-      handleChangeStatusSubmit
+      handleChangeStatusSubmit,
+      handleSelectPage
     } = this;
 
     return (
@@ -380,7 +402,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
               </div>
 
               {/* <!-- 주문내역 목록 --> */}
-              <table className="content-table table table-striped table-sm mb-0">
+              <table className="content-table table table-striped table-sm mb-4">
                 <thead>
                   <tr className="text-center">
                     <th>
@@ -422,6 +444,8 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                   )}
                 </tbody>
               </table>
+
+              <Pagination pagination={pagination} handleSelectPage={handleSelectPage} />
             </section>
 
             {/* <!-- 주문 상세 모달 --> */}
