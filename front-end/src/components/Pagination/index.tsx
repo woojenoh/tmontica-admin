@@ -21,6 +21,7 @@ function Pagination(props: IPaginationProps) {
       ) {
         arr.push(
           <li
+            key={i}
             className={`page-item cursor-pointer ${i === pagination.page && "active"}`}
             onClick={() => handleSelectPage(i)}
           >
