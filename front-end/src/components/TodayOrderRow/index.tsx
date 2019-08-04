@@ -37,7 +37,7 @@ function TodayOrderRow(props: ITodayOrderRowProps) {
       </td>
       <td className="order__td order-payment">{order.payment}</td>
       <td className="order__td order-price">{numberCommaRegex(order.totalPrice)}</td>
-      <td className="order__td order-date">{moment(order.orderDate).format("hh시 mm분")}</td>
+      <td className="order__td order-date">{moment(order.orderDate).format("HH시 mm분")}</td>
       <td className="order__td order-status">{order.status}</td>
     </tr>
   );

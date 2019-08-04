@@ -79,7 +79,7 @@ function TodayOrderModal(props: ITodayOrderModalProps) {
                       <td>{index}</td>
                       <td>{l.status}</td>
                       <td>{l.editorId === orderDetail.userId ? "주문자" : l.editorId}</td>
-                      <td>{moment(l.modifiedDate).format("YYYY년 MM월 DD일 hh시 mm분")}</td>
+                      <td>{moment(l.modifiedDate).format("YYYY년 MM월 DD일 HH시 mm분")}</td>
                     </tr>
                   );
                 })}
