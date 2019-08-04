@@ -12,6 +12,7 @@ import * as rootTypes from "./types/index";
 import Signin from "./pages/Signin";
 import Menus from "./pages/Menus";
 import TodayOrder from "./pages/TodayOrder";
+import Order from "./pages/Order";
 
 export interface IAppProps extends RouteComponentProps {
   isSignin: boolean;
@@ -79,6 +80,7 @@ class App extends React.Component<IAppProps> {
       <>
         <Switch>
           <AdminRoute exact path="/todayOrder" component={TodayOrder} />
+          <AdminRoute exact path="/order" component={Order} />
           <AdminRoute exact path="/menus" component={Menus} />
           <AdminRoute exact path="/menus/:menuId([0-9]+)" component={Menus} />
           <AdminRoute exact path="/" component={TodayOrder} />

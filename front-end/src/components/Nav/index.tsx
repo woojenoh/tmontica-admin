@@ -19,6 +19,12 @@ export default class Nav extends Component<Props, State> {
               </Link>
             </li>
             <li className="nav-item">
+              <Link to="/order" className="nav-link">
+                <i className="fas fa-shopping-cart feather" />
+                <h5>주문 내역</h5>
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link to="/menus" className="nav-link">
                 <i className="fas fa-coffee feather" />
                 <h5>메뉴 관리</h5>
