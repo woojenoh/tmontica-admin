@@ -407,7 +407,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                               optionIds.delete(value);
                             }
                             this.setState({
-                              optionIds
+                              optionIds: new Set(optionIds)
                             });
                           }}
                         />
@@ -428,7 +428,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                               optionIds.delete(value);
                             }
                             this.setState({
-                              optionIds
+                              optionIds: new Set(optionIds)
                             });
                           }}
                         />
@@ -449,7 +449,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                               optionIds.delete(value);
                             }
                             this.setState({
-                              optionIds
+                              optionIds: new Set(optionIds)
                             });
                           }}
                         />
@@ -470,7 +470,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                               optionIds.delete(value);
                             }
                             this.setState({
-                              optionIds
+                              optionIds: new Set(optionIds)
                             });
                           }}
                         />
