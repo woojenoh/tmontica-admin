@@ -1,3 +1,5 @@
+import * as commonTypes from "./common";
+
 export interface IOrder {
   orderId: number;
   orderDate: string;
@@ -42,6 +44,12 @@ export interface IOrderStatusLog {
   editorId: string;
   modifiedDate: string;
   status: TOrderStatusKor;
+}
+
+export interface IOrderFetchData {
+  pagination: commonTypes.IPagination;
+  statusCount: IOrderStatusCount;
+  orders: IOrder[];
 }
 
 export type TOrderStatusKor =

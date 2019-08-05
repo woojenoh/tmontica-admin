@@ -23,6 +23,12 @@ export interface IOrderState {
   endDate: string;
   searchType: string;
   searchValue: string;
+  capturedInput: {
+    startDate: string;
+    endDate: string;
+    searchType: string;
+    searchValue: string;
+  };
 }
 
 export interface InputState {
@@ -37,7 +43,13 @@ class Order extends React.Component<IOrderProps, IOrderState> {
     this.handleFetchAll();
   }
 
-  searchTypes = ["주문자", "주문번호", "주문상태", "결제방법"] as orderTypes.TOrderSearchType[];
+  searchTypes = [
+    "선택",
+    "주문자",
+    "주문번호",
+    "주문상태",
+    "결제방법"
+  ] as orderTypes.TOrderSearchType[];
 
   state = {
     orders: null,
@@ -50,7 +62,14 @@ class Order extends React.Component<IOrderProps, IOrderState> {
     startDate: "",
     endDate: "",
     searchType: this.searchTypes[0],
-    searchValue: ""
+    searchValue: "",
+    // 검색 버튼을 눌렀을 당시의 인풋 상태를 저장하기 위한 상태값.
+    capturedInput: {
+      startDate: "",
+      endDate: "",
+      searchType: this.searchTypes[0],
+      searchValue: ""
+    }
   } as IOrderState;
 
   handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -65,18 +84,80 @@ class Order extends React.Component<IOrderProps, IOrderState> {
     });
   };
 
+  handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // 검색 버튼을 누르면 우선 인풋에 있는 값들을 CapturedInput에 저장한다.
+    this.setState(
+      {
+        capturedInput: {
+          startDate: this.state.startDate,
+          endDate: this.state.endDate,
+          searchType: this.state.searchType,
+          searchValue: this.state.searchValue
+        }
+      },
+      () => {
+        if (
+          (this.state.capturedInput.searchType !== "선택" &&
+            this.state.capturedInput.searchValue === "") ||
+          (this.state.capturedInput.searchType === "선택" &&
+            this.state.capturedInput.searchValue !== "")
+        ) {
+          alert("검색 타입에 해당하는 검색어를 입력하세요.");
+        } else {
+          axios
+            .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/history", {
+              params: {
+                page: this.state.currentPage,
+                size: this.state.pageSize,
+                startDate: this.state.capturedInput.startDate,
+                endDate: this.state.capturedInput.endDate,
+                searchType:
+                  this.state.capturedInput.searchType === "선택" ? "" : this.state.searchType,
+                searchValue: this.state.capturedInput.searchValue
+              }
+            })
+            .then((res: AxiosResponse) => {
+              this.setState({
+                orders: res.data.orders,
+                pagination: res.data.pagination
+              });
+            })
+            .catch((err: AxiosError) => {
+              alert(err);
+            });
+        }
+      }
+    );
+  };
+
   handleFetchAll = () => {
     axios
-      .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
+      .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/history", {
         params: {
           page: 1,
-          size: this.state.pageSize
+          size: this.state.pageSize,
+          startDate: "",
+          endDate: "",
+          searchType: "",
+          searchValue: ""
         }
       })
       .then((res: AxiosResponse) => {
         this.setState({
           orders: res.data.orders,
-          pagination: res.data.pagination
+          pagination: res.data.pagination,
+          startDate: "",
+          endDate: "",
+          searchType: this.searchTypes[0],
+          searchValue: "",
+          capturedInput: {
+            startDate: "",
+            endDate: "",
+            searchType: this.searchTypes[0],
+            searchValue: ""
+          }
         });
       })
       .catch((err: AxiosError) => {
@@ -118,11 +199,18 @@ class Order extends React.Component<IOrderProps, IOrderState> {
         currentPage: pageNumber
       },
       () => {
+        // 페이지를 넘길 때 CapturedInput 상태를 사용한다.
+        // 계속 컨트롤 중인 인풋 상태를 사용하면 검색 버튼을 누르지 않았는데도, 내역이 바뀔 수 있기 때문.
         axios
-          .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
+          .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/history", {
             params: {
               page: this.state.currentPage,
-              size: this.state.pageSize
+              size: this.state.pageSize,
+              startDate: this.state.capturedInput.startDate,
+              endDate: this.state.capturedInput.endDate,
+              searchType:
+                this.state.capturedInput.searchType === "선택" ? "" : this.state.searchType,
+              searchValue: this.state.capturedInput.searchValue
             }
           })
           .then((res: AxiosResponse) => {
@@ -156,7 +244,8 @@ class Order extends React.Component<IOrderProps, IOrderState> {
       handleSelectPage,
       handleInputChange,
       handleSearchTypeChange,
-      searchTypes
+      searchTypes,
+      handleSearchSubmit
     } = this;
 
     return (
@@ -173,7 +262,7 @@ class Order extends React.Component<IOrderProps, IOrderState> {
                     전체 내역 보기
                   </button>
                 </div>
-                <form className="order-search text-right">
+                <form className="order-search text-right" onSubmit={e => handleSearchSubmit(e)}>
                   <div className="order-period d-flex mb-2">
                     <input
                       type="date"
@@ -197,7 +286,6 @@ class Order extends React.Component<IOrderProps, IOrderState> {
                       className="custom-select mr-2 w-25"
                       value={searchType}
                       onChange={e => handleSearchTypeChange(e)}
-                      required
                     >
                       {searchTypes.map((s: string, index: number) => {
                         return (
@@ -214,7 +302,6 @@ class Order extends React.Component<IOrderProps, IOrderState> {
                       name="searchValue"
                       value={searchValue}
                       onChange={e => handleInputChange(e)}
-                      required
                     />
                     <input type="submit" value="검색" className="btn btn-primary w-25" />
                   </div>
