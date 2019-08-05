@@ -127,7 +127,13 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
                 </tbody>
               </Table>
             </section>
-            <MenuModal show={show} handleClose={handleClose} menuId={menuId} isReg={isReg} />
+            <MenuModal
+              show={show}
+              handleClose={handleClose}
+              menuId={menuId}
+              isReg={isReg}
+              getMenus={this.getMenus.bind(this)}
+            />
           </main>
         </div>
       </>

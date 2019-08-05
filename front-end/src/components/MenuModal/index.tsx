@@ -13,6 +13,7 @@ interface IMenuModalProps {
   menuId: number;
   isReg: boolean;
   handleClose(): void;
+  getMenus(): void;
 }
 
 interface IMenuModalState {
@@ -50,7 +51,7 @@ const initState = {
   startDate: formatDate(new Date()),
   endDate: formatDate(new Date()),
   imgFile: "",
-  imgUrl: "https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica"
+  imgUrl: ""
 };
 
 export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
@@ -71,6 +72,9 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
 
   async getMenuById() {
     if (this.props.isReg) {
+      this.setState({
+        ...initState
+      });
       return;
     }
     const menu = await axios.get(`${API_URL}/menus/${this.props.menuId}`);
@@ -101,7 +105,8 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   }
 
   render() {
-    const { menuId, show, handleClose } = this.props;
+    const { menuId, show, handleClose, isReg, getMenus } = this.props;
+    const regName = isReg ? "등록" : "수정";
 
     const {
       nameKo,
@@ -513,7 +518,9 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                   <img
                     src={
                       imgUrl
-                        ? `${BASE_URL}/${imgUrl}`
+                        ? /^data/.test(imgUrl)
+                          ? imgUrl
+                          : `${BASE_URL}/${imgUrl}`
                         : "https://dummyimage.com/600x400/ffffff/ff7300.png&text=tmontica"
                     }
                     alt="메뉴 이미지"
@@ -546,9 +553,10 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
               <input
                 type="submit"
                 className="reg-menu__button btn btn-primary"
-                value="등록"
+                value={regName}
                 onClick={e => {
                   e.preventDefault();
+
                   const data = new FormData();
                   if (!this.state.nameKo) {
                     alert("메뉴명을 입력해주세요.");
@@ -565,9 +573,12 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                     this.categoryEng.focus();
                     return;
                   }
-                  if (!this.state.imgFile) {
+                  if (!this.state.imgFile && isReg) {
                     alert("이미지를 등록해주세요.");
                     return;
+                  }
+                  if (!isReg) {
+                    data.append("menuId", `${this.props.menuId}`);
                   }
                   data.append("nameKo", this.state.nameKo);
                   data.append("nameEng", this.state.nameEng);
@@ -585,17 +596,47 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                   data.append("usable", `${this.state.usable}`);
                   data.append("startDate", this.state.startDate);
                   data.append("endDate", this.state.endDate);
-                  data.append("imgFile", this.state.imgFile);
+                  if (this.state.imgFile) {
+                    data.append("imgFile", this.state.imgFile);
+                  }
                   const options = {
                     headers: { "content-type": "multipart/form-data" }
                   };
 
-                  axios.post(`${API_URL}/menus`, data, options).then(res => {
-                    alert("메뉴가 등록되었습니다.");
-                    this.setState({ ...initState });
-                  });
+                  const isConfirm = window.confirm(`${regName}하시겠습니까?`);
+                  if (!isConfirm) return;
+
+                  if (isReg) {
+                    axios.post(`${API_URL}/menus`, data, options).then(res => {
+                      alert("메뉴가 등록되었습니다.");
+                      this.setState({ ...initState });
+                    });
+                  } else {
+                    axios.put(`${API_URL}/menus`, data, options).then(res => {
+                      alert("메뉴가 수정되었습니다.");
+                      this.setState({ ...initState });
+                    });
+                  }
                 }}
               />
+              {!isReg ? (
+                <input
+                  type="submit"
+                  className="reg-menu__button btn btn-primary"
+                  value="삭제"
+                  onClick={e => {
+                    e.preventDefault();
+
+                    axios.delete(`${API_URL}/menus/${menuId}`).then(res => {
+                      alert("메뉴가 삭제되었습니다.");
+                      handleClose();
+                      getMenus();
+                    });
+                  }}
+                />
+              ) : (
+                ""
+              )}
 
               <button className="cancle-menu__button btn btn-danger" onClick={handleClose}>
                 취소
