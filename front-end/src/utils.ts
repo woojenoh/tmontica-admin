@@ -1,5 +1,7 @@
 import history from "./history";
 import React, { Component } from "react";
+import axios, { AxiosRequestConfig } from "axios";
+import jwt_decode from "jwt-decode";
 
 export const goToSignin = (message = "로그인이 필요합니다.") => {
   alert(message);
@@ -52,4 +54,8 @@ export function setImagePreview(files: FileList | null, callback: Function) {
   } else {
     alert("이미지 파일을 등록해 주세요.");
   }
+}
+
+export function withJWT(header: AxiosRequestConfig = {}) {
+  return { ...header, headers: { Authorization: localStorage.getItem("jwt") || "" } };
 }
