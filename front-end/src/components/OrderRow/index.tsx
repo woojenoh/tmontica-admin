@@ -4,7 +4,7 @@ import { numberCommaRegex } from "../../utils";
 import * as orderTypes from "../../types/order";
 import "./styles.scss";
 
-export interface ITodayOrderRowProps {
+export interface IOrderRowProps {
   order: orderTypes.IOrder;
   isChecked: boolean;
   handleModalOpen(orderId: number): void;
@@ -12,7 +12,7 @@ export interface ITodayOrderRowProps {
   handleUncheckRow(orderId: number): void;
 }
 
-function TodayOrderRow(props: ITodayOrderRowProps) {
+function OrderRow(props: IOrderRowProps) {
   const { order, isChecked, handleModalOpen, handleCheckRow, handleUncheckRow } = props;
 
   return (
@@ -43,4 +43,4 @@ function TodayOrderRow(props: ITodayOrderRowProps) {
   );
 }
 
-export default TodayOrderRow;
+export default OrderRow;

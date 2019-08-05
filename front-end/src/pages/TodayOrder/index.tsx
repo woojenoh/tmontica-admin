@@ -3,8 +3,8 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 import _ from "underscore";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
-import TodayOrderRow from "../../components/TodayOrderRow";
-import TodayOrderModal from "../../components/TodayOrderModal";
+import OrderRow from "../../components/OrderRow";
+import OrderModal from "../../components/OrderModal";
 import TodayOrderStatus from "../../components/TodayOrderStatus";
 import Pagination from "../../components/Pagination";
 import * as orderTypes from "../../types/order";
@@ -428,7 +428,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
                   {orders ? (
                     orders.map(o => {
                       return (
-                        <TodayOrderRow
+                        <OrderRow
                           key={o.orderId}
                           order={o}
                           handleModalOpen={handleModalOpen}
@@ -450,7 +450,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
             </section>
 
             {/* <!-- 주문 상세 모달 --> */}
-            <TodayOrderModal
+            <OrderModal
               isModalOpen={isModalOpen}
               handleModalClose={handleModalClose}
               orderDetail={orderDetail}
