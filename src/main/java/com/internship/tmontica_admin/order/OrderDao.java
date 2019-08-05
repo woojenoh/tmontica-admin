@@ -36,12 +36,12 @@ public interface OrderDao {
     List<OrderStatusLogResp> getOrderStatusLogByOrderId(int orderId);
 
     // order Status로 오늘의 주문현황 가져오기(페이징)
-    @Select("select * from orders where status = #{status} and order_date > curdate() " +
+    @Select("select SQL_CALC_FOUND_ROWS * from orders where status = #{status} and order_date > curdate() " +
             "limit #{startList}, #{size}")
     List<Order> getTodayOrderByStatus(String status, int startList, int size);
 
     // 오늘의 order 정보 가져오기(페이징)
-    @Select("select * from orders where order_date > curdate() " +
+    @Select("select SQL_CALC_FOUND_ROWS * from orders where order_date > curdate() " +
             "limit #{startList}, #{size}")
     List<Order> getTodayOrders(int startList, int size);
 
@@ -62,35 +62,43 @@ public interface OrderDao {
     StatusCountResp getTodayStatusCount();
 
     // 검색 조건과 날짜가 적용된 주문내역 검색하기(페이징)
-    @Select("select * from orders " +
+    @Select("select SQL_CALC_FOUND_ROWS * from orders " +
             "where ${searchType} like '%${searchValue}%' " +
             "   and order_date between date(#{startDate}) and date(#{endDate})+1 " +
             "limit #{startList}, #{size}")
-    List<Order> searchOrder(String searchType, String searchValue, String startDate, String endDate, int startList, int size);
-
-    // 전체 주문 내역 가져오기 (페이징)
-//    @Select("select * from orders " +
-//            "where ${searchType} like '%${searchValue}%' " +
-//            "   and order_date between date(#{startDate}) and date(#{endDate})+1 " +
-//            "limit #{startList}, #{size}")
-//    List<Order> searchOrder(int startList, int size);
+    List<Order> searchOrderBySearchVal(String searchType, String searchValue, String startDate, String endDate, int startList, int size);
 
     // 검색 조건과 날짜가 적용된 주문내역 전체 개수 가져오기
     @Select("select count(*) from orders " +
             "where ${searchType} like '%${searchValue}%' " +
             "   and order_date between date(#{startDate}) and date(#{endDate})+1")
-    int getSearchOrderCnt(String searchType, String searchValue, String startDate, String endDate);
+    int getSearchOrderCntBySearchVal(String searchType, String searchValue, String startDate, String endDate);
 
     // 날짜 적용된 주문 내역 가져오기 (페이징)
-//    @Select("select * from orders " +
-//            "where ${searchType} like '%${searchValue}%' " +
-//            "   and order_date between date(#{startDate}) and date(#{endDate})+1 " +
-//            "limit #{startList}, #{size}")
-//    List<Order> searchOrder(String startDate, String endDate, int startList, int size);
+    @Select("select SQL_CALC_FOUND_ROWS * from orders " +
+            "where order_date between date(#{startDate}) and date(#{endDate})+1 " +
+            "limit #{startList}, #{size}")
+    List<Order> searchOrderByDate(String startDate, String endDate, int startList, int size);
 
-//    // 오늘의 order 정보 모두 가져오기
-//    @Select("select * from orders where order_date > curdate() ")
-//    List<Order> getTodayOrders();
+    // 전체 주문 내역 가져오기 (페이징)
+    @Select("select SQL_CALC_FOUND_ROWS * from orders " +
+            "limit #{startList}, #{size}")
+    List<Order> searchAllOrder(int startList, int size);
 
+    // 날짜 적용된 주문 내역 개수 가져오기
+    @Select("select count(*) from orders " +
+            "where order_date between date(#{startDate}) and date(#{endDate})+1 ")
+    int getSearchOrderCntByDate(String startDate, String endDate);
 
+    // 전체 주문 내역 개수 가져오기
+    @Select("select count(*) from orders ")
+    int getSearchAllOrderCnt();
+
+    // 오늘의 order 정보 모두 가져오기
+    @Select("select * from orders where order_date > curdate() ")
+    List<Order> getTodayAllOrders();
+
+    // 페이징을 위한 데이터들의 전체 개수 가져오기 (LIMIT절을 적용하지 않은 전체 row의 개수를 임시로 저장)
+    @Select("select FOUND_ROWS()")
+    int getTotalCnt();
 }
