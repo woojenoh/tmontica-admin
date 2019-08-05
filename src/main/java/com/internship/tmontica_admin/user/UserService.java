@@ -56,14 +56,13 @@ public class UserService {
         throw new UserException(UserExceptionType.PASSWORD_MISMATCH_EXCEPTION);
     }
 
-    private void checkAdminRoleException(String role){
+    public void checkAdminRoleException(String role){
 
         for(AdminRole adminRole : AdminRole.values()){
             if(role.equals(adminRole.getRole())){
                 return;
             }
         }
-
         throw new UserException(UserExceptionType.NOT_ADMIN_EXCEPTION);
     }
 

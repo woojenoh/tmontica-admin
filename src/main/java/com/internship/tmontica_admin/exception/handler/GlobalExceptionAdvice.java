@@ -6,6 +6,7 @@ import com.internship.tmontica_admin.exception.TmonTicaExceptionFormat;
 import com.internship.tmontica_admin.menu.exception.MenuException;
 import com.internship.tmontica_admin.menu.exception.MenuValidException;
 import com.internship.tmontica_admin.menu.exception.SaveImgException;
+import com.internship.tmontica_admin.order.exception.OrderSearchTypeException;
 import com.internship.tmontica_admin.order.exception.OrderValidException;
 import com.internship.tmontica_admin.security.exception.UnauthorizedException;
 import com.internship.tmontica_admin.user.exception.UserException;
@@ -36,21 +37,28 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(UserValidException.class)
     public TmonTicaExceptionFormat handleUserValidException(UserValidException e) {
         log.info("UserValidExceptionMessage : {}" , e.getMessage());
-        return new TmonTicaExceptionFormat(e.getField(), e.getErrorMessage(), e.getBindingResult());
+        return new TmonTicaExceptionFormat(e.getField(), e.getMessage(), e.getBindingResult());
     }
 
     @ExceptionHandler(UserException.class)
     public ResponseEntity<TmonTicaExceptionFormat> handleUserException(UserException e) {
-        log.debug("UserExceptionMessage : {}", e.getErrorMessage());
-        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getErrorMessage()), e.getUserExceptionType().getResponseType());
+        log.debug("UserExceptionMessage : {}", e.getMessage());
+        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getMessage()), e.getUserExceptionType().getResponseType());
     }
 
     // 오더
     @ExceptionHandler(OrderValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public TmonTicaExceptionFormat handleOrderValidException(OrderValidException e){
-        return new TmonTicaExceptionFormat(e.getField(), e.getExceptionMessage(), e.getBindingResult());
+        return new TmonTicaExceptionFormat(e.getField(), e.getMessage(), e.getBindingResult());
     }
+
+    @ExceptionHandler(OrderSearchTypeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public TmonTicaExceptionFormat handleOrderSearchTypeException(OrderSearchTypeException e){
+        return new TmonTicaExceptionFormat(e.getField(), e.getMessage());
+    }
+
 
     // 메뉴
     @ExceptionHandler(MenuValidException.class)

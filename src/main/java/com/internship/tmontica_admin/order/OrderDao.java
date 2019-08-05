@@ -5,7 +5,6 @@ import com.internship.tmontica_admin.order.model.response.Order_MenusResp;
 import com.internship.tmontica_admin.order.model.response.StatusCountResp;
 import org.apache.ibatis.annotations.*;
 
-import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -36,25 +35,43 @@ public interface OrderDao {
     @Select("select status, editor_id, modified_date from order_status_logs where order_id=#{orderId}")
     List<OrderStatusLogResp> getOrderStatusLogByOrderId(int orderId);
 
-    // order Status로 오늘의 주문현황 가져오기
-    @Select("select * from orders where status = #{status} and order_date > curdate()")
-    List<Order> getTodayOrderByStatus(String status);
+    // order Status로 오늘의 주문현황 가져오기(페이징)
+    @Select("select * from orders where status = #{status} and order_date > curdate() " +
+            "limit #{startList}, #{size}")
+    List<Order> getTodayOrderByStatus(String status, int startList, int size);
 
-    // 오늘의 order 정보 모두 가져오기
-    @Select("select * from orders where order_date > curdate()")
-    List<Order> getTodayOrders();
+    // 오늘의 order 정보 모두 가져오기(페이징)
+    @Select("select * from orders where order_date > curdate() " +
+            "limit #{startList}, #{size}")
+    List<Order> getTodayOrders(int startList, int size);
+
+    // order Status로 오늘의 주문현황 개수 가져오기
+    @Select("select count(*) from orders where status = #{status} and order_date > curdate()")
+    int getTodayOrderCntByStatus(String status);
+
+    // 오늘의 order 정보 전체 개수 가져오기
+    @Select("select count(*) from orders where order_date > curdate()")
+    int getTodayOrderCnt();
 
     // 오늘의 order 상태별 개수 가져오기
     @Select("select count(if(status=\"미결제\", status, null)) beforePayment, count(if(status=\"결제완료\", status, null)) afterPayment, " +
-            "       count(if(status=\"제작중\", status, null)) inProduction,count(if(status=\"준비완료\", status, null)) ready, " +
+            "       count(if(status=\"준비중\", status, null)) inProduction,count(if(status=\"준비완료\", status, null)) ready, " +
             "        count(if(status=\"픽업완료\", status, null)) pickUp,count(if(status=\"주문취소\", status, null)) cancel " +
             "from orders " +
             "where order_date > curdate()")
     StatusCountResp getTodayStatusCount();
 
-    // 주문내역 검색하기
+    // 주문내역 검색하기(페이징)
     @Select("select * from orders " +
             "where ${searchType} like '%${searchValue}%' " +
+            "   and order_date between date(#{startDate}) and date(#{endDate})+1 " +
+            "limit #{startList}, #{size}")
+    List<Order> searchOrder(String searchType, String searchValue, String startDate, String endDate, int startList, int size);
+
+    // 주문내역 검색 전체 개수 가져오기
+    @Select("select count(*) from orders " +
+            "where ${searchType} like '%${searchValue}%' " +
             "   and order_date between date(#{startDate}) and date(#{endDate})+1")
-    List<Order> searchOrder(String searchType, String searchValue, String startDate, String endDate);
+    int getSearchOrderCnt(String searchType, String searchValue, String startDate, String endDate);
+
 }
