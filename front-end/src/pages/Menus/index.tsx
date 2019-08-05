@@ -2,7 +2,7 @@ import React, { Component, MouseEvent } from "react";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import { Table } from "react-bootstrap";
-import { handleChange } from "../../utils";
+import { handleChange, withJWT } from "../../utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
 import { MenuModal } from "../../components/MenuModal";
@@ -10,32 +10,38 @@ import axios from "axios";
 import { API_URL } from "../../api/common";
 import { IMenus, IMenu } from "../../types/menu";
 import MenuRow from "../../components/MenuRow";
+import Pagination from "../../components/Pagination";
+import { IPagination } from "../../types/common";
 
 interface IMenusProps {}
 interface IMenusState {
+  page: number;
   show: boolean;
   menuId: number;
   menus: IMenus;
   isReg: boolean;
   checkedRows: number[];
   isCheckedAll: boolean;
+  pagination: IPagination | null;
 }
 
 export default class Menus extends Component<IMenusProps, IMenusState> {
   state = {
+    page: 1,
     show: false,
     menuId: -1,
     menus: [],
     isReg: true,
     checkedRows: [] as number[],
-    isCheckedAll: false
+    isCheckedAll: false,
+    pagination: null
   };
 
   componentDidMount() {
     const result = /\/menus\/([0-9+])\??/.exec(window.location.href);
     const menuId = result && result.length > 1 ? parseInt(result[1]) : -1;
 
-    this.getMenus();
+    this.getMenus(this.state.page);
 
     if (menuId > 0) {
       this.setState({
@@ -100,13 +106,14 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
     });
   };
 
-  async getMenus() {
+  async getMenus(page: number = 1) {
     try {
-      const res = await axios.get(`${API_URL}/menus`);
+      const res = await axios.get(`${API_URL}/menus?page=${page}`, withJWT());
       if (res.status === 200) {
-        const { menus } = res.data;
+        const { menus, pagination } = res.data;
         this.setState({
-          menus
+          menus,
+          pagination
         });
       }
     } catch (err) {
@@ -114,9 +121,20 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
     }
   }
 
+  handleSelectPage(pageNumber: number) {
+    this.setState(
+      {
+        page: pageNumber
+      },
+      () => {
+        this.getMenus(pageNumber);
+      }
+    );
+  }
+
   render() {
-    const { handleShowRegModal, handleShowUpdateModal, handleClose } = this;
-    const { show, menuId, isReg, menus } = this.state;
+    const { handleShowRegModal, handleShowUpdateModal, handleClose, handleSelectPage } = this;
+    const { show, menuId, isReg, menus, pagination } = this.state;
 
     return (
       <>
@@ -177,13 +195,14 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
                     ))}
                 </tbody>
               </Table>
+              <Pagination pagination={pagination} handleSelectPage={handleSelectPage.bind(this)} />
             </section>
             <MenuModal
               show={show}
               handleClose={handleClose}
               menuId={menuId}
               isReg={isReg}
-              getMenus={this.getMenus.bind(this)}
+              getMenus={this.getMenus.bind(this, this.state.page)}
             />
           </main>
         </div>

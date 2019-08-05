@@ -1,12 +1,13 @@
 import React, { ChangeEvent, PureComponent } from "react";
 import { Modal } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import { handleChange, formatDate, setImagePreview } from "../../utils";
+import { handleChange, formatDate, setImagePreview, withJWT } from "../../utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
 import { API_URL, BASE_URL } from "../../api/common";
 import axios from "axios";
 import { Indexable } from "../../types/index";
+import jwt_decode from "jwt-decode";
 
 interface IMenuModalProps {
   show: boolean;
@@ -77,13 +78,19 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
       });
       return;
     }
-    const menu = await axios.get(`${API_URL}/menus/${this.props.menuId}`);
+    try {
+      const res = await axios.get(`${API_URL}/menus/${this.props.menuId}`, {
+        headers: { Authorization: jwt_decode(localStorage.getItem("jwt") || "") }
+      });
 
-    const optionIds = menu.data.option.map((o: { id: number }) => o.id);
-    this.setState({
-      ...menu.data,
-      optionIds: new Set(optionIds)
-    });
+      const optionIds = res.data.option.map((o: { id: number }) => o.id);
+      this.setState({
+        ...res.data,
+        optionIds: new Set(optionIds)
+      });
+    } catch (err) {
+      alert(err);
+    }
   }
 
   clickFileInput() {
@@ -636,13 +643,13 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                   if (!isConfirm) return;
 
                   if (isReg) {
-                    axios.post(`${API_URL}/menus`, data, options).then(res => {
+                    axios.post(`${API_URL}/menus`, data, withJWT(options)).then(res => {
                       alert("메뉴가 등록되었습니다.");
                       this.setState({ ...initState });
                       getMenus();
                     });
                   } else {
-                    axios.put(`${API_URL}/menus`, data, options).then(res => {
+                    axios.put(`${API_URL}/menus`, data, withJWT(options)).then(res => {
                       alert("메뉴가 수정되었습니다.");
                       getMenus();
                     });
@@ -657,7 +664,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                   onClick={e => {
                     e.preventDefault();
 
-                    axios.delete(`${API_URL}/menus/${menuId}`).then(res => {
+                    axios.delete(`${API_URL}/menus/${menuId}`, withJWT()).then(res => {
                       alert("메뉴가 삭제되었습니다.");
                       handleClose();
                       getMenus();
