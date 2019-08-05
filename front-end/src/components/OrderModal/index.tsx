@@ -4,13 +4,13 @@ import moment from "moment";
 import { numberCommaRegex } from "../../utils";
 import * as orderTypes from "../../types/order";
 
-export interface ITodayOrderModalProps {
+export interface IOrderModalProps {
   isModalOpen: boolean;
   handleModalClose(): void;
   orderDetail: orderTypes.IOrderDetail | null;
 }
 
-function TodayOrderModal(props: ITodayOrderModalProps) {
+function OrderModal(props: IOrderModalProps) {
   const { isModalOpen, handleModalClose, orderDetail } = props;
 
   return (
@@ -102,4 +102,4 @@ function TodayOrderModal(props: ITodayOrderModalProps) {
   );
 }
 
-export default TodayOrderModal;
+export default OrderModal;
