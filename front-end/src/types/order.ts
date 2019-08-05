@@ -1,3 +1,5 @@
+import * as commonTypes from "./common";
+
 export interface IOrder {
   orderId: number;
   orderDate: string;
@@ -44,6 +46,12 @@ export interface IOrderStatusLog {
   status: TOrderStatusKor;
 }
 
+export interface IOrderFetchData {
+  pagination: commonTypes.IPagination;
+  statusCount: IOrderStatusCount;
+  orders: IOrder[];
+}
+
 export type TOrderStatusKor =
   | "미결제"
   | "결제완료"
@@ -59,3 +67,5 @@ export type TOrderStatusEng =
   | "ready"
   | "pickUp"
   | "cancel";
+
+export type TOrderSearchType = "주문자" | "주문번호" | "주문상태" | "결제방법";
