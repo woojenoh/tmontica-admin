@@ -15,13 +15,13 @@ export default class Nav extends Component<Props, State> {
             <li className="nav-item">
               <Link to="/" className="nav-link">
                 <i className="fas fa-shopping-cart feather" />
-                <h5>주문 관리</h5>
+                <h5>오늘의 주문</h5>
               </Link>
             </li>
             <li className="nav-item">
               <Link to="/order" className="nav-link">
                 <i className="fas fa-shopping-cart feather" />
-                <h5>주문 내역</h5>
+                <h5>주문 내역 검색</h5>
               </Link>
             </li>
             <li className="nav-item">

@@ -258,7 +258,7 @@ class Order extends React.Component<IOrderProps, IOrderState> {
             <section className="order">
               <div className="order-top mb-4 d-flex justify-content-between">
                 <div className="order-title d-flex flex-column justify-content-between">
-                  <h1 className="m-0">주문 내역 보기</h1>
+                  <h1 className="m-0">주문 내역 검색</h1>
                   <button className="btn btn-outline-primary" onClick={() => handleFetchAll()}>
                     전체 내역 보기
                   </button>
