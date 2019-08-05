@@ -32,7 +32,7 @@ public interface MenuDao {
     @Select("SELECT * FROM menus  ORDER BY created_date DESC LIMIT #{limit} OFFSET #{offset}")
     List<Menu> getAllMenusByPage(int limit, int offset);
 
-    @Select("SELECT * FROM menus WHERE category_eng = #{category} ORDER BY created_date LIMIT #{limit} OFFSET #{offset}")
+    @Select("SELECT * FROM menus WHERE category_eng = #{category} ORDER BY created_date DESC LIMIT #{limit} OFFSET #{offset}")
     List<Menu> getMenusByCategory(String category, int limit, int offset);
 
 

@@ -3,11 +3,16 @@ package com.internship.tmontica_admin.menu;
 import com.internship.tmontica_admin.menu.model.response.MenuByPageResp;
 import com.internship.tmontica_admin.option.OptionDao;
 import com.internship.tmontica_admin.security.JwtService;
+import com.internship.tmontica_admin.util.SaveImageFile;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,10 +20,10 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MenuServiceTest {
@@ -32,8 +37,12 @@ public class MenuServiceTest {
     @Mock
     private OptionDao optionDao;
 
+    @Mock
+    private SaveImageFile saveImageFile;
+
     @InjectMocks
     private MenuService menuService;
+
 
 
     @Test
@@ -80,27 +89,34 @@ public class MenuServiceTest {
 
     @Test
     public void 메뉴_추가하기(){
-//        //given
-//        final MemberSignupRequest request = buildRequest(TEST_EMAIL);
-//        given(memberRepository.save(any(Member.class))).willReturn(request.toMember());
-//
-//        //when
-//        final Member member = memberSignUpService.signUp(request);
-//
-//        //then
-//        Mockito.verify(memberRepository, atLeast(1)).save(any(Member.class));
-//        Assert.assertThat(member.getEmail(), is(request.getEmail()));
-
-        // given
-        Menu menu = Menu.builder().id(1).categoryEng("Coffee").categoryKo("커피").usable(true)
+        Menu menu = Menu.builder().categoryEng("Coffee").categoryKo("커피").usable(true)
                                   .monthlyMenu(true).nameKo("콜드브루").nameEng("Cold Brew")
                                   .description("시원한 콜드브루").discountRate(10).productPrice(2000)
                                   .sellPrice(1800).stock(100).createdDate(new Date()).build();
+
+        List<Integer> optionIds = new ArrayList<>();
+        optionIds.add(1);
+        optionIds.add(2);
+
+        MockMultipartFile mockMultipartFile =
+                new MockMultipartFile("cold-brew","cold-brew-image.file","image/png",new byte[]{1,2,3,4,5,66,7,7,8,9,77,8,9,0});
+
+        given(menuDao.addMenu(any(Menu.class))).willReturn(1);
+        given(saveImageFile.saveImg(any(MockMultipartFile.class),any(String.class),any(String.class))).willReturn("/imagefile/2019/8/5/cold-brew-1234124.png");
+        given(jwtService.getUserInfo("userInfo")).willReturn("{ \"id\" : \"test123\"}");
+
+
         // when
+        int createdId = menuService.addMenu(menu, optionIds, mockMultipartFile);
 
+        // then
+        verify(menuDao, atLeastOnce()).addMenu(any(Menu.class));
+        assertThat(createdId , is(0));
 
-        //given
-        //given(menuDao.addMenu(any(Menu.class))).willReturn(menu);
+    }
+
+    @Test
+    public void 메뉴_수정하기(){
 
     }
 }

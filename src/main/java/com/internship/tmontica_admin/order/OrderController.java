@@ -58,15 +58,8 @@ public class OrderController {
                                                             @RequestParam(value = "endDate", required = false)String endDate,
                                                             @RequestParam(value = "size", required = false)int size,
                                                             @RequestParam(value = "page", required = false)int page){
-        OrderHistoryResp orderHistoryResp = null;
-        if(searchType.equals("") && searchValue.equals("") && startDate.equals("") && endDate.equals("")){
-            // 전체 내역 보내기
-        }else if(searchType.equals("") && searchValue.equals("") && !startDate.equals("") && !endDate.equals("")){
-            // 날짜만 적용
-        }else {
-            // 검색 조건, 날짜 모두 적용
-            orderHistoryResp = orderService.getOrderHistory(searchType, searchValue,startDate, endDate, size, page);
-        }
+
+        OrderHistoryResp orderHistoryResp = orderService.getOrderHistory(searchType, searchValue,startDate, endDate, size, page);
         return new ResponseEntity<>(orderHistoryResp, HttpStatus.OK);
     }
 }
