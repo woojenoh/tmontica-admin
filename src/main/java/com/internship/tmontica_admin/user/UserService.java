@@ -1,6 +1,6 @@
 package com.internship.tmontica_admin.user;
 
-import com.internship.tmontica_admin.security.JwtServiceImpl;
+import com.internship.tmontica_admin.security.JwtService;
 import com.internship.tmontica_admin.user.exception.UserException;
 import com.internship.tmontica_admin.user.exception.UserExceptionType;
 import com.internship.tmontica_admin.user.model.response.AdminSignInRespDTO;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserDao userDao;
-    private final JwtServiceImpl jwtService;
+    private final JwtService jwtService;
     private final ModelMapper modelMapper;
 
     public void signInCheck(User user) {

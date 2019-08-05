@@ -21,6 +21,8 @@ public class BannerService {
 
     private final BannerDao bannerDao;
 
+    private final SaveImageFile saveImageFile;
+
     @Value("${menu.imagepath}")
     private String location;
 
@@ -39,7 +41,7 @@ public class BannerService {
         banner.setUsePage(usePage);
 
         // 이미지 저장
-        String imgUrl = SaveImageFile.saveImg(multipartFile, usePage , location);
+        String imgUrl = saveImageFile.saveImg(multipartFile, usePage , location);
         banner.setImgUrl(imgUrl);
         // 배너 등록
         bannerDao.addBanner(banner);
@@ -75,7 +77,7 @@ public class BannerService {
             Banner beforeBanner = bannerDao.getBannerById(banner.getId());
             banner.setImgUrl(beforeBanner.getImgUrl());
         }else{
-            String imgUrl = SaveImageFile.saveImg(multipartFile, usePage, location);
+            String imgUrl = saveImageFile.saveImg(multipartFile, usePage, location);
             banner.setImgUrl(imgUrl);
         }
 

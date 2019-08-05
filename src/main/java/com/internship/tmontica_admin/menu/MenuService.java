@@ -36,13 +36,15 @@ public class MenuService {
 
     private final JwtService jwtService;
 
+    private final SaveImageFile saveImageFile;
+
     @Value("${menu.imagepath}")
     private String location;
 
     // 메뉴 추가
     @Transactional
     public int addMenu(Menu menu, List<Integer>optionIds, MultipartFile imgFile){
-        String imgUrl = SaveImageFile.saveImg(imgFile, menu.getNameEng(), location);
+        String imgUrl = saveImageFile.saveImg(imgFile, menu.getNameEng(), location);
         menu.setImgUrl(imgUrl);
 
         // 등록인 정보 가져오기
@@ -55,7 +57,6 @@ public class MenuService {
         for(int optionId : optionIds)
             menuDao.addMenuOption(menu.getId(), optionId);
 
-        log.info("created menu Id : {}", menu.getId());
         return menu.getId();
     }
 
@@ -80,13 +81,12 @@ public class MenuService {
         checkCategoryName(category);
         // 메뉴 전체 갯수
         int totalCnt = menuDao.getCategoryMenuCnt(category);
-        log.info("total cnt : {}", totalCnt);
         // 페이지 객체 생성
         Pagination pagination = new Pagination();
         pagination.pageInfo(page, size, totalCnt);
-        log.info("pagination : {}", pagination);
+
         List<Menu> menus = menuDao.getMenusByCategory(category, size, pagination.getStartList());
-        log.info("menus size : {}", menus.size());
+
         MenuCategoryResp menuCategoryResp = new MenuCategoryResp();
         menuCategoryResp.setMenus(menus);
         menuCategoryResp.setPagination(pagination);
@@ -174,7 +174,7 @@ public class MenuService {
             Menu beforeMenu = getMenuById(menu.getId());
             menu.setImgUrl(beforeMenu.getImgUrl());
         }else{
-            String img = SaveImageFile.saveImg(imgFile, menu.getNameEng(), location);
+            String img = saveImageFile.saveImg(imgFile, menu.getNameEng(), location);
             menu.setImgUrl(img);
         }
 
