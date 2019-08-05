@@ -1,7 +1,6 @@
 package com.internship.tmontica_admin.util;
 
 import com.internship.tmontica_admin.menu.exception.SaveImgException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -11,7 +10,6 @@ import java.util.Calendar;
 import java.util.Optional;
 import java.util.UUID;
 
-@Slf4j
 public class SaveImageFile {
     public static String saveImg(MultipartFile imgFile, String name, String location){
         // file url : imagefile/년/월/일/파일이름
@@ -30,11 +28,8 @@ public class SaveImageFile {
                 .orElseThrow(() -> new SaveImgException());
         sb.append(".").append(extension);
 
-        log.info("img type : {}", extension);
-
         String dir = sb.toString();
-        log.info("location : {}" , location);
-        log.info("img dir : {}", dir);
+
         try(FileOutputStream fos = new FileOutputStream(location.concat(dir));
             InputStream in = imgFile.getInputStream()){
             byte[] buffer = new byte[1024];

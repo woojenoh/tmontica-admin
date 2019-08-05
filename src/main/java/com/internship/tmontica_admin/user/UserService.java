@@ -22,7 +22,7 @@ public class UserService {
         User data = userDao.getUserByUserId(user.getId());
         checkUserIdNotFoundException(user.getId());
         checkPasswordMismatchException(user.getPassword(), data.getPassword());
-        checkAdminRoleException(user.getRole());
+        checkAdminRoleException(data.getRole());
     }
 
     public AdminSignInRespDTO makeJwtToken(User user){

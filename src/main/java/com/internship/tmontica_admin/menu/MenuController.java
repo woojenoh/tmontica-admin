@@ -23,6 +23,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -54,13 +55,17 @@ public class MenuController {
 
 
     /** 전체 메뉴 가져오기 (관리자용) **/
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<Menu>> getAllMenus(@RequestParam(value = "page", required = false, defaultValue = "1")int page,
                                                   @RequestParam(value = "size", required = false, defaultValue = "10")int size){
 
         List<Menu> menus = menuService.getAllMenus(page, size);
         if (menus.isEmpty()) {
             throw new MenuException(MenuExceptionType.MENU_NO_CONTENT_EXCEPTION);
+        }
+
+        for(Menu menu : menus){
+            Date date = menu.getCreatedDate();
         }
         return new ResponseEntity<>(menus, HttpStatus.OK);
 
