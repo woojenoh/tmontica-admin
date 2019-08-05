@@ -35,7 +35,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     axios
       .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
         params: {
-          page: this.state.currentPage,
+          page: 1,
           size: this.state.pageSize
         }
       })
@@ -315,9 +315,29 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   };
 
   handleSelectPage = (pageNumber: number) => {
-    this.setState({
-      currentPage: pageNumber
-    });
+    this.setState(
+      {
+        currentPage: pageNumber
+      },
+      () => {
+        axios
+          .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
+            params: {
+              page: this.state.currentPage,
+              size: this.state.pageSize
+            }
+          })
+          .then((res: AxiosResponse) => {
+            this.setState({
+              orders: res.data.orders,
+              pagination: res.data.pagination
+            });
+          })
+          .catch((err: AxiosError) => {
+            alert(err);
+          });
+      }
+    );
   };
 
   render() {

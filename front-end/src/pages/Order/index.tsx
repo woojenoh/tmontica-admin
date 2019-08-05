@@ -1,14 +1,118 @@
 import * as React from "react";
+import axios, { AxiosResponse, AxiosError } from "axios";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
+import OrderRow from "../../components/OrderRow";
+import OrderModal from "../../components/OrderModal";
+import Pagination from "../../components/Pagination";
+import * as orderTypes from "../../types/order";
+import * as commonTypes from "../../types/common";
 import "./styles.scss";
 
 export interface IOrderProps {}
 
-export interface IOrderState {}
+export interface IOrderState {
+  orders: orderTypes.IOrder[] | null;
+  isModalOpen: boolean;
+  orderDetail: orderTypes.IOrderDetail | null;
+  selectedOrderId: number | null;
+  currentPage: number;
+  pageSize: number;
+  pagination: commonTypes.IPagination | null;
+}
 
 class Order extends React.Component<IOrderProps, IOrderState> {
+  componentDidMount() {
+    this.handleFetchAll();
+  }
+
+  state = {
+    orders: null,
+    isModalOpen: false,
+    orderDetail: null,
+    selectedOrderId: null,
+    currentPage: 1,
+    pageSize: 10,
+    pagination: null
+  } as IOrderState;
+
+  handleFetchAll = () => {
+    axios
+      .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
+        params: {
+          page: 1,
+          size: this.state.pageSize
+        }
+      })
+      .then((res: AxiosResponse) => {
+        this.setState({
+          orders: res.data.orders,
+          pagination: res.data.pagination
+        });
+      })
+      .catch((err: AxiosError) => {
+        alert(err);
+      });
+  };
+
+  handleModalOpen = (orderId: number) => {
+    const { selectedOrderId, orderDetail } = this.state;
+    if (orderId !== selectedOrderId || orderDetail === null) {
+      axios
+        .get(`http://tmonticaadmin-idev.tmon.co.kr/api/orders/detail/${orderId}`)
+        .then((res: AxiosResponse) => {
+          this.setState({
+            orderDetail: res.data,
+            selectedOrderId: orderId,
+            isModalOpen: true
+          });
+        })
+        .catch((err: AxiosError) => {
+          alert(err);
+        });
+    } else {
+      this.setState({
+        isModalOpen: true
+      });
+    }
+  };
+
+  handleModalClose = () => {
+    this.setState({
+      isModalOpen: false
+    });
+  };
+
+  handleSelectPage = (pageNumber: number) => {
+    this.setState(
+      {
+        currentPage: pageNumber
+      },
+      () => {
+        axios
+          .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
+            params: {
+              page: this.state.currentPage,
+              size: this.state.pageSize
+            }
+          })
+          .then((res: AxiosResponse) => {
+            this.setState({
+              orders: res.data.orders,
+              pagination: res.data.pagination
+            });
+          })
+          .catch((err: AxiosError) => {
+            alert(err);
+          });
+      }
+    );
+  };
+
   render() {
+    const { orders, isModalOpen, orderDetail, pagination } = this.state;
+    const { handleFetchAll, handleModalOpen, handleModalClose, handleSelectPage } = this;
+
     return (
       <>
         <Header title="주문 내역" />
@@ -16,9 +120,14 @@ class Order extends React.Component<IOrderProps, IOrderState> {
           <Nav />
           <main className="main col-md-10 p-4">
             <section className="order">
-              <div className="order-title mb-4 d-flex justify-content-between">
-                <h1>주문 내역 보기</h1>
-                <form className="order-top text-right">
+              <div className="order-top mb-4 d-flex justify-content-between">
+                <div className="order-title d-flex flex-column justify-content-between">
+                  <h1 className="m-0">주문 내역 보기</h1>
+                  <button className="btn btn-outline-primary" onClick={() => handleFetchAll()}>
+                    전체 내역 보기
+                  </button>
+                </div>
+                <form className="order-search text-right">
                   <div className="order-period d-flex mb-2">
                     <input type="date" className="form-control mr-2" required />
                     <input type="date" className="form-control" required />
@@ -41,12 +150,9 @@ class Order extends React.Component<IOrderProps, IOrderState> {
                 </form>
               </div>
               <div className="order-table">
-                <table className="table table-striped">
+                <table className="table table-striped mb-4">
                   <thead>
                     <tr className="text-center">
-                      <th>
-                        <input type="checkbox" />
-                      </th>
                       <th>주문번호</th>
                       <th>주문자</th>
                       <th>주문메뉴</th>
@@ -57,22 +163,29 @@ class Order extends React.Component<IOrderProps, IOrderState> {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="text-center">
-                      <td>
-                        <input type="checkbox" />
-                      </td>
-                      <td>1</td>
-                      <td>qwe123</td>
-                      <td>아메리카노</td>
-                      <td>현금결제</td>
-                      <td>1,000</td>
-                      <td>2019년 8월 4일</td>
-                      <td>미결제</td>
-                    </tr>
+                    {orders ? (
+                      orders.map(o => {
+                        return (
+                          <OrderRow key={o.orderId} order={o} handleModalOpen={handleModalOpen} />
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td>로딩 중입니다.</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
+
+                <Pagination pagination={pagination} handleSelectPage={handleSelectPage} />
               </div>
             </section>
+
+            <OrderModal
+              orderDetail={orderDetail}
+              isModalOpen={isModalOpen}
+              handleModalClose={handleModalClose}
+            />
           </main>
         </div>
       </>
