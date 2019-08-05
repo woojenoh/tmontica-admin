@@ -2,6 +2,8 @@ package com.internship.tmontica_admin.banner;
 
 import com.internship.tmontica_admin.banner.exception.BannerException;
 import com.internship.tmontica_admin.banner.exception.BannerExceptionType;
+import com.internship.tmontica_admin.security.JwtService;
+import com.internship.tmontica_admin.util.JsonUtil;
 import com.internship.tmontica_admin.util.SaveImageFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +24,13 @@ public class BannerService {
     @Value("${menu.imagepath}")
     private String location;
 
-    //private final JwtService jwtService;
+    private final JwtService jwtService;
 
     // 배너 등록하기
     @Transactional
     public int addBanner(Banner banner, MultipartFile multipartFile){
         // TODO : 등록하는 관리자 정보 가져오기
-        String creatorId = "admin";
+        String creatorId = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id");
         banner.setCreatorId(creatorId);
 
         //usePage 영어로 저장
@@ -42,10 +44,10 @@ public class BannerService {
         // 배너 등록
         bannerDao.addBanner(banner);
 
-        // usable = true 일때 같은 페이지, 같은 번호의 배너를 등록 시 기존의 배너들의 usable = false 로 변경
-        if(banner.isUsable()){
-            bannerDao.updateBannerUnusable(banner.getNumber(), banner.getUsePage(), banner.getId());
-        }
+//        // usable = true 일때 같은 페이지, 같은 번호의 배너를 등록 시 기존의 배너들의 usable = false 로 변경
+//        if(banner.isUsable()){
+//            bannerDao.updateBannerUnusable(banner.getNumber(), banner.getUsePage(), banner.getId());
+//        }
         return banner.getId();
     }
 
@@ -55,9 +57,35 @@ public class BannerService {
         List<Banner> banners = bannerDao.getBannersByUsePage(usePage);
         return banners;
     }
-    // 배너 수정하기
 
+    // id로 배너 가져오기
+    public Banner getBannerById(int id){
+        return getBannerById(id);
+    }
+    // 배너 수정하기
+    public void updateBanner(Banner banner, MultipartFile multipartFile){
+
+        //usePage 영어로 저장
+        checkUsePage(banner.getUsePage());
+        String usePage = BannerUsePage.convertKoToEng(banner.getUsePage());
+        banner.setUsePage(usePage);
+
+        // 이미지 파일 업데이트
+        if(multipartFile == null || multipartFile.isEmpty()){
+            Banner beforeBanner = bannerDao.getBannerById(banner.getId());
+            banner.setImgUrl(beforeBanner.getImgUrl());
+        }else{
+            String imgUrl = SaveImageFile.saveImg(multipartFile, usePage, location);
+            banner.setImgUrl(imgUrl);
+        }
+
+        // DB에 업데이트
+        bannerDao.updateBanner(banner);
+    }
     // 배너 삭제하기
+    public void deleteBanner(int id){
+        bannerDao.deleteBanner(id);
+    }
 
     // usepage check
     public void checkUsePage(String usePage){

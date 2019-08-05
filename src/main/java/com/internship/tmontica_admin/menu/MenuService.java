@@ -5,6 +5,8 @@ import com.internship.tmontica_admin.menu.exception.MenuExceptionType;
 import com.internship.tmontica_admin.menu.model.response.MenuDetailResp;
 import com.internship.tmontica_admin.menu.model.response.MenuOptionResp;
 import com.internship.tmontica_admin.option.Option;
+import com.internship.tmontica_admin.security.JwtService;
+import com.internship.tmontica_admin.util.JsonUtil;
 import com.internship.tmontica_admin.util.SaveImageFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +31,7 @@ public class MenuService {
 
     private final ModelMapper modelMapper;
 
-    // private final JwtService jwtService;
+    private final JwtService jwtService;
 
     @Value("${menu.imagepath}")
     private String location;
@@ -41,10 +43,9 @@ public class MenuService {
         menu.setImgUrl(imgUrl);
 
         // 등록인 정보 가져오기
-        // TODO : 관리자 확인 , 유저 정보 확인
-        menu.setCreatorId("admin");
-        //menu.setCreatorId(JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id"));
-        menu.setCreatedDate(new Date());
+        String creatorId = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id");
+        menu.setCreatorId(creatorId);
+
         menuDao.addMenu(menu);
 
         // 메뉴의 옵션 추가
@@ -141,9 +142,9 @@ public class MenuService {
     public void updateMenu(Menu menu, MultipartFile imgFile){
         if(!existMenu(menu.getId()))
             return;
-        // TODO : 관리자 확인 , 유저 정보 확인
-        menu.setUpdaterId("admin");
-        //menu.setUpdaterId(JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id"));
+
+        String updaterId = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id");
+        menu.setUpdaterId(updaterId);
 
         if(imgFile==null || imgFile.isEmpty()){
             Menu beforeMenu = getMenuById(menu.getId());
@@ -152,6 +153,7 @@ public class MenuService {
             String img = SaveImageFile.saveImg(imgFile, menu.getNameEng(), location);
             menu.setImgUrl(img);
         }
+
         menu.setUpdatedDate(new Date());
         menuDao.updateMenu(menu);
     }

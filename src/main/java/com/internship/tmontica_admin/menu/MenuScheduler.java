@@ -5,8 +5,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -25,18 +28,17 @@ public class MenuScheduler {
         List<Menu> allMenus = menuDao.getAllMenus();
         List<Menu> filteredMenus = new ArrayList<>();
         Date now = new Date();
+        log.info("now : {}" , now);
+        log.info("time zone : {}", Calendar.getInstance().getTimeZone());
+        Predicate<Menu> con1 = menu -> menu.getStartDate() == null && menu.getEndDate() == null;
+        Predicate<Menu> con2 = menu -> menu.getStartDate().before(now) && menu.getEndDate().after(now);
 
-        for(Menu menu : allMenus){
-            if(menu.getStartDate() == null && menu.getEndDate() == null) {
-                if(menu.isUsable())
-                    filteredMenus.add(menu);
-            }else if(menu.getStartDate().before(now) && menu.getEndDate().after(now)){
-                filteredMenus.add(menu);
-            }
+        filteredMenus = allMenus.stream().filter(Menu::isUsable)
+                                         .filter(con1.or(con2)).collect(Collectors.toList());
+
+        for(Menu menu : filteredMenus){
+            log.info(menu.toString());
         }
-
-//        filteredMenus = allMenus.stream().filter(menu -> menu.getStartDate() == null)
-//                                         .filter(menu -> )
 
         usableMenus = filteredMenus;   // TODO : usableMenu --> scheduler에 , stream 적용
         log.info("[scheduler] end scheduler , usableMenus size : {}", usableMenus.size());

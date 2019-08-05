@@ -6,15 +6,6 @@ import java.util.List;
 
 @Mapper
 public interface BannerDao {
-    //    private int id;
-    //    private String usePage;
-    //    private boolean usable;
-    //    private String img;
-    //    private String link;
-    //    private Date start_date;
-    //    private Date end_date;
-    //    private String creatorId;
-    //    private int number;
 
     @Insert("INSERT INTO banners(use_page, usable, img_url, link, start_date, end_date, creator_id, number)" +
             " VALUES(#{usePage}, #{usable}, #{imgUrl}, #{link}, #{startDate}, #{endDate}, #{creatorId}, #{number})")
@@ -39,7 +30,7 @@ public interface BannerDao {
     @Update("UPDATE banners SET use_page = #{usePage}, img = #{img}, link = #{link}, usable = #{usable}," +
             "start_date = #{startDate}, end_Date = #{endDate}, number = #{number} " +
             "WHERE id = #{id}")
-    void updateBanner(int id);
+    void updateBanner(Banner banner);
 
     @Delete("DELETE FROM banners WHERE id = #{id}")
     void deleteBanner(int id);
