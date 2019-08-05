@@ -9,6 +9,8 @@ import TodayOrderStatus from "../../components/TodayOrderStatus";
 import Pagination from "../../components/Pagination";
 import * as orderTypes from "../../types/order";
 import * as commonTypes from "../../types/common";
+import { API_URL } from "../../api/common";
+import { withJWT } from "../../utils";
 import "./styles.scss";
 
 export interface ITodayOrderProps {}
@@ -33,12 +35,15 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   componentDidMount() {
     // 처음에 전체내역을 한번 가져온다.
     axios
-      .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
-        params: {
-          page: 1,
-          size: this.state.pageSize
-        }
-      })
+      .get(
+        `${API_URL}/orders/today`,
+        withJWT({
+          params: {
+            page: 1,
+            size: this.state.pageSize
+          }
+        })
+      )
       .then((res: AxiosResponse) => {
         this.setState({
           orders: res.data.orders,
@@ -67,13 +72,16 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
   startInterval = (time: number) => {
     const intervalId = setInterval(() => {
       axios
-        .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
-          params: {
-            page: this.state.currentPage,
-            size: this.state.pageSize,
-            status: this.state.selectedTodayStatus
-          }
-        })
+        .get(
+          `${API_URL}/orders/today`,
+          withJWT({
+            params: {
+              page: this.state.currentPage,
+              size: this.state.pageSize,
+              status: this.state.selectedTodayStatus
+            }
+          })
+        )
         .then((res: AxiosResponse) => {
           this.setState({
             orders: res.data.orders,
@@ -135,7 +143,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
     const { selectedOrderId, orderDetail } = this.state;
     if (orderId !== selectedOrderId || orderDetail === null) {
       axios
-        .get(`http://tmonticaadmin-idev.tmon.co.kr/api/orders/detail/${orderId}`)
+        .get(`http://tmonticaadmin-idev.tmon.co.kr/api/orders/detail/${orderId}`, withJWT())
         .then((res: AxiosResponse) => {
           this.setState({
             orderDetail: res.data,
@@ -161,13 +169,16 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
 
   handleClickTodayStatus = (statusName: orderTypes.TOrderStatusKor) => {
     axios
-      .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
-        params: {
-          page: this.state.currentPage,
-          size: this.state.pageSize,
-          status: statusName
-        }
-      })
+      .get(
+        `${API_URL}/orders/today`,
+        withJWT({
+          params: {
+            page: this.state.currentPage,
+            size: this.state.pageSize,
+            status: statusName
+          }
+        })
+      )
       .then((res: AxiosResponse) => {
         this.setState({
           orders: res.data.orders,
@@ -184,12 +195,15 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
 
   initializeTodayStatus = () => {
     axios
-      .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
-        params: {
-          page: this.state.currentPage,
-          size: this.state.pageSize
-        }
-      })
+      .get(
+        `${API_URL}/orders/today`,
+        withJWT({
+          params: {
+            page: this.state.currentPage,
+            size: this.state.pageSize
+          }
+        })
+      )
       .then((res: AxiosResponse) => {
         this.setState({
           orders: res.data.orders,
@@ -255,10 +269,14 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
 
     if (orders && statusCount) {
       axios
-        .put("http://tmonticaadmin-idev.tmon.co.kr/api/orders/status", {
-          orderIds: checkedOrderIds,
-          status: selectedSelectStatus
-        })
+        .put(
+          "http://tmonticaadmin-idev.tmon.co.kr/api/orders/status",
+          {
+            orderIds: checkedOrderIds,
+            status: selectedSelectStatus
+          },
+          withJWT()
+        )
         .then(() => {
           const newStatusCount = _(statusCount).clone() as orderTypes.IOrderStatusCount;
           // 주문상태 변경에 따른 State 변경 로직.
@@ -321,12 +339,15 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
       },
       () => {
         axios
-          .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/today", {
-            params: {
-              page: this.state.currentPage,
-              size: this.state.pageSize
-            }
-          })
+          .get(
+            `${API_URL}/orders/today`,
+            withJWT({
+              params: {
+                page: this.state.currentPage,
+                size: this.state.pageSize
+              }
+            })
+          )
           .then((res: AxiosResponse) => {
             this.setState({
               orders: res.data.orders,

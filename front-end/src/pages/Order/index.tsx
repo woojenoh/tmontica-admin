@@ -7,6 +7,8 @@ import OrderModal from "../../components/OrderModal";
 import Pagination from "../../components/Pagination";
 import * as orderTypes from "../../types/order";
 import * as commonTypes from "../../types/common";
+import { API_URL } from "../../api/common";
+import { withJWT } from "../../utils";
 import "./styles.scss";
 
 export interface IOrderProps {}
@@ -107,17 +109,20 @@ class Order extends React.Component<IOrderProps, IOrderState> {
           alert("검색 타입에 해당하는 검색어를 입력하세요.");
         } else {
           axios
-            .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/history", {
-              params: {
-                page: this.state.currentPage,
-                size: this.state.pageSize,
-                startDate: this.state.capturedInput.startDate,
-                endDate: this.state.capturedInput.endDate,
-                searchType:
-                  this.state.capturedInput.searchType === "선택" ? "" : this.state.searchType,
-                searchValue: this.state.capturedInput.searchValue
-              }
-            })
+            .get(
+              `${API_URL}/orders/history`,
+              withJWT({
+                params: {
+                  page: this.state.currentPage,
+                  size: this.state.pageSize,
+                  startDate: this.state.capturedInput.startDate,
+                  endDate: this.state.capturedInput.endDate,
+                  searchType:
+                    this.state.capturedInput.searchType === "선택" ? "" : this.state.searchType,
+                  searchValue: this.state.capturedInput.searchValue
+                }
+              })
+            )
             .then((res: AxiosResponse) => {
               this.setState({
                 orders: res.data.orders,
@@ -134,16 +139,19 @@ class Order extends React.Component<IOrderProps, IOrderState> {
 
   handleFetchAll = () => {
     axios
-      .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/history", {
-        params: {
-          page: 1,
-          size: this.state.pageSize,
-          startDate: "",
-          endDate: "",
-          searchType: "",
-          searchValue: ""
-        }
-      })
+      .get(
+        `${API_URL}/orders/history`,
+        withJWT({
+          params: {
+            page: 1,
+            size: this.state.pageSize,
+            startDate: "",
+            endDate: "",
+            searchType: "",
+            searchValue: ""
+          }
+        })
+      )
       .then((res: AxiosResponse) => {
         this.setState({
           orders: res.data.orders,
@@ -169,7 +177,7 @@ class Order extends React.Component<IOrderProps, IOrderState> {
     const { selectedOrderId, orderDetail } = this.state;
     if (orderId !== selectedOrderId || orderDetail === null) {
       axios
-        .get(`http://tmonticaadmin-idev.tmon.co.kr/api/orders/detail/${orderId}`)
+        .get(`http://tmonticaadmin-idev.tmon.co.kr/api/orders/detail/${orderId}`, withJWT())
         .then((res: AxiosResponse) => {
           this.setState({
             orderDetail: res.data,
@@ -202,17 +210,20 @@ class Order extends React.Component<IOrderProps, IOrderState> {
         // 페이지를 넘길 때 CapturedInput 상태를 사용한다.
         // 계속 컨트롤 중인 인풋 상태를 사용하면 검색 버튼을 누르지 않았는데도, 내역이 바뀔 수 있기 때문.
         axios
-          .get("http://tmonticaadmin-idev.tmon.co.kr/api/orders/history", {
-            params: {
-              page: this.state.currentPage,
-              size: this.state.pageSize,
-              startDate: this.state.capturedInput.startDate,
-              endDate: this.state.capturedInput.endDate,
-              searchType:
-                this.state.capturedInput.searchType === "선택" ? "" : this.state.searchType,
-              searchValue: this.state.capturedInput.searchValue
-            }
-          })
+          .get(
+            `${API_URL}/orders/history`,
+            withJWT({
+              params: {
+                page: this.state.currentPage,
+                size: this.state.pageSize,
+                startDate: this.state.capturedInput.startDate,
+                endDate: this.state.capturedInput.endDate,
+                searchType:
+                  this.state.capturedInput.searchType === "선택" ? "" : this.state.searchType,
+                searchValue: this.state.capturedInput.searchValue
+              }
+            })
+          )
           .then((res: AxiosResponse) => {
             this.setState({
               orders: res.data.orders,
