@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, SyntheticEvent } from "react";
 import { IMenu } from "../../types/menu";
 import { IMAGE_URL } from "../../api/common";
 import "./styles.scss";
@@ -17,7 +17,13 @@ export default class MenuRow extends Component<Props, State> {
     const { menu, handleShowUpdateModal } = this.props;
 
     return (
-      <tr onClick={e => handleShowUpdateModal(menu.id)}>
+      <tr
+        onClick={(e: SyntheticEvent) => {
+          const target = e.target as HTMLElement;
+          if (target.closest(".check")) return;
+          handleShowUpdateModal(menu.id);
+        }}
+      >
         <td className="menu__td check">
           <input type="checkbox" aria-label="Checkbox for following text input" />
         </td>

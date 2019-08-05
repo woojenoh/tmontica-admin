@@ -115,11 +115,11 @@
   .modal-footer .btn {
     width: 105px;
   }
-}
 
-@media (min-width: 576px) {
-  .modal-dialog {
-    max-width: none;
-    margin: 1.75rem auto;
+  @media (min-width: 576px) {
+    .modal-dialog {
+      max-width: none;
+      margin: 1.75rem auto;
+    }
   }
 }

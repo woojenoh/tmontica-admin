@@ -476,6 +476,28 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                         />
                         <label className="option-name m-0">시럽추가</label>
                       </div>
+
+                      <div className="input-group align-items-center">
+                        <input
+                          name="optionIds[]"
+                          value="5"
+                          checked={optionIds.has(5) ? true : false}
+                          type="checkbox"
+                          className="option__checkbox mr-1"
+                          onChange={e => {
+                            const value = parseInt(e.target.value);
+                            if (e.target.checked) {
+                              optionIds.add(value);
+                            } else {
+                              optionIds.delete(value);
+                            }
+                            this.setState({
+                              optionIds: new Set(optionIds)
+                            });
+                          }}
+                        />
+                        <label className="option-name m-0">사이즈업</label>
+                      </div>
                     </div>
                   </div>
                 ) : (
