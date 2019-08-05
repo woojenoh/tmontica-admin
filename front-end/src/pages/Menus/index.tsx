@@ -6,22 +6,32 @@ import { handleChange } from "../../utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
 import { MenuModal } from "../../components/MenuModal";
+import axios from "axios";
+import { API_URL } from "../../api/common";
+import { IMenus } from "../../types/menu";
+import MenuRow from "../../components/MenuRow";
 
 interface IMenusProps {}
 interface IMenusState {
   show: boolean;
   menuId: number;
+  menus: IMenus;
+  isReg: boolean;
 }
 
 export default class Menus extends Component<IMenusProps, IMenusState> {
   state = {
     show: false,
-    menuId: -1
+    menuId: -1,
+    menus: [],
+    isReg: true
   };
 
   componentDidMount() {
     const result = /\/menus\/([0-9+])\??/.exec(window.location.href);
     const menuId = result && result.length > 1 ? parseInt(result[1]) : -1;
+
+    this.getMenus();
 
     if (menuId > 0) {
       this.setState({
@@ -37,25 +47,49 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
     });
   };
 
-  handleShow = (e: MouseEvent<HTMLButtonElement>) => {
+  handleShowRegModal = (e: MouseEvent<HTMLButtonElement>) => {
     this.setState({
-      show: true
+      show: true,
+      isReg: true,
+      menuId: -1
     });
   };
 
+  handleShowUpdateModal = (menuId: number) => {
+    this.setState({
+      show: true,
+      isReg: false,
+      menuId
+    });
+  };
+
+  async getMenus() {
+    try {
+      const res = await axios.get(`${API_URL}/menus`);
+      if (res.status === 200) {
+        const menus = res.data;
+        this.setState({
+          menus
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   render() {
-    const { handleShow, handleClose } = this;
-    const { show, menuId } = this.state;
+    const { handleShowRegModal, handleShowUpdateModal, handleClose } = this;
+    const { show, menuId, isReg, menus } = this.state;
 
     return (
       <>
         <Header title="메뉴 관리" />
         <div className="main-wrapper">
           <Nav />
-          <main className="col-md-10">
+          <main id="menus" className="col-md-10">
             <section>
               <div className="content-head d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <button className="btn btn-primary" onClick={handleShow}>
+                <button className="btn btn-primary" onClick={handleShowRegModal}>
                   메뉴 추가
                 </button>
                 <button className="btn btn-primary">이달의 메뉴 보기</button>
@@ -79,6 +113,7 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
                     <th>할인율</th>
                     <th>판매가</th>
                     <th>재고</th>
+                    <th>사용여부</th>
                     <th>등록일</th>
                     <th>등록인</th>
                     <th>수정일</th>
@@ -86,28 +121,13 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="menu__td check">
-                      <input type="checkbox" aria-label="Checkbox for following text input" />
-                    </td>
-                    <td className="menu__td preview" />
-                    <td className="menu__td category" />
-                    <td className="menu__td name" />
-                    <td className="menu__td description" />
-                    <td className="menu__td monthly" />
-                    <td className="menu__td product-price" />
-                    <td className="menu__td discount-rate" />
-                    <td className="menu__td sales-price" />
-                    <td className="menu__td quantity" />
-                    <td className="menu__td create-date" />
-                    <td className="menu__td creator" />
-                    <td className="menu__td edit-date" />
-                    <td className="menu__td editor" />
-                  </tr>
+                  {menus.map((menu, i) => (
+                    <MenuRow key={i} menu={menu} handleShowUpdateModal={handleShowUpdateModal} />
+                  ))}
                 </tbody>
               </Table>
             </section>
-            <MenuModal show={show} handleClose={handleClose} menuId={menuId} />
+            <MenuModal show={show} handleClose={handleClose} menuId={menuId} isReg={isReg} />
           </main>
         </div>
       </>

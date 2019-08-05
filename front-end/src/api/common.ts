@@ -1,6 +1,8 @@
 import { TCommonError } from "../types/error";
 
-export const API_URL = "http://tmonticaadmin-idev.tmon.co.kr/api";
+export const BASE_URL = "http://tmonticaadmin-idev.tmon.co.kr";
+export const IMAGE_URL = `${BASE_URL}/images`;
+export const API_URL = `${BASE_URL}/api`;
 
 const defaultRequestConfig = {
   headers: {
