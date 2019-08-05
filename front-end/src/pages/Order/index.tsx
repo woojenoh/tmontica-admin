@@ -216,7 +216,8 @@ class Order extends React.Component<IOrderProps, IOrderState> {
           .then((res: AxiosResponse) => {
             this.setState({
               orders: res.data.orders,
-              pagination: res.data.pagination
+              pagination: res.data.pagination,
+              currentPage: 1
             });
           })
           .catch((err: AxiosError) => {
