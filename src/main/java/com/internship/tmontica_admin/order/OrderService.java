@@ -129,8 +129,18 @@ public class OrderService {
     }
 
 
-    // 주문 내역 검색 api(관리자)
+    // 주문 내역 검색 api(관리자) - 검색 조건과 날짜가 있을 때
     public OrderHistoryResp getOrderHistory(String searchType, String searchValue, String startDate, String endDate, int size, int page) {
+
+        if(searchType.equals("") && searchValue.equals("") && startDate.equals("") && endDate.equals("")){
+            // 전체 내역 보내기
+        }else if(searchType.equals("") && searchValue.equals("") && !startDate.equals("") && !endDate.equals("")){
+            // 날짜만 적용
+        }else {
+
+        }
+
+
         // 페이징을 위한 전체 데이터 개수
         int totalCnt = orderDao.getSearchOrderCnt(OrderSearchType.getBysearchType(searchType), searchValue, startDate, endDate);
         Pagination pagination = new Pagination();
