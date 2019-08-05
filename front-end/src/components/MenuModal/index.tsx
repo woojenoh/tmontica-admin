@@ -130,7 +130,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
     } = this.state;
 
     return (
-      <Modal id="menuModal" show={show} onHide={handleClose}>
+      <Modal id="menuModal" show={show} onHide={handleClose} size="lg">
         <form
           name="menuForm"
           ref={el => (this.form = el ? el : undefined)}
@@ -138,7 +138,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
             e.preventDefault();
           }}
         >
-          <div className="modal-dialog" role="document">
+          <Modal.Body>
             <div className="modal-content">
               <div className="input-group-wrap">
                 <div className="input-group name">
@@ -672,7 +672,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                 취소
               </button>
             </div>
-          </div>
+          </Modal.Body>
         </form>
       </Modal>
     );

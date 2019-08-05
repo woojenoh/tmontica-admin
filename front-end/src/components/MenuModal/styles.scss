@@ -3,13 +3,14 @@
 }
 
 #menuModal {
-  width: 757px;
+  // width: 757px;
+  // max-width: 1020px;
   background: hsla(207, 90%, 54%, 0.8);
   padding: 21px;
-  position: fixed;
-  left: calc((100% - 757px) / 2);
-  height: auto;
-  top: calc((100% - 500px) / 2);
+  // position: fixed;
+  // left: calc((100% - 757px) / 2);
+  // height: auto;
+  // top: calc((100% - 500px) / 2);
   border-radius: 11px;
 
   .row {
@@ -114,12 +115,5 @@
 
   .modal-footer .btn {
     width: 105px;
-  }
-
-  @media (min-width: 576px) {
-    .modal-dialog {
-      max-width: none;
-      margin: 1.75rem auto;
-    }
   }
 }
