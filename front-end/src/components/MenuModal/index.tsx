@@ -386,97 +386,101 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                   </div>
                 </div>
 
-                <div className="input-group options">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">옵션</span>
+                {/coffee|ade/.test(categoryEng) ? (
+                  <div className="input-group options">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text">옵션</span>
+                    </div>
+                    <div className="form-control">
+                      <div className="input-group align-items-center pr-1">
+                        <input
+                          name="optionIds[]"
+                          value="1"
+                          checked={optionIds.has(1) ? true : false}
+                          type="checkbox"
+                          className="option__checkbox mr-1"
+                          onChange={e => {
+                            const value = parseInt(e.target.value);
+                            if (e.target.checked) {
+                              optionIds.add(value);
+                            } else {
+                              optionIds.delete(value);
+                            }
+                            this.setState({
+                              optionIds
+                            });
+                          }}
+                        />
+                        <label className="option-name m-0">HOT</label>
+                      </div>
+                      <div className="input-group align-items-center pr-1">
+                        <input
+                          name="optionIds[]"
+                          value="2"
+                          checked={optionIds.has(2) ? true : false}
+                          type="checkbox"
+                          className="option__checkbox mr-1"
+                          onChange={e => {
+                            const value = parseInt(e.target.value);
+                            if (e.target.checked) {
+                              optionIds.add(value);
+                            } else {
+                              optionIds.delete(value);
+                            }
+                            this.setState({
+                              optionIds
+                            });
+                          }}
+                        />
+                        <label className="option-name m-0">ICE</label>
+                      </div>
+                      <div className="input-group align-items-center pr-1">
+                        <input
+                          name="optionIds[]"
+                          value="3"
+                          checked={optionIds.has(3) ? true : false}
+                          type="checkbox"
+                          className="option__checkbox mr-1"
+                          onChange={e => {
+                            const value = parseInt(e.target.value);
+                            if (e.target.checked) {
+                              optionIds.add(value);
+                            } else {
+                              optionIds.delete(value);
+                            }
+                            this.setState({
+                              optionIds
+                            });
+                          }}
+                        />
+                        <label className="option-name m-0">샷추가</label>
+                      </div>
+                      <div className="input-group align-items-center">
+                        <input
+                          name="optionIds[]"
+                          value="4"
+                          checked={optionIds.has(4) ? true : false}
+                          type="checkbox"
+                          className="option__checkbox mr-1"
+                          onChange={e => {
+                            const value = parseInt(e.target.value);
+                            if (e.target.checked) {
+                              optionIds.add(value);
+                            } else {
+                              optionIds.delete(value);
+                            }
+                            this.setState({
+                              optionIds
+                            });
+                          }}
+                        />
+                        <label className="option-name m-0">시럽추가</label>
+                      </div>
+                    </div>
                   </div>
-                  <div className="form-control">
-                    <div className="input-group align-items-center pr-1">
-                      <input
-                        name="optionIds[]"
-                        value="1"
-                        checked={optionIds.has(1) ? true : false}
-                        type="checkbox"
-                        className="option__checkbox mr-1"
-                        onChange={e => {
-                          const value = parseInt(e.target.value);
-                          if (e.target.checked) {
-                            optionIds.add(value);
-                          } else {
-                            optionIds.delete(value);
-                          }
-                          this.setState({
-                            optionIds
-                          });
-                        }}
-                      />
-                      <label className="option-name m-0">HOT</label>
-                    </div>
-                    <div className="input-group align-items-center pr-1">
-                      <input
-                        name="optionIds[]"
-                        value="2"
-                        checked={optionIds.has(2) ? true : false}
-                        type="checkbox"
-                        className="option__checkbox mr-1"
-                        onChange={e => {
-                          const value = parseInt(e.target.value);
-                          if (e.target.checked) {
-                            optionIds.add(value);
-                          } else {
-                            optionIds.delete(value);
-                          }
-                          this.setState({
-                            optionIds
-                          });
-                        }}
-                      />
-                      <label className="option-name m-0">ICE</label>
-                    </div>
-                    <div className="input-group align-items-center pr-1">
-                      <input
-                        name="optionIds[]"
-                        value="3"
-                        checked={optionIds.has(3) ? true : false}
-                        type="checkbox"
-                        className="option__checkbox mr-1"
-                        onChange={e => {
-                          const value = parseInt(e.target.value);
-                          if (e.target.checked) {
-                            optionIds.add(value);
-                          } else {
-                            optionIds.delete(value);
-                          }
-                          this.setState({
-                            optionIds
-                          });
-                        }}
-                      />
-                      <label className="option-name m-0">샷추가</label>
-                    </div>
-                    <div className="input-group align-items-center">
-                      <input
-                        name="optionIds[]"
-                        value="4"
-                        checked={optionIds.has(4) ? true : false}
-                        type="checkbox"
-                        className="option__checkbox mr-1"
-                        onChange={e => {
-                          const value = parseInt(e.target.value);
-                          if (e.target.checked) {
-                            optionIds.add(value);
-                          } else {
-                            optionIds.delete(value);
-                          }
-                          this.setState({
-                            optionIds
-                          });
-                        }}
-                      />
-                      <label className="option-name m-0">시럽추가</label>
-                    </div>
-                  </div>
-                </div>
+                ) : (
+                  ""
+                )}
 
                 <div className="input-group monthly">
                   <div className="input-group-prepend">
