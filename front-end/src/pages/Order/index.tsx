@@ -1,6 +1,7 @@
 import * as React from "react";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
+import "./styles.scss";
 
 export interface IOrderProps {}
 
@@ -13,8 +14,8 @@ class Order extends React.Component<IOrderProps, IOrderState> {
         <Header title="주문 내역" />
         <div className="main-wrapper">
           <Nav />
-          <main className="main col-md-10">
-            <section className="order p-4">
+          <main className="main col-md-10 p-4">
+            <section className="order">
               <div className="order-title mb-4 d-flex justify-content-between">
                 <h1>주문 내역 보기</h1>
                 <form className="order-top text-right">

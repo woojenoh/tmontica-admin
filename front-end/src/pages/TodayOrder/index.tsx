@@ -9,6 +9,7 @@ import TodayOrderStatus from "../../components/TodayOrderStatus";
 import Pagination from "../../components/Pagination";
 import * as orderTypes from "../../types/order";
 import * as commonTypes from "../../types/common";
+import "./styles.scss";
 
 export interface ITodayOrderProps {}
 
@@ -352,13 +353,13 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
         <Header title="주문 관리" />
         <div className="main-wrapper">
           <Nav />
-          <main className="col-md-10">
+          <main className="main col-md-10 p-4">
             {/* <!-- 오늘의 현황 --> */}
-            <section className="today-board__section">
-              <div className="content-head d-flex flex-wrap flex-md-nowrap align-items-center pt-3 mb-3 border-bottom">
-                <h4 className="mb-3">오늘의 현황</h4>
+            <section className="today-order">
+              <div className="mb-3 border-bottom">
+                <h1 className="mb-3">오늘의 현황</h1>
               </div>
-              <div className="today-board-list">
+              <div className="today-order-circles">
                 {statusCount
                   ? status.map((s: string, index: number) => {
                       return (
@@ -378,9 +379,9 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
             </section>
 
             {/* <!-- 주문내역 --> */}
-            <section className="order-list__section">
-              <div className="content-head d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 mt-4 mb-3">
-                <h4>주문내역({selectedTodayStatus ? selectedTodayStatus : "전체"})</h4>
+            <section className="today-order-list pt-3 mt-3">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h1>주문내역({selectedTodayStatus ? selectedTodayStatus : "전체"})</h1>
                 <div className="order-select d-flex">
                   <select
                     className="mr-2"
@@ -402,7 +403,7 @@ class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
               </div>
 
               {/* <!-- 주문내역 목록 --> */}
-              <table className="content-table table table-striped table-sm mb-4">
+              <table className="content-table table table-striped mb-4">
                 <thead>
                   <tr className="text-center">
                     <th>
