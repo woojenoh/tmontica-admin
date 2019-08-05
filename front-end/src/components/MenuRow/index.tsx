@@ -6,7 +6,10 @@ import { formatDate } from "../../utils";
 
 interface Props {
   menu: IMenu;
+  isChecked: boolean;
   handleShowUpdateModal(menuId: number): void;
+  handleCheckRow(menuId: number): void;
+  handleUncheckRow(menuId: number): void;
 }
 interface State {}
 
@@ -14,7 +17,7 @@ export default class MenuRow extends Component<Props, State> {
   state = {};
 
   render() {
-    const { menu, handleShowUpdateModal } = this.props;
+    const { menu, handleShowUpdateModal, isChecked } = this.props;
 
     return (
       <tr
@@ -25,7 +28,18 @@ export default class MenuRow extends Component<Props, State> {
         }}
       >
         <td className="menu__td check">
-          <input type="checkbox" aria-label="Checkbox for following text input" />
+          <input
+            type="checkbox"
+            aria-label="Checkbox for following text input"
+            checked={isChecked}
+            onChange={e => {
+              if (e.target.checked) {
+                this.props.handleCheckRow(this.props.menu.id);
+              } else {
+                this.props.handleUncheckRow(this.props.menu.id);
+              }
+            }}
+          />
         </td>
         <td className="menu__td preview">
           <img src={`${IMAGE_URL}/${menu.imgUrl}`} />

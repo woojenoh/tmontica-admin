@@ -8,7 +8,7 @@ import "./styles.scss";
 import { MenuModal } from "../../components/MenuModal";
 import axios from "axios";
 import { API_URL } from "../../api/common";
-import { IMenus } from "../../types/menu";
+import { IMenus, IMenu } from "../../types/menu";
 import MenuRow from "../../components/MenuRow";
 
 interface IMenusProps {}
@@ -17,6 +17,8 @@ interface IMenusState {
   menuId: number;
   menus: IMenus;
   isReg: boolean;
+  checkedRows: number[];
+  isCheckedAll: boolean;
 }
 
 export default class Menus extends Component<IMenusProps, IMenusState> {
@@ -24,7 +26,9 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
     show: false,
     menuId: -1,
     menus: [],
-    isReg: true
+    isReg: true,
+    checkedRows: [] as number[],
+    isCheckedAll: false
   };
 
   componentDidMount() {
@@ -40,6 +44,39 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
       });
     }
   }
+
+  handleCheckRowAll = () => {
+    const { menus } = this.state;
+    if (menus) {
+      this.setState({
+        checkedRows: menus.map((menu: IMenu) => menu.id),
+        isCheckedAll: true
+      });
+    } else {
+      alert("문제가 발생했습니다.");
+    }
+  };
+
+  handleUncheckRowAll = () => {
+    this.setState({
+      checkedRows: [],
+      isCheckedAll: false
+    });
+  };
+
+  handleCheckRow = (menuId: number) => {
+    const { checkedRows } = this.state;
+    this.setState({
+      checkedRows: checkedRows.concat(menuId)
+    });
+  };
+
+  handleUncheckRow = (menuId: number) => {
+    const { checkedRows } = this.state;
+    this.setState({
+      checkedRows: checkedRows.filter(i => i !== menuId)
+    });
+  };
 
   handleClose = () => {
     this.setState({
@@ -67,7 +104,7 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
     try {
       const res = await axios.get(`${API_URL}/menus`);
       if (res.status === 200) {
-        const menus = res.data;
+        const { menus } = res.data;
         this.setState({
           menus
         });
@@ -101,7 +138,13 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
                       <input
                         type="checkbox"
                         aria-label="Checkbox for following text input"
-                        onChange={handleChange.bind(this)}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            this.handleCheckRowAll();
+                          } else {
+                            this.handleUncheckRowAll();
+                          }
+                        }}
                       />
                     </th>
                     <th>미리보기</th>
@@ -121,9 +164,17 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
                   </tr>
                 </thead>
                 <tbody>
-                  {menus.map((menu, i) => (
-                    <MenuRow key={i} menu={menu} handleShowUpdateModal={handleShowUpdateModal} />
-                  ))}
+                  {menus.length >= 1 &&
+                    menus.map((menu: IMenu, i) => (
+                      <MenuRow
+                        key={i}
+                        isChecked={this.state.checkedRows.includes(menu.id) ? true : false}
+                        menu={menu}
+                        handleShowUpdateModal={handleShowUpdateModal}
+                        handleCheckRow={this.handleCheckRow.bind(this)}
+                        handleUncheckRow={this.handleUncheckRow.bind(this)}
+                      />
+                    ))}
                 </tbody>
               </Table>
             </section>
