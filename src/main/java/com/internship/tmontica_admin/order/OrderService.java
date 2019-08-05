@@ -12,7 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -129,26 +130,36 @@ public class OrderService {
     }
 
 
-    // 주문 내역 검색 api(관리자) - 검색 조건과 날짜가 있을 때
+    // 주문 내역 검색 api(관리자)
     public OrderHistoryResp getOrderHistory(String searchType, String searchValue, String startDate, String endDate, int size, int page) {
 
+        List<Order> orders = null;
+        int totalCnt = 0;
+        Pagination pagination = new Pagination();
+
+        // 파라미터의 유무에 따라서 검색 하기
         if(searchType.equals("") && searchValue.equals("") && startDate.equals("") && endDate.equals("")){
-            // 전체 내역 보내기
+            // 전체 내역 가져오기
+            totalCnt = orderDao.getSearchAllOrderCnt(); // 페이징을 위한 전체 데이터 개수
+            pagination.pageInfo(page, size, totalCnt);// 페이지네이션 객체 생성
+
+            orders = orderDao.searchAllOrder(pagination.getStartList(), size);
         }else if(searchType.equals("") && searchValue.equals("") && !startDate.equals("") && !endDate.equals("")){
             // 날짜만 적용
-        }else {
+            totalCnt = orderDao.getSearchOrderCntByDate(startDate, endDate);
+            pagination.pageInfo(page, size, totalCnt);
 
+            orders = orderDao.searchOrderByDate(startDate, endDate, pagination.getStartList(), size);
+        }else {
+            // 검색 조건과 날짜 모두 적용
+            totalCnt = orderDao.getSearchOrderCntBySearchVal(OrderSearchType.getBysearchType(searchType), searchValue, startDate, endDate);
+            pagination.pageInfo(page, size, totalCnt);
+
+            // 검색조건에 맞는 데이터 가져오기
+            orders = orderDao.searchOrderBySearchVal(OrderSearchType.getBysearchType(searchType),searchValue,startDate,endDate,
+                                                        pagination.getStartList(), pagination.getSize());
         }
 
-
-        // 페이징을 위한 전체 데이터 개수
-        int totalCnt = orderDao.getSearchOrderCnt(OrderSearchType.getBysearchType(searchType), searchValue, startDate, endDate);
-        Pagination pagination = new Pagination();
-        pagination.pageInfo(page, size, totalCnt); // 페이지네이션 객체 생성
-
-        // 검색조건에 맞는 데이터 가져오기
-        List<Order> orders = orderDao.searchOrder(OrderSearchType.getBysearchType(searchType),searchValue,startDate,endDate,
-                                                    pagination.getStartList(), pagination.getSize());
         List<OrderResp> orderResps = new ArrayList<>();
 
         // 디비에서 가져온 리스트 orders -> orderResps 리스트에 매핑
