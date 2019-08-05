@@ -1,14 +1,13 @@
 package com.internship.tmontica_admin.menu;
 
-import org.junit.Before;
+import com.internship.tmontica_admin.menu.model.response.MenuByPageResp;
+import com.internship.tmontica_admin.option.OptionDao;
+import com.internship.tmontica_admin.security.JwtService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,7 +15,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
@@ -27,6 +25,12 @@ public class MenuServiceTest {
 
     @Mock
     private MenuDao menuDao;
+
+    @Mock
+    private JwtService jwtService;
+
+    @Mock
+    private OptionDao optionDao;
 
     @InjectMocks
     private MenuService menuService;
@@ -66,11 +70,11 @@ public class MenuServiceTest {
                 .willReturn(menus.subList(0, (menus.size() < 10)? menus.size() : 10));
 
         // when
-        final List<Menu> allMenus = menuService.getAllMenus(1, 10);
+        final MenuByPageResp allMenus = menuService.getAllMenus(1, 10);
 
         // then
         verify(menuDao, atLeastOnce()).getAllMenusByPage(anyInt(), anyInt());
-        assertThat(allMenus.size(),is(3));
+        assertThat(allMenus.getMenus().size() ,is(3));
 
     }
 
@@ -87,11 +91,12 @@ public class MenuServiceTest {
 //        Mockito.verify(memberRepository, atLeast(1)).save(any(Member.class));
 //        Assert.assertThat(member.getEmail(), is(request.getEmail()));
 
+        // given
         Menu menu = Menu.builder().id(1).categoryEng("Coffee").categoryKo("커피").usable(true)
                                   .monthlyMenu(true).nameKo("콜드브루").nameEng("Cold Brew")
                                   .description("시원한 콜드브루").discountRate(10).productPrice(2000)
                                   .sellPrice(1800).stock(100).createdDate(new Date()).build();
-
+        // when
 
 
         //given

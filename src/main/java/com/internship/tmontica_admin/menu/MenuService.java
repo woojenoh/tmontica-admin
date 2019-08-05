@@ -2,9 +2,12 @@ package com.internship.tmontica_admin.menu;
 
 import com.internship.tmontica_admin.menu.exception.MenuException;
 import com.internship.tmontica_admin.menu.exception.MenuExceptionType;
+import com.internship.tmontica_admin.menu.model.response.MenuByPageResp;
+import com.internship.tmontica_admin.menu.model.response.MenuCategoryResp;
 import com.internship.tmontica_admin.menu.model.response.MenuDetailResp;
 import com.internship.tmontica_admin.menu.model.response.MenuOptionResp;
 import com.internship.tmontica_admin.option.Option;
+import com.internship.tmontica_admin.paging.Pagination;
 import com.internship.tmontica_admin.security.JwtService;
 import com.internship.tmontica_admin.util.JsonUtil;
 import com.internship.tmontica_admin.util.SaveImageFile;
@@ -73,17 +76,38 @@ public class MenuService {
     }
 
     // 카테고리 별 메뉴 정보 가져오기
-    public List<Menu> getMenusByCategory(String category, int page, int size){
+    public MenuCategoryResp getMenusByCategory(String category, int page, int size){
         checkCategoryName(category);
-        int offset = (page - 1) * size;
-        return menuDao.getMenusByCategory(category, size, offset);
+        // 메뉴 전체 갯수
+        int totalCnt = menuDao.getCategoryMenuCnt(category);
+        log.info("total cnt : {}", totalCnt);
+        // 페이지 객체 생성
+        Pagination pagination = new Pagination();
+        pagination.pageInfo(page, size, totalCnt);
+        log.info("pagination : {}", pagination);
+        List<Menu> menus = menuDao.getMenusByCategory(category, size, pagination.getStartList());
+        log.info("menus size : {}", menus.size());
+        MenuCategoryResp menuCategoryResp = new MenuCategoryResp();
+        menuCategoryResp.setMenus(menus);
+        menuCategoryResp.setPagination(pagination);
 
+        return menuCategoryResp;
     }
 
-    // 사용 가능한 메뉴 정보 가져오기 (전체)
-    public List<Menu> getAllMenus(int page, int size){
-        int offset = (page - 1) * size;
-        return menuDao.getAllMenusByPage(size, offset);
+    // 메뉴 정보 가져오기 (전체)
+    public MenuByPageResp getAllMenus(int page, int size){
+        // 메뉴 전체 갯수
+        int totalCnt = menuDao.getAllMenuCnt();
+        // 페이지 객체 생성
+        Pagination pagination = new Pagination();
+        pagination.pageInfo(page, size, totalCnt);
+        // 페이지에 맞는 메뉴 리스트 가져오기.
+        List<Menu> menus = menuDao.getAllMenusByPage(size, pagination.getStartList());
+
+        MenuByPageResp menuByPageResp = new MenuByPageResp();
+        menuByPageResp.setMenus(menus);
+        menuByPageResp.setPagination(pagination);
+        return menuByPageResp;
 
     }
 
@@ -139,7 +163,7 @@ public class MenuService {
     }
 
     // 메뉴 수정하기
-    public void updateMenu(Menu menu, MultipartFile imgFile){
+    public void updateMenu(Menu menu, List<Integer>optionIds, MultipartFile imgFile){
         if(!existMenu(menu.getId()))
             return;
 
@@ -153,6 +177,11 @@ public class MenuService {
             String img = SaveImageFile.saveImg(imgFile, menu.getNameEng(), location);
             menu.setImgUrl(img);
         }
+
+        // 메뉴 옵션
+        menuDao.deleteMenuOption(menu.getId());
+        for(int optionId : optionIds)
+            menuDao.addMenuOption(menu.getId(), optionId);
 
         menu.setUpdatedDate(new Date());
         menuDao.updateMenu(menu);
@@ -171,6 +200,14 @@ public class MenuService {
     // 메뉴 존재하는지 확인
     public boolean existMenu(int id){
         return (menuDao.getMenuById(id) == null) ? false : true;
+    }
+
+    // 이달의 메뉴 상태 변경
+    public void updateMonthlyMenu(List<Integer> menuIds){
+        for(int id : menuIds){
+            Menu menu = menuDao.getMenuById(id);
+            menuDao.updateMonthlyMenu(id, !menu.isMonthlyMenu());
+        }
     }
 
 

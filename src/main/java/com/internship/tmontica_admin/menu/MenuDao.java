@@ -20,16 +20,19 @@ public interface MenuDao {
     @Insert("INSERT INTO menu_options(menu_id, option_id) VALUES (#{menuId}, #{optionId})")
     int addMenuOption(@Param("menuId") int menuId, @Param("optionId") int optionId);
 
+    @Delete("DELETE FROM menu_options WHERE menu_id = #{menuId}")
+    int deleteMenuOption(@Param("menuId") int menuId );
+
     @Select("SELECT * FROM menus WHERE id = #{id}")
     Menu getMenuById(int id);
 
-    @Select("SELECT * FROM menus")
+    @Select("SELECT * FROM menus ORDER BY created_date DESC")
     List<Menu> getAllMenus();
 
-    @Select("SELECT * FROM menus LIMIT #{limit} OFFSET #{offset}")
+    @Select("SELECT * FROM menus  ORDER BY created_date DESC LIMIT #{limit} OFFSET #{offset}")
     List<Menu> getAllMenusByPage(int limit, int offset);
 
-    @Select("SELECT * FROM menus WHERE category_eng = #{category} AND usable = 1 LIMIT #{limit} OFFSET #{offset}")
+    @Select("SELECT * FROM menus WHERE category_eng = #{category} ORDER BY created_date LIMIT #{limit} OFFSET #{offset}")
     List<Menu> getMenusByCategory(String category, int limit, int offset);
 
 
@@ -49,13 +52,19 @@ public interface MenuDao {
     void deleteMenu(int id);
 
 
-    @Update("UPDATE menus SET usable = #{usable} WHERE id = #{id}")
-    void updateMenuUsable(int id, boolean usable);
+    @Update("UPDATE menus SET monthly_menu = #{monthlyMenu} WHERE id = #{id}")
+    void updateMonthlyMenu(int id, boolean monthlyMenu);
 
 
     @Select("SELECT * FROM options INNER JOIN menu_options " +
             "ON menu_options.menu_id = #{id} WHERE menu_options.option_id = options.id")
     List<Option> getOptionsById(int id);
+
+    @Select("SELECT count(*) FROM menus ")
+    int getAllMenuCnt();
+
+    @Select("SELECT count(*) FROM menus WHERE category_eng = #{category}")
+    int getCategoryMenuCnt(String category);
 
 
 }
