@@ -52,13 +52,21 @@ public class OrderController {
 
     /** 주문 내역 검색(관리자) */
     @GetMapping("/history")
-    public ResponseEntity<OrderHistoryResp> getOrderHistory(@RequestParam(value = "searchType", required = true)String searchType,
-                                                            @RequestParam(value = "searchValue", required = true)String searchValue,
-                                                            @RequestParam(value = "startDate", required = true) String startDate,
-                                                            @RequestParam(value = "endDate", required = true)String endDate,
+    public ResponseEntity<OrderHistoryResp> getOrderHistory(@RequestParam(value = "searchType", required = false)String searchType,
+                                                            @RequestParam(value = "searchValue", required = false)String searchValue,
+                                                            @RequestParam(value = "startDate", required = false) String startDate,
+                                                            @RequestParam(value = "endDate", required = false)String endDate,
                                                             @RequestParam(value = "size", required = false)int size,
                                                             @RequestParam(value = "page", required = false)int page){
-       OrderHistoryResp orderHistoryResp = orderService.getOrderHistory(searchType, searchValue,startDate, endDate, size, page);
+        OrderHistoryResp orderHistoryResp = null;
+        if(searchType.equals("") && searchValue.equals("") && startDate.equals("") && endDate.equals("")){
+            // 전체 내역 보내기
+        }else if(searchType.equals("") && searchValue.equals("") && !startDate.equals("") && !endDate.equals("")){
+            // 날짜만 적용
+        }else {
+            // 검색 조건, 날짜 모두 적용
+            orderHistoryResp = orderService.getOrderHistory(searchType, searchValue,startDate, endDate, size, page);
+        }
         return new ResponseEntity<>(orderHistoryResp, HttpStatus.OK);
     }
 }
