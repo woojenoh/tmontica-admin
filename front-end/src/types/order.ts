@@ -59,3 +59,5 @@ export type TOrderStatusEng =
   | "ready"
   | "pickUp"
   | "cancel";
+
+export type TOrderSearchType = "주문자" | "주문번호" | "주문상태" | "결제방법";

@@ -19,12 +19,25 @@ export interface IOrderState {
   currentPage: number;
   pageSize: number;
   pagination: commonTypes.IPagination | null;
+  startDate: string;
+  endDate: string;
+  searchType: string;
+  searchValue: string;
+}
+
+export interface InputState {
+  startDate: string;
+  endDate: string;
+  searchType: string;
+  searchValue: string;
 }
 
 class Order extends React.Component<IOrderProps, IOrderState> {
   componentDidMount() {
     this.handleFetchAll();
   }
+
+  searchTypes = ["주문자", "주문번호", "주문상태", "결제방법"] as orderTypes.TOrderSearchType[];
 
   state = {
     orders: null,
@@ -33,8 +46,24 @@ class Order extends React.Component<IOrderProps, IOrderState> {
     selectedOrderId: null,
     currentPage: 1,
     pageSize: 10,
-    pagination: null
+    pagination: null,
+    startDate: "",
+    endDate: "",
+    searchType: this.searchTypes[0],
+    searchValue: ""
   } as IOrderState;
+
+  handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
+    this.setState({
+      [e.currentTarget.name]: e.currentTarget.value
+    } as { [K in keyof InputState]: InputState[K] });
+  };
+
+  handleSearchTypeChange = (e: React.FormEvent<HTMLSelectElement>) => {
+    this.setState({
+      searchType: e.currentTarget.value as orderTypes.TOrderSearchType
+    });
+  };
 
   handleFetchAll = () => {
     axios
@@ -110,8 +139,25 @@ class Order extends React.Component<IOrderProps, IOrderState> {
   };
 
   render() {
-    const { orders, isModalOpen, orderDetail, pagination } = this.state;
-    const { handleFetchAll, handleModalOpen, handleModalClose, handleSelectPage } = this;
+    const {
+      orders,
+      isModalOpen,
+      orderDetail,
+      pagination,
+      startDate,
+      endDate,
+      searchType,
+      searchValue
+    } = this.state;
+    const {
+      handleFetchAll,
+      handleModalOpen,
+      handleModalClose,
+      handleSelectPage,
+      handleInputChange,
+      handleSearchTypeChange,
+      searchTypes
+    } = this;
 
     return (
       <>
@@ -129,20 +175,45 @@ class Order extends React.Component<IOrderProps, IOrderState> {
                 </div>
                 <form className="order-search text-right">
                   <div className="order-period d-flex mb-2">
-                    <input type="date" className="form-control mr-2" required />
-                    <input type="date" className="form-control" required />
+                    <input
+                      type="date"
+                      className="form-control mr-2"
+                      name="startDate"
+                      value={startDate}
+                      onChange={e => handleInputChange(e)}
+                      required
+                    />
+                    <input
+                      type="date"
+                      className="form-control"
+                      name="endDate"
+                      value={endDate}
+                      onChange={e => handleInputChange(e)}
+                      required
+                    />
                   </div>
                   <div className="order-search d-flex">
-                    <select className="custom-select mr-2 w-25" required>
-                      <option value="주문자">주문자</option>
-                      <option value="주문번호">주문번호</option>
-                      <option value="주문상태">주문상태</option>
-                      <option value="결제방법">결제방법</option>
+                    <select
+                      className="custom-select mr-2 w-25"
+                      value={searchType}
+                      onChange={e => handleSearchTypeChange(e)}
+                      required
+                    >
+                      {searchTypes.map((s: string, index: number) => {
+                        return (
+                          <option key={index} value={s}>
+                            {s}
+                          </option>
+                        );
+                      })}
                     </select>
                     <input
                       type="text"
                       className="form-control mr-2 w-50"
                       placeholder="검색할 내용"
+                      name="searchValue"
+                      value={searchValue}
+                      onChange={e => handleInputChange(e)}
                       required
                     />
                     <input type="submit" value="검색" className="btn btn-primary w-25" />
