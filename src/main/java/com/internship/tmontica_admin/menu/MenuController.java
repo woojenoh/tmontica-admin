@@ -1,8 +1,6 @@
 package com.internship.tmontica_admin.menu;
 
 
-import com.internship.tmontica_admin.menu.exception.MenuException;
-import com.internship.tmontica_admin.menu.exception.MenuExceptionType;
 import com.internship.tmontica_admin.menu.exception.MenuValidException;
 import com.internship.tmontica_admin.menu.model.request.MenuMonthlyUpdateReq;
 import com.internship.tmontica_admin.menu.model.request.MenuReq;
@@ -85,7 +83,7 @@ public class MenuController {
         MenuDetailResp menuDetailResp = menuService.getMenuDetailById(menuId);
         // 메뉴가 없으면 no content
         if(menuDetailResp == null) {
-            throw new MenuException(MenuExceptionType.MENU_NO_CONTENT_EXCEPTION);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(menuDetailResp, HttpStatus.OK);
     }
@@ -120,9 +118,8 @@ public class MenuController {
         menu.setId(menuUpdateReq.getMenuId());
         modelMapper.map(menuUpdateReq, menu);
 
-        menuService.updateMenu(menu, menuUpdateReq.getOptionIds(), menuUpdateReq.getImgFile());
-
-        return new ResponseEntity(HttpStatus.OK);
+        int result = menuService.updateMenu(menu, menuUpdateReq.getOptionIds(), menuUpdateReq.getImgFile());
+        return new ResponseEntity(result < 1 ? HttpStatus.BAD_REQUEST : HttpStatus.OK);
     }
 
     /** 메뉴 삭제하기 **/
