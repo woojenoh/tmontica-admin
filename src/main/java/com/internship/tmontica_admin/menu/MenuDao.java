@@ -43,13 +43,13 @@ public interface MenuDao {
             "discount_rate = #{discountRate}, stock = #{stock}, updated_date = #{updatedDate}," +
             "start_date = #{startDate}, end_Date = #{endDate},"+
             "updater_id = #{updaterId} WHERE id = #{id}")
-    void updateMenu(Menu menu);
+    int updateMenu(Menu menu);
 
     @Update("UPDATE menus SET stock = #{stock} WHERE id = #{id}")
     void updateMenuStock(int id, int stock);
 
     @Delete("DELETE FROM menus WHERE id = #{id}")
-    void deleteMenu(int id);
+    int deleteMenu(int id);
 
 
     @Update("UPDATE menus SET monthly_menu = #{monthlyMenu} WHERE id = #{id}")
