@@ -92,7 +92,8 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
       const optionIds = res.data.option.map((o: { id: number }) => o.id);
       this.setState({
         ...res.data,
-        optionIds: new Set(optionIds)
+        optionIds: new Set(optionIds),
+        imgFile: ""
       });
     } catch (err) {
       alert(err);
