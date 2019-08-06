@@ -1,5 +1,6 @@
 package com.internship.tmontica_admin.statistic.output;
 
+import com.internship.tmontica_admin.statistic.datatype.AgeGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -16,7 +16,7 @@ public class StatisticController {
     @GetMapping
     public ResponseEntity<String> signIn(@RequestParam("test")String test) {
 
-        statisticService.makeData();
+        statisticService.makeTotalSalesByAgeGroupData();
         return new ResponseEntity<>("test", HttpStatus.OK);
     }
 }
