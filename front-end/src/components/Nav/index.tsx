@@ -31,6 +31,12 @@ export default class Nav extends Component<Props, State> {
               </Link>
             </li>
             <li className="nav-item">
+              <Link to="/statistics" className="nav-link">
+                <i className="far fa-chart-bar feather" />
+                <h5>통계</h5>
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link to="/" className="nav-link">
                 <i className="far fa-flag feather" />
                 <h5>배너 관리</h5>
@@ -40,12 +46,6 @@ export default class Nav extends Component<Props, State> {
               <Link to="/" className="nav-link">
                 <i className="fas fa-user feather" />
                 <h5>사용자 관리</h5>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/" className="nav-link">
-                <i className="far fa-chart-bar feather" />
-                <h5>통계</h5>
               </Link>
             </li>
           </ul>
