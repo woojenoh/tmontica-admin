@@ -5,13 +5,17 @@
 #menuModal {
   // width: 757px;
   // max-width: 1020px;
-  background: hsla(207, 90%, 54%, 0.8);
+  background: #f8fbff;
   padding: 21px;
   // position: fixed;
   // left: calc((100% - 757px) / 2);
   // height: auto;
   // top: calc((100% - 500px) / 2);
   border-radius: 11px;
+
+  form[name="menuForm"] {
+    width: 100%;
+  }
 
   .row {
     margin: 0;
@@ -30,7 +34,8 @@
     margin-bottom: 0;
   }
 
-  .modal-content {
+  .content-inner-wrap {
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
     background: none;
@@ -50,10 +55,12 @@
 
   .menu-image {
     width: 230px;
+    border: 1px solid #6c757d;
+    box-sizing: border-box;
   }
 
   .input-group-wrap {
-    width: 430px;
+    width: 478px;
   }
   img {
     width: 100%;
@@ -92,13 +99,31 @@
   .monthly .input-group {
     width: 68px;
     /* display: flex; */
-    /* justify-content: space-between; */
     margin-right: 17px;
     line-height: 1.15;
   }
 
+  .period .form-control {
+    justify-content: space-around;
+
+    input {
+      text-align: center;
+      font-weight: 300;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 0.3rem;
+      outline: 0;
+    }
+  }
+
   .monthly .input-group input[type="radio"] {
     margin-right: 9px;
+  }
+
+  .options {
+    .form-control {
+      font-size: 14px;
+      height: 38px;
+    }
   }
 
   .left-wrap .reg-image__button {

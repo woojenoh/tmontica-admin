@@ -146,7 +146,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
           }}
         >
           <Modal.Body>
-            <div className="modal-content">
+            <div className="content-inner-wrap">
               <div className="input-group-wrap">
                 <div className="input-group name">
                   <div className="input-group-prepend">
@@ -357,7 +357,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                   </div>
                 </div>
 
-                <div className="input-group monthly">
+                <div className="input-group period">
                   <div className="input-group-prepend">
                     <span className="input-group-text">기간</span>
                   </div>
@@ -399,7 +399,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                       <span className="input-group-text">옵션</span>
                     </div>
                     <div className="form-control">
-                      <div className="input-group align-items-center pr-1">
+                      <div className="input-group align-items-center">
                         <input
                           name="optionIds[]"
                           value="1"
@@ -420,7 +420,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                         />
                         <label className="option-name m-0">HOT</label>
                       </div>
-                      <div className="input-group align-items-center pr-1">
+                      <div className="input-group align-items-center">
                         <input
                           name="optionIds[]"
                           value="2"
@@ -588,7 +588,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
             <div className="modal-footer">
               <input
                 type="submit"
-                className="reg-menu__button btn btn-primary"
+                className="reg-menu__button btn btn-outline-primary"
                 value={regName}
                 onClick={e => {
                   e.preventDefault();
@@ -659,7 +659,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
               {!isReg ? (
                 <input
                   type="submit"
-                  className="reg-menu__button btn btn-primary"
+                  className="reg-menu__button btn btn-outline-primary"
                   value="삭제"
                   onClick={e => {
                     e.preventDefault();

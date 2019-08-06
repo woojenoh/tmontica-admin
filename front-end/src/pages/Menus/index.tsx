@@ -144,10 +144,10 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
           <main id="menus" className="col-md-10">
             <section>
               <div className="content-head d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <button className="btn btn-primary" onClick={handleShowRegModal}>
+                <button className="btn btn-outline-primary mr-1" onClick={handleShowRegModal}>
                   메뉴 추가
                 </button>
-                <button className="btn btn-primary">이달의 메뉴 보기</button>
+                <button className="btn btn-outline-primary">이달의 메뉴 보기</button>
               </div>
               <Table striped size="sm" className="content-table">
                 <thead>
