@@ -2,6 +2,7 @@ package com.internship.tmontica_admin.statistic;
 
 import com.internship.tmontica_admin.order.Order;
 import com.internship.tmontica_admin.order.OrderDao;
+import com.internship.tmontica_admin.order.OrderDetail;
 import com.internship.tmontica_admin.statistic.datatype.AgeGroup;
 import com.internship.tmontica_admin.user.User;
 import com.internship.tmontica_admin.user.UserDao;
@@ -21,8 +22,8 @@ public class StatisticService {
 
     public void makeTotalSalesByAgeGroupData(){
 
-        // 전체 주문 리스트
-        List<Order> todayOrderList = orderDao.getTodayAllOrders();
+        // 전체 주문 리스트중 실제 매출된 내역
+        List<Order> todayOrderList = orderDao.getTodayAllOrders().stream().filter(Order::isRealSales).collect(Collectors.toList());
         // 유저별 총 구매액
         Map<String, Integer> totalPriceByUser = todayOrderList.stream()
                 .collect(Collectors.groupingBy(Order::getUserId, Collectors.summingInt(Order::getTotalPrice)));
@@ -39,8 +40,10 @@ public class StatisticService {
 
     public void makeTotalSalesByMenu(){
 
-        // 전체 주문 리스트
-        List<Order> todayOrderList = orderDao.getTodayAllOrders();
+        // 전체 상세 주문 리스트
+        List<OrderDetail> todayOrderDetailList = orderDao.getTodayOrderDetails();
+        todayOrderDetailList.forEach(System.out::println);
+
 
     }
 
