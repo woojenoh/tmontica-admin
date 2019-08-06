@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,19 +37,23 @@ public class OrderService {
         // orderId 리스트 가져오기
         List<Integer> orderIds = orderStatusReq.getOrderIds();
         for (int orderId : orderIds) {
-            // orders 테이블에서 status 수정
-            orderDao.updateOrderStatus(orderId, orderStatusReq.getStatus());
-            // order_status_log 테이블에도 로그 추가
-            OrderStatusLog orderStatusLog = new OrderStatusLog(orderStatusReq.getStatus(), userId, orderId);
-            orderDao.addOrderStatusLog(orderStatusLog);
-
+            //로그중에 픽업완료인 애의 리스트
+            List<OrderStatusLogResp> orderStatusLogList = orderDao.getOrderStatusLogByOrderId(orderId).stream()
+                    .filter(OrderStatusLogResp::isPickUp)
+                    .collect(Collectors.toList());
             // "픽업완료" 상태로 바뀌면 포인트 적립
-            if(orderStatusReq.getStatus().equals(OrderStatusType.PICK_UP.getStatus())){
+            if(orderStatusLogList.isEmpty()&&orderStatusReq.getStatus().equals(OrderStatusType.PICK_UP.getStatus())){
                 Order order = orderDao.getOrderByOrderId(orderId);
                 Point point = new Point(order.getUserId(), PointLogType.GET_POINT.getType(),
                         String.valueOf((int)(order.getTotalPrice()*(RESERVE_RATE)/100)), "결제 적립금 적립.");
                 pointService.updateUserPoint(point);
             }
+
+            // orders 테이블에서 status 수정
+            orderDao.updateOrderStatus(orderId, orderStatusReq.getStatus());
+            // order_status_log 테이블에도 로그 추가
+            OrderStatusLog orderStatusLog = new OrderStatusLog(orderStatusReq.getStatus(), userId, orderId);
+            orderDao.addOrderStatusLog(orderStatusLog);
         }
     }
 
