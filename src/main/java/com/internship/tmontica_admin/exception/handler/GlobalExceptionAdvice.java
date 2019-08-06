@@ -9,6 +9,7 @@ import com.internship.tmontica_admin.menu.exception.SaveImgException;
 import com.internship.tmontica_admin.order.exception.OrderSearchTypeException;
 import com.internship.tmontica_admin.order.exception.OrderValidException;
 import com.internship.tmontica_admin.security.exception.UnauthorizedException;
+import com.internship.tmontica_admin.statistic.exception.StatisticException;
 import com.internship.tmontica_admin.user.exception.UserException;
 import com.internship.tmontica_admin.user.exception.UserValidException;
 import org.slf4j.Logger;
@@ -45,6 +46,13 @@ public class GlobalExceptionAdvice {
         log.debug("UserExceptionMessage : {}", e.getMessage());
         return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getMessage()), e.getUserExceptionType().getResponseType());
     }
+
+    // 통계
+     @ExceptionHandler(StatisticException.class)
+     public ResponseEntity<TmonTicaExceptionFormat> handleStatisticException(StatisticException  e){
+        log.debug("StatisticExceptionMessage : {}", e.getMessage());
+        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getLocalizedMessage(), e.getMessage()), e.getStatisticExceptionType().getResponseType());
+     }
 
     // 오더
     @ExceptionHandler(OrderValidException.class)
