@@ -2,7 +2,6 @@ package com.internship.tmontica_admin.security;
 
 import com.internship.tmontica_admin.security.exception.UnauthorizedException;
 import com.internship.tmontica_admin.user.AdminRole;
-import com.internship.tmontica_admin.user.UserService;
 import com.internship.tmontica_admin.user.model.response.UserTokenInfoDTO;
 import com.internship.tmontica_admin.util.JsonUtil;
 import com.internship.tmontica_admin.util.UserConfigValueName;
@@ -69,9 +68,15 @@ public class JwtServiceImpl implements JwtService{
 
         String jwtToken = request.getHeader(UserConfigValueName.JWT_TOKEN_HEADER_KEY);
 
-        Jws<Claims> jws = Jwts.parser()
-                .setSigningKey(KEY)
-                .parseClaimsJws(jwtToken);
+        Jws<Claims> jws;
+
+        try{
+            jws = Jwts.parser()
+                    .setSigningKey(KEY)
+                    .parseClaimsJws(jwtToken);
+        } catch (JwtException e) {
+            throw new UnauthorizedException();
+        }
 
         return jws.getBody().get(key, String.class);
     }
