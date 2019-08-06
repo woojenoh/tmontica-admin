@@ -4,6 +4,7 @@ import com.internship.tmontica_admin.order.exception.OrderExceptionType;
 import com.internship.tmontica_admin.order.exception.OrderValidException;
 import com.internship.tmontica_admin.order.model.request.OrderStatusReq;
 import com.internship.tmontica_admin.order.model.response.OrderDetailResp;
+import com.internship.tmontica_admin.order.model.response.OrderHistoryResp;
 import com.internship.tmontica_admin.order.model.response.OrderResp;
 import com.internship.tmontica_admin.order.model.response.OrdersByStatusResp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,13 +52,14 @@ public class OrderController {
 
     /** 주문 내역 검색(관리자) */
     @GetMapping("/history")
-    public ResponseEntity<Map<String, List<OrderResp>>> getOrderHistory(@RequestParam(value = "searchType", required = true)String searchType,
-                                                                      @RequestParam(value = "searchValue", required = true)String searchValue,
-                                                                      @RequestParam(value = "startDate", required = true) String startDate,
-                                                                      @RequestParam(value = "endDate", required = true)String endDate,
-                                                                      @RequestParam(value = "size", required = false)int size,
-                                                                      @RequestParam(value = "page", required = false)int page){
-        Map<String, List<OrderResp>> map = orderService.getOrderHistory(searchType, searchValue,startDate, endDate);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+    public ResponseEntity<OrderHistoryResp> getOrderHistory(@RequestParam(value = "searchType", required = false)String searchType,
+                                                            @RequestParam(value = "searchValue", required = false)String searchValue,
+                                                            @RequestParam(value = "startDate", required = false) String startDate,
+                                                            @RequestParam(value = "endDate", required = false)String endDate,
+                                                            @RequestParam(value = "size", required = false)int size,
+                                                            @RequestParam(value = "page", required = false)int page){
+
+        OrderHistoryResp orderHistoryResp = orderService.getOrderHistory(searchType, searchValue,startDate, endDate, size, page);
+        return new ResponseEntity<>(orderHistoryResp, HttpStatus.OK);
     }
 }

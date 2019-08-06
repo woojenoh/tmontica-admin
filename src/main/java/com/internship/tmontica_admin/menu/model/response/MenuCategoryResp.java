@@ -1,5 +1,7 @@
 package com.internship.tmontica_admin.menu.model.response;
 
+import com.internship.tmontica_admin.menu.Menu;
+import com.internship.tmontica_admin.paging.Pagination;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,6 @@ import java.util.List;
 public class MenuCategoryResp {
     private String categoryKo;
     private String categoryEng;
-    private int size;
-    private int page;
-    private List<MenuSimpleResp> menus = new ArrayList<>();
+    private Pagination pagination;
+    private List<Menu> menus = new ArrayList<>();
 }

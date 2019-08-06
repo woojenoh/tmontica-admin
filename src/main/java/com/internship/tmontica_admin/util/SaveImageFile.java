@@ -1,7 +1,7 @@
 package com.internship.tmontica_admin.util;
 
 import com.internship.tmontica_admin.menu.exception.SaveImgException;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -11,9 +11,9 @@ import java.util.Calendar;
 import java.util.Optional;
 import java.util.UUID;
 
-@Slf4j
+@Component
 public class SaveImageFile {
-    public static String saveImg(MultipartFile imgFile, String name, String location){
+    public String saveImg(MultipartFile imgFile, String name, String location){
         // file url : imagefile/년/월/일/파일이름
         StringBuilder sb = new StringBuilder("imagefile/");
         Calendar calendar = Calendar.getInstance();
@@ -30,11 +30,8 @@ public class SaveImageFile {
                 .orElseThrow(() -> new SaveImgException());
         sb.append(".").append(extension);
 
-        log.info("img type : {}", extension);
-
         String dir = sb.toString();
-        log.info("location : {}" , location);
-        log.info("img dir : {}", dir);
+
         try(FileOutputStream fos = new FileOutputStream(location.concat(dir));
             InputStream in = imgFile.getInputStream()){
             byte[] buffer = new byte[1024];
@@ -50,7 +47,7 @@ public class SaveImageFile {
     }
 
     // 파일 이름에서 확장자 가져오기
-    public static Optional<String> getExtensionByStringHandling(String filename) {
+    public Optional<String> getExtensionByStringHandling(String filename) {
         return Optional.ofNullable(filename)
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
