@@ -35,23 +35,24 @@ public interface OrderDao {
     @Select("select status, editor_id, modified_date from order_status_logs where order_id=#{orderId}")
     List<OrderStatusLogResp> getOrderStatusLogByOrderId(int orderId);
 
+    // order Status로 오늘의 주문현황 개수 가져오기
+    @Select("select count(*) from orders where status = #{status} and order_date > curdate()")
+    int getTodayOrderCntByStatus(String status);
+
     // order Status로 오늘의 주문현황 가져오기(페이징)
     @Select("select * from orders where status = #{status} and order_date > curdate() " +
             "limit #{startList}, #{size}")
     List<Order> getTodayOrderByStatus(String status, int startList, int size);
+
+    // 오늘의 order 정보 전체 개수 가져오기
+    @Select("select count(*) from orders where order_date > curdate()")
+    int getTodayOrderCnt();
 
     // 오늘의 order 정보 가져오기(페이징)
     @Select("select * from orders where order_date > curdate() " +
             "limit #{startList}, #{size}")
     List<Order> getTodayOrders(int startList, int size);
 
-    // order Status로 오늘의 주문현황 개수 가져오기
-    @Select("select count(*) from orders where status = #{status} and order_date > curdate()")
-    int getTodayOrderCntByStatus(String status);
-
-    // 오늘의 order 정보 전체 개수 가져오기
-    @Select("select count(*) from orders where order_date > curdate()")
-    int getTodayOrderCnt();
 
     // 오늘의 order 상태별 개수 가져오기
     @Select("select count(if(status=\"미결제\", status, null)) beforePayment, count(if(status=\"결제완료\", status, null)) afterPayment, " +
@@ -61,6 +62,12 @@ public interface OrderDao {
             "where order_date > curdate()")
     StatusCountResp getTodayStatusCount();
 
+    // 검색 조건과 날짜가 적용된 주문내역 전체 개수 가져오기
+    @Select("select count(*) from orders " +
+            "where ${searchType} like '%${searchValue}%' " +
+            "   and order_date between date(#{startDate}) and date(#{endDate})+1")
+    int getSearchOrderCntBySearchVal(String searchType, String searchValue, String startDate, String endDate);
+
     // 검색 조건과 날짜가 적용된 주문내역 검색하기(페이징)
     @Select("select * from orders " +
             "where ${searchType} like '%${searchValue}%' " +
@@ -68,11 +75,10 @@ public interface OrderDao {
             "limit #{startList}, #{size}")
     List<Order> searchOrderBySearchVal(String searchType, String searchValue, String startDate, String endDate, int startList, int size);
 
-    // 검색 조건과 날짜가 적용된 주문내역 전체 개수 가져오기
+    // 날짜 적용된 주문 내역 개수 가져오기
     @Select("select count(*) from orders " +
-            "where ${searchType} like '%${searchValue}%' " +
-            "   and order_date between date(#{startDate}) and date(#{endDate})+1")
-    int getSearchOrderCntBySearchVal(String searchType, String searchValue, String startDate, String endDate);
+            "where order_date between date(#{startDate}) and date(#{endDate})+1 ")
+    int getSearchOrderCntByDate(String startDate, String endDate);
 
     // 날짜 적용된 주문 내역 가져오기 (페이징)
     @Select("select * from orders " +
@@ -80,29 +86,24 @@ public interface OrderDao {
             "limit #{startList}, #{size}")
     List<Order> searchOrderByDate(String startDate, String endDate, int startList, int size);
 
+    // 전체 주문 내역 개수 가져오기
+    @Select("select count(*) from orders ")
+    int getSearchAllOrderCnt();
+
     // 전체 주문 내역 가져오기 (페이징)
     @Select("select * from orders " +
             "limit #{startList}, #{size}")
     List<Order> searchAllOrder(int startList, int size);
-
-    // 날짜 적용된 주문 내역 개수 가져오기
-    @Select("select count(*) from orders " +
-            "where order_date between date(#{startDate}) and date(#{endDate})+1 ")
-    int getSearchOrderCntByDate(String startDate, String endDate);
-
-    // 전체 주문 내역 개수 가져오기
-    @Select("select count(*) from orders ")
-    int getSearchAllOrderCnt();
 
     // 오늘의 order 정보 모두 가져오기
     @Select("select * from orders where order_date > curdate() ")
     List<Order> getTodayAllOrders();
 
     // 오늘의 order Detail 정보 모두 가져오기
-    @Select("select A.id, A.order_id, A.option, A.price, A.quantity, A.menu_id  " +
-            "from orders inner join order_details A  " +
-            "   on orders.id = A.order_id " +
-            "where order_date > curdate()")
+    @Select("select A.id, A.order_id, A.option, A.price, A.quantity, A.menu_id " +
+            "from orders B inner join order_details A " +
+            "   on B.id = A.order_id " +
+            "where order_date > curdate() and B.status=\"픽업완료\"")
     List<OrderDetail> getTodayOrderDetails();
 
 }
