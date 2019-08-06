@@ -55,6 +55,12 @@ const initState = {
   imgUrl: ""
 };
 
+const categoryDict: { [index: string]: string } = {
+  ade: "에이드",
+  coffee: "커피",
+  bread: "빵"
+};
+
 export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   implements Indexable {
   [key: string]: any;
@@ -620,7 +626,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                   data.append("nameEng", this.state.nameEng);
                   data.append("description", this.state.description);
                   data.append("monthlyMenu", `${this.state.monthlyMenu}`);
-                  data.append("categoryKo", this.state.categoryKo);
+                  data.append("categoryKo", categoryDict[this.state.categoryEng]);
                   data.append("categoryEng", this.state.categoryEng);
                   data.append("productPrice", this.state.productPrice.toString());
                   data.append("sellPrice", this.state.sellPrice.toString());
