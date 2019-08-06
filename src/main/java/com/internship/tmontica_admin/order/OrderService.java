@@ -8,6 +8,8 @@ import com.internship.tmontica_admin.paging.Pagination;
 import com.internship.tmontica_admin.point.Point;
 import com.internship.tmontica_admin.point.PointLogType;
 import com.internship.tmontica_admin.point.PointService;
+import com.internship.tmontica_admin.security.JwtServiceImpl;
+import com.internship.tmontica_admin.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,18 +25,14 @@ public class OrderService {
     private final OptionDao optionDao;
     private static final double RESERVE_RATE = 10.0;
     private final PointService pointService;
+    private final JwtServiceImpl jwtService;
 
     // 주문 상태 변경 api(관리자)
     @Transactional
     public void updateOrderStatusApi(OrderStatusReq orderStatusReq){
-//        String userId = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"),"id");
-//        // 관리자 권한 검사
-//        String role = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"),"role");
-//        if(!role.equals(UserRole.ADMIN.toString())){
-//            throw new UserException(UserExceptionType.INVALID_USER_ROLE_EXCEPTION);
-//        }
-        // TODO: 관리자 아이디 받아오기
-        String userId = "admin";
+        // 관리자의 아이디 가져오기
+        String userId = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"),"id");
+
         // orderId 리스트 가져오기
         List<Integer> orderIds = orderStatusReq.getOrderIds();
         for (int orderId : orderIds) {
@@ -57,12 +55,6 @@ public class OrderService {
 
     // 오늘의 상태별 주문 현황 가져오기 api(관리자)
     public OrdersByStatusResp getTodayOrderByStatusApi(String status, int size, int page) {
-//        // 관리자 권한 검사
-//        String role = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"),"role");
-//        if(!role.equals(UserRole.ADMIN.toString())){
-//            throw new UserException(UserExceptionType.INVALID_USER_ROLE_EXCEPTION);
-//        }
-
 
         List<OrderResp> orderResps = new ArrayList<>();
         // 오늘의 상태별 주문 개수 가져오기
@@ -109,11 +101,6 @@ public class OrderService {
 
     // 주문 상세정보 가져오기 api(관리자)
     public OrderDetailResp getOrderDetailApi(int orderId){
-//        // 관리자 권한 검사
-//        String role = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"),"role");
-//        if(!role.equals(UserRole.ADMIN.toString())){
-//            throw new UserException(UserExceptionType.INVALID_USER_ROLE_EXCEPTION);
-//        }
         // orderId로 주문 정보 1개 가져오기
         Order order = orderDao.getOrderByOrderId(orderId);
         // orderId로 주문 상세 정보 리스트 가져오기
@@ -139,7 +126,7 @@ public class OrderService {
 
         // 파라미터의 유무에 따라서 검색 하기
         if(searchType.equals("") && searchValue.equals("") && startDate.equals("") && endDate.equals("")){
-            // 전체 내역 가져오기
+            // (조건 없을때)전체 내역 가져오기
             totalCnt = orderDao.getSearchAllOrderCnt(); // 페이징을 위한 전체 데이터 개수
             pagination.pageInfo(page, size, totalCnt);// 페이지네이션 객체 생성
 

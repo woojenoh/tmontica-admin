@@ -2,6 +2,8 @@ package com.internship.tmontica_admin.user;
 
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 
 @Mapper
 public interface UserDao {
@@ -12,4 +14,6 @@ public interface UserDao {
     int updateUserPoint(int point, String id);
     @Select("SELECT point FROM users WHERE id = #{id}")
     int getUserPointByUserId(String id);
+    @Select("SELECT * FROM users")
+    List<User> getAllUser();
 }

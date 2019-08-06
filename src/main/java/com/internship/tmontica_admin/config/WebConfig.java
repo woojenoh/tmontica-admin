@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
             "/webjars/springfox-swagger-ui/**" , "/", "/csrf",
             "/api/orders/**", "/api/carts/**",
             "/api/users/signin", "/api/menus/**", "/api/options/**","/swagger*/**", "/resources/**" , "/images/**"
-            , "/**/*.jpg", "/**/*.js", "/**/*.css", "/error/**"
+            , "/**/*.jpg", "/**/*.js", "/**/*.css", "/error/**", "/api/statistic**", "/webjars/springfox-swagger-ui/**", "/csrf"
     };
 
     @Override

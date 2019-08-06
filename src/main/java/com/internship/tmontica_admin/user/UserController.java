@@ -31,7 +31,4 @@ public class UserController {
         AdminSignInRespDTO adminSignInRespDTO = userService.makeJwtToken(user);
         return new ResponseEntity<>(adminSignInRespDTO, HttpStatus.OK);
     }
-
-
-
 }
