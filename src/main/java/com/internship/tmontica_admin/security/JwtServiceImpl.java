@@ -62,6 +62,7 @@ public class JwtServiceImpl implements JwtService{
 
         return false;
     }
+
     public String getUserInfo(String key){
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
