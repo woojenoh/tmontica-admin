@@ -73,7 +73,7 @@ public class BannerController {
     }
 
     // 배너 삭제
-    @DeleteMapping("{/id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity deleteBanner(@PathVariable int id){
         bannerService.deleteBanner(id);
         return new ResponseEntity(HttpStatus.OK);

@@ -150,5 +150,14 @@ public class MenuServiceTest {
 
     @Test
     public void 메뉴_삭제하기(){
+        //given
+        given(menuDao.deleteMenu(10)).willReturn(1);
+
+        //when
+        menuService.deleteMenu(10);
+
+        //then
+        verify(menuDao, atLeastOnce()).deleteMenuOption(10);
+
     }
 }

@@ -20,8 +20,8 @@ public class BannerValidator implements Validator {
         BannerReq bannerReq = (BannerReq) o;
 
         // 기한 체크
-        Date startDate = bannerReq.getStart_date();
-        Date endDate = bannerReq.getEnd_date();
+        Date startDate = bannerReq.getStartDate();
+        Date endDate = bannerReq.getEndDate();
         if(startDate.after(endDate) || endDate.before(startDate)){
             errors.rejectValue("startDate", "wrongValue", "기한이 올바르지 않습니다.");
             errors.rejectValue("endDate", "wrongValue", "기한이 올바르지 않습니다.");

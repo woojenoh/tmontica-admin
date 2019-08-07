@@ -67,6 +67,10 @@ public class MenuService {
         // 메뉴의 옵션 정보 가져오기
         List<Option> options = menuDao.getOptionsById(id);
 
+        if(menu == null){
+            throw new MenuException(MenuExceptionType.MENU_NOT_EXIST_EXCEPTION);
+        }
+
         MenuDetailResp menuDetailResp = modelMapper.map(menu, MenuDetailResp.class);
         List<MenuOptionResp> menuOptions = modelMapper.map(options, new TypeToken<List<MenuOptionResp>>(){}.getType());
 

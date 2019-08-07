@@ -28,11 +28,11 @@ public class BannerUpdateReq {
 
     @NotNull(message = "시작일은 필수입니다.")
     @DateTimeFormat(pattern = "yyyy.MM.dd HH:mm:ss")
-    private Date start_date;
+    private Date startDate;
 
     @NotNull(message = "종료일은 필수입니다.")
     @DateTimeFormat(pattern = "yyyy.MM.dd HH:mm:ss")
-    private Date end_date;
+    private Date endDate;
 
     @NotNull(message = "순서는 필수입니다.")
     @Min(1) @Max(10)
