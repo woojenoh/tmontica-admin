@@ -1,7 +1,7 @@
 import React, { ChangeEvent, PureComponent, FormEvent, BaseSyntheticEvent } from "react";
 import { Modal } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import { handleChange, formatDate, setImagePreview, withJWT } from "../../utils";
+import { setImagePreview, withJWT } from "../../utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
 import { API_URL, BASE_URL } from "../../api/common";
@@ -9,6 +9,7 @@ import axios from "axios";
 import { Indexable } from "../../types/index";
 import { addMenu, updateMenu, getMenuById } from "../../api/menu";
 import { CommonError } from "../../api/CommonError";
+import moment from "moment";
 
 interface IMenuModalProps {
   show: boolean;
@@ -37,6 +38,8 @@ interface IMenuModalState extends Indexable {
   imgUrl: string | ArrayBuffer | null;
 }
 
+const dateFormat = "YYYY.MM.DD HH:mm:ss";
+
 const initState = {
   nameKo: "",
   nameEng: "",
@@ -50,8 +53,8 @@ const initState = {
   stock: 0,
   optionIds: new Set([]) as Set<number>,
   usable: false,
-  startDate: formatDate(new Date()),
-  endDate: formatDate(new Date()),
+  startDate: moment().format(dateFormat),
+  endDate: moment().format(dateFormat),
   imgFile: "",
   imgUrl: ""
 };
@@ -67,7 +70,6 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   [key: string]: any;
   fileInput: React.RefObject<HTMLInputElement> = React.createRef();
   form?: HTMLFormElement;
-  regName: string;
 
   state = {
     ...initState
@@ -76,8 +78,11 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   constructor(props: IMenuModalProps, state: IMenuModalState) {
     super(props, state);
 
-    this.regName = this.props.isReg ? "등록" : "수정";
     this.clickFileInput = this.clickFileInput.bind(this);
+  }
+
+  getRegName() {
+    return this.props.isReg ? "등록" : "수정";
   }
 
   async addMenu(data: FormData) {
@@ -133,7 +138,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
     });
   };
 
-  // 
+  //
 
   // 메뉴 등록/수정
   handleSubmit(e: FormEvent<HTMLInputElement>) {
@@ -145,7 +150,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
     }
     const data = this.getFormData();
 
-    const isConfirm = window.confirm(`${this.regName}하시겠습니까?`);
+    const isConfirm = window.confirm(`${this.getRegName()}하시겠습니까?`);
     if (!isConfirm) return;
 
     if (this.props.isReg) {
@@ -201,8 +206,8 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
       data.append("optionIds", v.toString());
     });
     data.append("usable", `${this.state.usable}`);
-    data.append("startDate", this.state.startDate);
-    data.append("endDate", this.state.endDate);
+    data.append("startDate", moment(this.state.startDate).format(dateFormat));
+    data.append("endDate", moment(this.state.endDate).format(dateFormat));
     if (this.state.imgFile) {
       data.append("imgFile", this.state.imgFile);
     }
@@ -489,10 +494,10 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                   <div className="form-control">
                     <DatePicker
                       selected={new Date(startDate)}
-                      name="ㄹ"
+                      name="startDate"
                       onChange={date =>
                         this.setState({
-                          startDate: formatDate(date)
+                          startDate: moment(date ? date : undefined).format(dateFormat)
                         })
                       }
                       showTimeSelect
@@ -506,7 +511,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                       name="endDate"
                       onChange={date =>
                         this.setState({
-                          endDate: formatDate(date)
+                          endDate: moment(date ? date : undefined).format(dateFormat)
                         })
                       }
                       showTimeSelect
@@ -702,7 +707,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
               <input
                 type="submit"
                 className="reg-menu__button btn btn-outline-primary"
-                value={this.regName}
+                value={this.getRegName()}
                 onClick={this.handleSubmit.bind(this)}
               />
               {!isReg ? (

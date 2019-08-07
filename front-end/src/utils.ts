@@ -33,7 +33,12 @@ function isValidDate(d: Date): boolean {
   return !isNaN(d.getTime());
 }
 export function formatDate(date: any, format?: string): string {
-  var datetime = new Date(date);
+  var datetime;
+  if (date instanceof Date) {
+    datetime = date;
+  } else {
+    datetime = new Date();
+  }
   return isValidDate(datetime)
     ? _formatDatetime(datetime, typeof format === "string" ? format : "yyyy.mm.dd hh:ii:ss")
     : "";
