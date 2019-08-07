@@ -42,11 +42,10 @@ export default class MenuRow extends Component<Props, State> {
           />
         </td>
         <td className="menu__td preview">
-          <img src={`${IMAGE_URL}/${menu.imgUrl}`} />
+          <img src={`${IMAGE_URL}/${menu.imgUrl}`} alt={menu.nameEng} />
         </td>
         <td className="menu__td category">{menu.categoryKo}</td>
         <td className="menu__td name">{menu.nameKo}</td>
-        <td className="menu__td description">{menu.description}</td>
         <td className="menu__td monthly">{menu.monthlyMenu ? "○" : "Ⅹ"}</td>
         <td className="menu__td product-price">{menu.productPrice.toLocaleString()}</td>
         <td className="menu__td discount-rate">{menu.discountRate}</td>

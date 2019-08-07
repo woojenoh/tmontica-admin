@@ -2,16 +2,15 @@ import React, { Component, MouseEvent } from "react";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import { Table } from "react-bootstrap";
-import { handleChange, withJWT } from "../../utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
 import { MenuModal } from "../../components/MenuModal";
-import axios from "axios";
-import { API_URL } from "../../api/common";
 import { IMenus, IMenu } from "../../types/menu";
 import MenuRow from "../../components/MenuRow";
 import Pagination from "../../components/Pagination";
 import { IPagination } from "../../types/common";
+import { getMenuPaging } from "../../api/menu";
+import { CommonError } from "../../api/CommonError";
 
 interface IMenusProps {}
 interface IMenusState {
@@ -108,14 +107,14 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
 
   async getMenus(page: number = 1) {
     try {
-      const res = await axios.get(`${API_URL}/menus?page=${page}`, withJWT());
-      if (res.status === 200) {
-        const { menus, pagination } = res.data;
-        this.setState({
-          menus,
-          pagination
-        });
-      }
+      const data = await getMenuPaging(page);
+      if (data instanceof CommonError) throw data;
+
+      const { menus, pagination } = data;
+      this.setState({
+        menus,
+        pagination
+      });
     } catch (err) {
       console.log(err);
     }
@@ -168,7 +167,6 @@ export default class Menus extends Component<IMenusProps, IMenusState> {
                     <th>미리보기</th>
                     <th>카테고리</th>
                     <th>메뉴명</th>
-                    <th>설명</th>
                     <th>이달의 메뉴</th>
                     <th>상품가</th>
                     <th>할인율</th>

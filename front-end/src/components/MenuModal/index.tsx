@@ -1,4 +1,4 @@
-import React, { ChangeEvent, PureComponent } from "react";
+import React, { ChangeEvent, PureComponent, FormEvent, BaseSyntheticEvent } from "react";
 import { Modal } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { handleChange, formatDate, setImagePreview, withJWT } from "../../utils";
@@ -7,7 +7,8 @@ import "./styles.scss";
 import { API_URL, BASE_URL } from "../../api/common";
 import axios from "axios";
 import { Indexable } from "../../types/index";
-import jwt_decode from "jwt-decode";
+import { addMenu, updateMenu, getMenuById } from "../../api/menu";
+import { CommonError } from "../../api/CommonError";
 
 interface IMenuModalProps {
   show: boolean;
@@ -17,7 +18,7 @@ interface IMenuModalProps {
   getMenus(): void;
 }
 
-interface IMenuModalState {
+interface IMenuModalState extends Indexable {
   nameKo: string;
   nameEng: string;
   description: string;
@@ -66,6 +67,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   [key: string]: any;
   fileInput: React.RefObject<HTMLInputElement> = React.createRef();
   form?: HTMLFormElement;
+  regName: string;
 
   state = {
     ...initState
@@ -74,7 +76,137 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   constructor(props: IMenuModalProps, state: IMenuModalState) {
     super(props, state);
 
+    this.regName = this.props.isReg ? "등록" : "수정";
     this.clickFileInput = this.clickFileInput.bind(this);
+  }
+
+  async addMenu(data: FormData) {
+    try {
+      const res = await addMenu(data);
+      if (res instanceof CommonError) throw res;
+
+      alert("메뉴가 등록되었습니다.");
+      this.setState({ ...initState });
+      this.props.getMenus();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async updateMenu(data: FormData) {
+    try {
+      const res = await updateMenu(data);
+      if (res instanceof CommonError) throw res;
+
+      alert("메뉴가 수정되었습니다.");
+      this.props.getMenus();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // 체크하면 Ture/False 일 때 사용하는 onChange 핸들러
+  handleChangeRadio = (name: string, isTrue: boolean) => (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      this.setState({
+        [name]: isTrue
+      });
+    }
+  };
+
+  // 타겟 value를 state에 넣을 때 사용하는 onChange 핸들러
+  handleChangeValue = (name: string) => (e: BaseSyntheticEvent) => {
+    this.setState({
+      [name]: e.currentTarget.value
+    });
+  };
+
+  //
+  handleChangeProductPrice = (discountRate: number) => (e: BaseSyntheticEvent) => {
+    const numericValue = parseInt(e.target.value.replace(/,/g, ""));
+    const productPrice = !Number.isNaN(numericValue) ? numericValue : 0;
+    this.setState({
+      productPrice,
+      sellPrice: Number(
+        productPrice > 0 ? productPrice * ((100 - discountRate) / 100) : productPrice
+      )
+    });
+  };
+
+  // 
+
+  // 메뉴 등록/수정
+  handleSubmit(e: FormEvent<HTMLInputElement>) {
+    e.preventDefault();
+
+    // 유효성검사
+    if (!this.isValidForm()) {
+      return;
+    }
+    const data = this.getFormData();
+
+    const isConfirm = window.confirm(`${this.regName}하시겠습니까?`);
+    if (!isConfirm) return;
+
+    if (this.props.isReg) {
+      this.addMenu(data);
+    } else {
+      this.updateMenu(data);
+    }
+  }
+
+  isValidForm(): boolean {
+    const { nameKo, nameEng, categoryEng, imgFile } = this.state;
+    const { isReg } = this.props;
+
+    if (!nameKo) {
+      alert("메뉴명을 입력해주세요.");
+      this.nameKo.focus();
+      return false;
+    }
+    if (!nameEng) {
+      alert("영문명을 입력해주세요.");
+      this.nameEng.focus();
+      return false;
+    }
+    if (!categoryEng) {
+      alert("카테고리를 선택해주세요.");
+      this.categoryEng.focus();
+      return false;
+    }
+    if (!imgFile && isReg) {
+      alert("이미지를 등록해주세요.");
+      return false;
+    }
+    return true;
+  }
+
+  getFormData() {
+    const data = new FormData();
+
+    if (!this.props.isReg) {
+      data.append("menuId", `${this.props.menuId}`);
+    }
+    data.append("nameKo", this.state.nameKo);
+    data.append("nameEng", this.state.nameEng);
+    data.append("description", this.state.description);
+    data.append("monthlyMenu", `${this.state.monthlyMenu}`);
+    data.append("categoryKo", categoryDict[this.state.categoryEng]);
+    data.append("categoryEng", this.state.categoryEng);
+    data.append("productPrice", this.state.productPrice.toString());
+    data.append("sellPrice", this.state.sellPrice.toString());
+    data.append("discountRate", this.state.discountRate.toString());
+    data.append("stock", this.state.stock.toString());
+    this.state.optionIds.forEach(v => {
+      data.append("optionIds", v.toString());
+    });
+    data.append("usable", `${this.state.usable}`);
+    data.append("startDate", this.state.startDate);
+    data.append("endDate", this.state.endDate);
+    if (this.state.imgFile) {
+      data.append("imgFile", this.state.imgFile);
+    }
+    return data;
   }
 
   async getMenuById() {
@@ -85,18 +217,22 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
       return;
     }
     try {
-      const res = await axios.get(`${API_URL}/menus/${this.props.menuId}`, {
-        headers: { Authorization: jwt_decode(localStorage.getItem("jwt") || "") }
-      });
+      const data = await getMenuById(this.props.menuId);
+      if (data instanceof CommonError) throw data;
 
-      const optionIds = res.data.option.map((o: { id: number }) => o.id);
-      this.setState({
-        ...res.data,
-        optionIds: new Set(optionIds),
-        imgFile: ""
-      });
-    } catch (err) {
-      alert(err);
+      const optionIds = data.option.map((o: { id: number }) => o.id);
+      this.setState(
+        Object.assign({}, data, {
+          optionIds: new Set(optionIds),
+          imgFile: ""
+        } as IMenuModalState)
+      );
+    } catch (error) {
+      if (error instanceof CommonError) {
+        error.alertMessage();
+      } else {
+        console.dir(error);
+      }
     }
   }
 
@@ -123,14 +259,12 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
 
   render() {
     const { menuId, show, handleClose, isReg, getMenus } = this.props;
-    const regName = isReg ? "등록" : "수정";
 
     const {
       nameKo,
       nameEng,
       description,
       monthlyMenu,
-      categoryKo,
       categoryEng,
       productPrice,
       sellPrice,
@@ -168,7 +302,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                     type="text"
                     className="form-control"
                     placeholder="메뉴명"
-                    onChange={handleChange.bind(this)}
+                    onChange={this.handleChangeValue("nameKo")}
                   />
                 </div>
                 <div className="input-group en-name">
@@ -184,7 +318,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                     type="text"
                     className="form-control"
                     placeholder="영문명"
-                    onChange={handleChange.bind(this)}
+                    onChange={this.handleChangeValue("nameEng")}
                   />
                 </div>
                 <div className="input-group category">
@@ -198,11 +332,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                         this["categoryEng"] = el;
                       }}
                       value={categoryEng}
-                      onChange={e => {
-                        this.setState({
-                          categoryEng: e.target.value
-                        });
-                      }}
+                      onChange={this.handleChangeValue("categoryEng")}
                     >
                       <option value="">카테고리</option>
                       <option value="coffee">커피</option>
@@ -223,7 +353,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                       this["description"] = el;
                     }}
                     value={description}
-                    onChange={handleChange.bind(this)}
+                    onChange={this.handleChangeValue("description")}
                   />
                 </div>
                 <div className="input-group monthly">
@@ -236,13 +366,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                         type="radio"
                         name="monthlyMenu"
                         checked={monthlyMenu ? true : false}
-                        onChange={e => {
-                          if (e.target.checked) {
-                            this.setState({
-                              monthlyMenu: true
-                            });
-                          }
-                        }}
+                        onChange={this.handleChangeRadio("monthlyMenu", true)}
                       />
                       <label className="choice yes">예</label>
                     </div>
@@ -251,13 +375,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                         type="radio"
                         name="monthlyMenu"
                         checked={!monthlyMenu ? true : false}
-                        onChange={e => {
-                          if (e.target.checked) {
-                            this.setState({
-                              monthlyMenu: false
-                            });
-                          }
-                        }}
+                        onChange={this.handleChangeRadio("monthlyMenu", false)}
                       />
                       <label className="choice no">아니오</label>
                     </div>
@@ -278,7 +396,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                       placeholder="0,000(원)"
                       value={Number(productPrice).toLocaleString()}
                       onChange={e => {
-                        const numericValue = parseInt(e.target.value.replace(/\,/g, ""));
+                        const numericValue = parseInt(e.target.value.replace(/,/g, ""));
                         const productPrice = !Number.isNaN(numericValue) ? numericValue : 0;
                         this.setState({
                           productPrice,
@@ -354,7 +472,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                       className="form-control"
                       placeholder="0(수량)"
                       onChange={e => {
-                        const numericValue = parseInt(e.target.value.replace(/\,/g, ""));
+                        const numericValue = parseInt(e.target.value.replace(/,/g, ""));
                         const stock = !Number.isNaN(numericValue) ? numericValue : 0;
                         this.setState({
                           stock
@@ -528,13 +646,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                         type="radio"
                         name="usable"
                         checked={usable ? true : false}
-                        onChange={e => {
-                          if (e.target.checked) {
-                            this.setState({
-                              usable: true
-                            });
-                          }
-                        }}
+                        onChange={this.handleChangeRadio("usable", true)}
                       />
                       <label className="choice yes">사용</label>
                     </div>
@@ -543,13 +655,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                         type="radio"
                         name="usable"
                         checked={!usable ? true : false}
-                        onChange={e => {
-                          if (e.target.checked) {
-                            this.setState({
-                              usable: false
-                            });
-                          }
-                        }}
+                        onChange={this.handleChangeRadio("usable", false)}
                       />
                       <label className="choice no">미사용</label>
                     </div>
@@ -596,72 +702,8 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
               <input
                 type="submit"
                 className="reg-menu__button btn btn-outline-primary"
-                value={regName}
-                onClick={e => {
-                  e.preventDefault();
-
-                  const data = new FormData();
-                  if (!this.state.nameKo) {
-                    alert("메뉴명을 입력해주세요.");
-                    this.nameKo.focus();
-                    return;
-                  }
-                  if (!this.state.nameEng) {
-                    alert("영문명을 입력해주세요.");
-                    this.nameEng.focus();
-                    return;
-                  }
-                  if (!this.state.categoryEng) {
-                    alert("카테고리를 선택해주세요.");
-                    this.categoryEng.focus();
-                    return;
-                  }
-                  if (!this.state.imgFile && isReg) {
-                    alert("이미지를 등록해주세요.");
-                    return;
-                  }
-                  if (!isReg) {
-                    data.append("menuId", `${this.props.menuId}`);
-                  }
-                  data.append("nameKo", this.state.nameKo);
-                  data.append("nameEng", this.state.nameEng);
-                  data.append("description", this.state.description);
-                  data.append("monthlyMenu", `${this.state.monthlyMenu}`);
-                  data.append("categoryKo", categoryDict[this.state.categoryEng]);
-                  data.append("categoryEng", this.state.categoryEng);
-                  data.append("productPrice", this.state.productPrice.toString());
-                  data.append("sellPrice", this.state.sellPrice.toString());
-                  data.append("discountRate", this.state.discountRate.toString());
-                  data.append("stock", this.state.stock.toString());
-                  this.state.optionIds.forEach(v => {
-                    data.append("optionIds", v.toString());
-                  });
-                  data.append("usable", `${this.state.usable}`);
-                  data.append("startDate", this.state.startDate);
-                  data.append("endDate", this.state.endDate);
-                  if (this.state.imgFile) {
-                    data.append("imgFile", this.state.imgFile);
-                  }
-                  const options = {
-                    headers: { "content-type": "multipart/form-data" }
-                  };
-
-                  const isConfirm = window.confirm(`${regName}하시겠습니까?`);
-                  if (!isConfirm) return;
-
-                  if (isReg) {
-                    axios.post(`${API_URL}/menus`, data, withJWT(options)).then(res => {
-                      alert("메뉴가 등록되었습니다.");
-                      this.setState({ ...initState });
-                      getMenus();
-                    });
-                  } else {
-                    axios.put(`${API_URL}/menus`, data, withJWT(options)).then(res => {
-                      alert("메뉴가 수정되었습니다.");
-                      getMenus();
-                    });
-                  }
-                }}
+                value={this.regName}
+                onClick={this.handleSubmit.bind(this)}
               />
               {!isReg ? (
                 <input
