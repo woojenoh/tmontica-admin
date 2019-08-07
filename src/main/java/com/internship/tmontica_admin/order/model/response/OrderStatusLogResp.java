@@ -1,5 +1,6 @@
 package com.internship.tmontica_admin.order.model.response;
 
+import com.internship.tmontica_admin.order.OrderStatusType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,4 +15,8 @@ public class OrderStatusLogResp {
     private String editorId;
     private Date modifiedDate;
 
+    public boolean isPickUp(){
+
+        return status.equals(OrderStatusType.PICK_UP.getStatus());
+    }
 }
