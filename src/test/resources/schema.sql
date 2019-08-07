@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `find_id` ;
 
-CREATE TABLE `tmontica`.`find_id` (
+CREATE TABLE `find_id` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `auth_code` VARCHAR(45) NULL,
   `find_ids` VARCHAR (255) NULL,

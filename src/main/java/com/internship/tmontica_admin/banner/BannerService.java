@@ -46,10 +46,6 @@ public class BannerService {
         // 배너 등록
         bannerDao.addBanner(banner);
 
-//        // usable = true 일때 같은 페이지, 같은 번호의 배너를 등록 시 기존의 배너들의 usable = false 로 변경
-//        if(banner.isUsable()){
-//            bannerDao.updateBannerUnusable(banner.getNumber(), banner.getUsePage(), banner.getId());
-//        }
         return banner.getId();
     }
 
@@ -57,6 +53,12 @@ public class BannerService {
     public List<Banner> getBannersByPage(String usePage){
         checkUsePageEng(usePage);
         List<Banner> banners = bannerDao.getBannersByUsePage(usePage);
+        return banners;
+    }
+
+    //전체 배너 가져오기
+    public List<Banner> getAllBanners(){
+        List<Banner> banners = bannerDao.getAllBanner();
         return banners;
     }
 
