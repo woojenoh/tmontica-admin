@@ -67,6 +67,17 @@ const data2 = {
   ]
 };
 
+const data3 = {
+  labels: ["MOBILE", "PC", "TABLET"],
+  datasets: [
+    {
+      data: [200, 100, 50],
+      backgroundColor: [colors[0], colors[1], colors[2]],
+      hoverBackgroundColor: [hoverColors[0], hoverColors[1], hoverColors[2]]
+    }
+  ]
+};
+
 class Statistics extends React.Component<IStatisticsProps, IStatisticsState> {
   render() {
     return (
@@ -110,7 +121,7 @@ class Statistics extends React.Component<IStatisticsProps, IStatisticsState> {
 
               <div className="age-chart">
                 <div className="chart-form-container">
-                  <h1 className="mb-4 text-center">연령별 분포</h1>
+                  <h1 className="mb-4 text-center">연령별 분포량</h1>
                   <form className="chart-add-form">
                     <select className="form-control">
                       <option value="10대">10대</option>
@@ -128,6 +139,38 @@ class Statistics extends React.Component<IStatisticsProps, IStatisticsState> {
                 <div className="chart-wrapper pl-4">
                   <Doughnut
                     data={data2}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      tooltips: {
+                        enabled: false
+                      }
+                    }}
+                    getElementAtEvent={elem => console.log(elem)}
+                  />
+                </div>
+              </div>
+
+              <div className="device-chart">
+                <div className="chart-form-container">
+                  <h1 className="mb-4 text-center">기기별 접속량</h1>
+                  <form className="chart-add-form">
+                    <select className="form-control">
+                      <option value="10대">10대</option>
+                      <option value="20대">20대</option>
+                    </select>
+                    <input className="btn btn-primary w-100 mt-2 mb-4" type="submit" value="추가" />
+                  </form>
+                  <form className="chart-period-form">
+                    <input className="form-control mb-2" type="date" />
+                    <input className="form-control mb-2" type="date" />
+                    <input className="btn btn-primary w-100 mb-4" type="submit" value="적용" />
+                    <button className="btn btn-outline-primary w-100">기간 전체 보기</button>
+                  </form>
+                </div>
+                <div className="chart-wrapper pl-4">
+                  <Doughnut
+                    data={data3}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
