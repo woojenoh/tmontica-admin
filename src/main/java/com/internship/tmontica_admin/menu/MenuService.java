@@ -67,6 +67,10 @@ public class MenuService {
         // 메뉴의 옵션 정보 가져오기
         List<Option> options = menuDao.getOptionsById(id);
 
+        if(menu == null){
+            throw new MenuException(MenuExceptionType.MENU_NOT_EXIST_EXCEPTION);
+        }
+
         MenuDetailResp menuDetailResp = modelMapper.map(menu, MenuDetailResp.class);
         List<MenuOptionResp> menuOptions = modelMapper.map(options, new TypeToken<List<MenuOptionResp>>(){}.getType());
 
@@ -117,7 +121,7 @@ public class MenuService {
         List<Menu> usableMenus = MenuScheduler.getUsableMenus();
         // 사용가능한 메뉴가 존재하지 않을 경우
         if(usableMenus.isEmpty()){
-            throw new MenuException(MenuExceptionType.MENU_NO_CONTENT_EXCEPTION);
+            return new ArrayList<>();
         }
         return getMenusByPage(page, size, usableMenus);
 
@@ -131,7 +135,7 @@ public class MenuService {
         List<Menu> usableMenus = MenuScheduler.getUsableMenus();
         // 사용가능한 메뉴가 존재하지 않을 경우
         if(usableMenus.isEmpty()){
-            throw new MenuException(MenuExceptionType.MENU_NO_CONTENT_EXCEPTION);
+            return new ArrayList<>();
         }
         // 해당 카테고리의 모든 메뉴를 가져온다.
         List<Menu> categoryMenus = usableMenus.stream().filter(menu -> menu.getCategoryEng().equals(category))
@@ -152,10 +156,6 @@ public class MenuService {
         return menus.subList(startIndex, endIndex);
     }
 
-    // 메뉴 옵션 추가
-    public int addMenuOption(int menuId, int optionId){
-        return menuDao.addMenuOption(menuId, optionId);
-    }
 
     // 하나의 메뉴 정보 가져오기
     public Menu getMenuById(int id){
@@ -163,9 +163,9 @@ public class MenuService {
     }
 
     // 메뉴 수정하기
-    public void updateMenu(Menu menu, List<Integer>optionIds, MultipartFile imgFile){
+    public int updateMenu(Menu menu, List<Integer>optionIds, MultipartFile imgFile){
         if(!existMenu(menu.getId()))
-            return;
+            throw new MenuException(MenuExceptionType.MENU_NOT_EXIST_EXCEPTION);
 
         String updaterId = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id");
         menu.setUpdaterId(updaterId);
@@ -180,22 +180,19 @@ public class MenuService {
 
         // 메뉴 옵션
         menuDao.deleteMenuOption(menu.getId());
-        for(int optionId : optionIds)
+        for(int optionId : optionIds) {
             menuDao.addMenuOption(menu.getId(), optionId);
-
+        }
         menu.setUpdatedDate(new Date());
-        menuDao.updateMenu(menu);
+        return menuDao.updateMenu(menu);
     }
 
     // 메뉴 삭제하기
     public void deleteMenu(int id) {
-        menuDao.deleteMenu(id);
+        int result = menuDao.deleteMenu(id);
+        if(result < 1) throw new MenuException(MenuExceptionType.MENU_NOT_EXIST_EXCEPTION);
     }
 
-    // 수량 수정하기
-    public void updateMenuStock(int id, int stock){
-        menuDao.updateMenuStock(id, stock);
-    }
 
     // 메뉴 존재하는지 확인
     public boolean existMenu(int id){
@@ -203,6 +200,7 @@ public class MenuService {
     }
 
     // 이달의 메뉴 상태 변경
+    @Transactional
     public void updateMonthlyMenu(List<Integer> menuIds){
         for(int id : menuIds){
             Menu menu = menuDao.getMenuById(id);

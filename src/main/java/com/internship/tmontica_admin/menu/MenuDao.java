@@ -1,5 +1,6 @@
 package com.internship.tmontica_admin.menu;
 
+import com.internship.tmontica_admin.menu.model.response.MenuIdNameResp;
 import com.internship.tmontica_admin.option.Option;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -23,16 +24,16 @@ public interface MenuDao {
     @Delete("DELETE FROM menu_options WHERE menu_id = #{menuId}")
     int deleteMenuOption(@Param("menuId") int menuId );
 
-    @Select("SELECT * FROM menus WHERE id = #{id}")
+    @Select("SELECT * FROM menus WHERE id = #{id} AND deleted = 0")
     Menu getMenuById(int id);
 
-    @Select("SELECT * FROM menus ORDER BY created_date DESC")
+    @Select("SELECT * FROM menus WHERE deleted = 0 ORDER BY created_date DESC")
     List<Menu> getAllMenus();
 
-    @Select("SELECT * FROM menus  ORDER BY created_date DESC LIMIT #{limit} OFFSET #{offset}")
+    @Select("SELECT * FROM menus WHERE deleted = 0 ORDER BY created_date DESC LIMIT #{limit} OFFSET #{offset}")
     List<Menu> getAllMenusByPage(int limit, int offset);
 
-    @Select("SELECT * FROM menus WHERE category_eng = #{category} ORDER BY created_date DESC LIMIT #{limit} OFFSET #{offset}")
+    @Select("SELECT * FROM menus WHERE category_eng = #{category} AND deleted = 0 ORDER BY created_date DESC LIMIT #{limit} OFFSET #{offset}")
     List<Menu> getMenusByCategory(String category, int limit, int offset);
 
 
@@ -43,13 +44,13 @@ public interface MenuDao {
             "discount_rate = #{discountRate}, stock = #{stock}, updated_date = #{updatedDate}," +
             "start_date = #{startDate}, end_Date = #{endDate},"+
             "updater_id = #{updaterId} WHERE id = #{id}")
-    void updateMenu(Menu menu);
+    int updateMenu(Menu menu);
 
     @Update("UPDATE menus SET stock = #{stock} WHERE id = #{id}")
     void updateMenuStock(int id, int stock);
 
-    @Delete("DELETE FROM menus WHERE id = #{id}")
-    void deleteMenu(int id);
+    @Delete("UPDATE menus SET deleted = 1 WHERE id = #{id}")
+    int deleteMenu(int id);
 
 
     @Update("UPDATE menus SET monthly_menu = #{monthlyMenu} WHERE id = #{id}")
@@ -66,5 +67,7 @@ public interface MenuDao {
     @Select("SELECT count(*) FROM menus WHERE category_eng = #{category}")
     int getCategoryMenuCnt(String category);
 
+    @Select("SELECT id, name_ko FROM menus")
+    List<MenuIdNameResp> getAllMenuIdAndName();
 
 }

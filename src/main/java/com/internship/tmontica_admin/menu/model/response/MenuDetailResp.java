@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -22,5 +23,8 @@ public class MenuDetailResp {
     private String categoryKo;
     private int stock;
     private boolean monthlyMenu;
+    private Date startDate;
+    private Date endDate;
+    private boolean usable;
     private List<MenuOptionResp> option;
 }
