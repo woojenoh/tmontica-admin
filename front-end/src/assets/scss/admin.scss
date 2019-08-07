@@ -10,6 +10,11 @@ body,
 #root {
   height: 100%;
   background-color: rgba(250, 250, 250, 0.5);
+  min-width: 1248px;
+}
+
+nav {
+  min-width: 180px;
 }
 
 .cursor-pointer {
@@ -26,10 +31,6 @@ body,
   color: rgb(33, 37, 41);
   font-size: 32px;
   font-weight: 500;
-}
-
-.content-table {
-  min-width: 932px;
 }
 
 /* 주문관리 */

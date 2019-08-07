@@ -41,6 +41,23 @@
     background: none;
   }
 
+  @media (max-width: 992px) {
+    .content-inner-wrap {
+      flex-direction: column-reverse;
+    }
+    .left-wrap {
+      width: 230px;
+      margin: 0 auto;
+      margin-bottom: 10px;
+    }
+    .content-inner-wrap .input-group-wrap {
+      width: 100%;
+    }
+    .period .form-control {
+      font-size: 14px;
+    }
+  }
+
   .input-group-prepend {
     width: 9%;
     min-width: 87px;
