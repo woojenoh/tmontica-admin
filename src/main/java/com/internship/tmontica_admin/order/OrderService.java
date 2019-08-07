@@ -88,7 +88,7 @@ public class OrderService {
         // 디비에서 가져온 리스트 orders -> orderResps 리스트에 매핑
         for(Order order : orders){
             // orderId로 주문 상세 정보 리스트 가져오기
-            List<Order_MenusResp> menus = orderDao.getOrderDetailByOrderId(order.getId());
+            List<OrderMenusResp> menus = orderDao.getOrderDetailByOrderId(order.getId());
 
             // menus리스트 안의 옵션 문자열과 이미지url 셋팅 작업
             setMenuOptionAndImgurl(menus);
@@ -109,7 +109,7 @@ public class OrderService {
         // orderId로 주문 정보 1개 가져오기
         Order order = orderDao.getOrderByOrderId(orderId);
         // orderId로 주문 상세 정보 리스트 가져오기
-        List<Order_MenusResp> menus = orderDao.getOrderDetailByOrderId(orderId);
+        List<OrderMenusResp> menus = orderDao.getOrderDetailByOrderId(orderId);
 
         // menus리스트 안의 옵션 문자열과 이미지url 셋팅 작업
         setMenuOptionAndImgurl(menus);
@@ -157,7 +157,7 @@ public class OrderService {
         // 디비에서 가져온 리스트 orders -> orderResps 리스트에 매핑
         for(Order order : orders){
             // orderId로 주문 상세 정보 리스트 가져오기
-            List<Order_MenusResp> menus = orderDao.getOrderDetailByOrderId(order.getId());
+            List<OrderMenusResp> menus = orderDao.getOrderDetailByOrderId(order.getId());
 
             // menus리스트 안의 옵션 문자열과 이미지url 셋팅 작업
             setMenuOptionAndImgurl(menus);
@@ -197,8 +197,8 @@ public class OrderService {
 
 
     // menus리스트 안의 옵션 문자열과 이미지url 셋팅 작업
-    public void setMenuOptionAndImgurl(List<Order_MenusResp> menus){
-        for (Order_MenusResp menu : menus) {
+    public void setMenuOptionAndImgurl(List<OrderMenusResp> menus){
+        for (OrderMenusResp menu : menus) {
             //메뉴 옵션 "1__1/4__2" => "HOT/샷추가(2개)" 로 바꾸는 작업
             if(!menu.getOption().equals("")){
                 String option = menu.getOption();

@@ -1,7 +1,7 @@
 package com.internship.tmontica_admin.order;
 
 import com.internship.tmontica_admin.order.model.response.OrderStatusLogResp;
-import com.internship.tmontica_admin.order.model.response.Order_MenusResp;
+import com.internship.tmontica_admin.order.model.response.OrderMenusResp;
 import com.internship.tmontica_admin.order.model.response.StatusCountResp;
 import org.apache.ibatis.annotations.*;
 
@@ -15,7 +15,7 @@ public interface OrderDao {
             "from order_details as A inner join menus as B " +
             "   on A.menu_id = B.id " +
             "where A.order_id = #{orderId}")
-    List<Order_MenusResp> getOrderDetailByOrderId(int orderId);
+    List<OrderMenusResp> getOrderDetailByOrderId(int orderId);
 
     // orderId로 주문 정보 가져오기
     @Select("select * from orders where id = #{orderId}")
@@ -110,4 +110,7 @@ public interface OrderDao {
             "   and A.status=\"픽업완료\"")
     List<OrderDetail> getTodayOrderDetails(String startDate, String endDate);
 
+
+    @Select("select * from orders where status=\"미결제\"")
+    List<Order> getBeforePaymentOrders();
 }
