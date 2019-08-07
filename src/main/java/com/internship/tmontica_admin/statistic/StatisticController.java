@@ -19,7 +19,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class StatisticController {
 
-    //private final StatisticScheduler statisticScheduler;
     private final StatisticService statisticService;
 
     @PostMapping("/menu")
@@ -51,6 +50,4 @@ public class StatisticController {
         //statisticScheduler.makeTotalSalesByMenu();
         return new ResponseEntity<>("test", HttpStatus.OK);
     }
-
-
 }

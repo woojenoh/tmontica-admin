@@ -24,7 +24,7 @@ public interface StatisticDao {
             "WHERE reg_date BETWEEN date(#{startDate}) AND date(#{endDate})+1")
     List<SalesWithAgeData> getSalesAgeGroupDataByDate(StatisticReqDTO statisticReqDTO);
 
-    @Select("SELECT menu_id, total_price FROM sales_menu_data " +
+    @Select("SELECT menu_id, total_price, menu_name FROM sales_menu_data " +
             "WHERE reg_date BETWEEN date(#{startDate}) AND date(#{endDate})+1")
     List<SalesWithMenuData> getSalesMenuDataByDate(StatisticReqDTO statisticReqDTO);
 

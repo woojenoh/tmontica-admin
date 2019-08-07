@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,17 +30,27 @@ public class StatisticService {
     public StatisticMenuByDateRespDTO getMenuByDateData(StatisticMenuByDateReqDTO statisticMenuByDateReqDTO) {
 
         setDefaultDate(statisticMenuByDateReqDTO);
-        Map<Integer, Integer> menuData = statisticDao.getSalesMenuDataByDate(statisticMenuByDateReqDTO)
+
+        Map<Integer, List<SalesWithMenuData>> menuData = statisticDao.getSalesMenuDataByDate(statisticMenuByDateReqDTO)
                 .stream().filter(v -> statisticMenuByDateReqDTO.getMenuIds().contains(v.getMenuId()))
-                .collect(Collectors.groupingBy(SalesWithMenuData::getMenuId, Collectors.summingInt(SalesWithMenuData::getTotalPrice)));
+                .collect(Collectors.groupingBy(SalesWithMenuData::getMenuId));
         List<SalesWithMenuData> resultList = new ArrayList<>();
-        menuData.keySet().forEach(v->resultList.add(new SalesWithMenuData(v, menuData.get(v))));
+        for(Integer key : menuData.keySet()){
+            int totalPrice = 0;
+            String menuName = "";
+            for(SalesWithMenuData salesWithMenuData : menuData.get(key)){
+                totalPrice += salesWithMenuData.getTotalPrice();
+                menuName = salesWithMenuData.getMenuName();
+            }
+            resultList.add(new SalesWithMenuData(key, totalPrice, menuName));
+        }
         return new StatisticMenuByDateRespDTO(resultList);
     }
 
     public StatisticSalesByAgeRespDTO getSalesByAgeData(StatisticSalesByAgeReqDTO statisticSalesByAgeReqDTO){
 
         setDefaultDate(statisticSalesByAgeReqDTO);
+        
         Map<String, Integer> ageData = statisticDao.getSalesAgeGroupDataByDate(statisticSalesByAgeReqDTO)
                 .stream().filter(v->statisticSalesByAgeReqDTO.getAgeGroups().contains(v.getAgeGroup()))
                 .collect(Collectors.groupingBy(SalesWithAgeData::getAgeGroup, Collectors.summingInt(SalesWithAgeData::getTotalPrice)));
