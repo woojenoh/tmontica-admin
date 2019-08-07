@@ -14,6 +14,7 @@ import Menus from "./pages/Menus";
 import TodayOrder from "./pages/TodayOrder";
 import Order from "./pages/Order";
 import Statistics from "./pages/Statistics";
+import Banner from "./pages/Banner";
 
 export interface IAppProps extends RouteComponentProps {
   isSignin: boolean;
@@ -85,6 +86,7 @@ class App extends React.Component<IAppProps> {
           <AdminRoute exact path="/order" component={Order} />
           <AdminRoute exact path="/menus" component={Menus} />
           <AdminRoute exact path="/menus/:menuId([0-9]+)" component={Menus} />
+          <AdminRoute exact path="/banner" component={Banner} />
           <AdminRoute exact path="/" component={TodayOrder} />
           <PublicRoute exact path="/signin" component={Signin} />
         </Switch>

@@ -1,0 +1,29 @@
+#bannerModal {
+  .banner-image {
+    img {
+      width: 100%;
+    }
+  }
+
+  .reg-image__button {
+    width: 100%;
+  }
+
+  .usable {
+    .input-group {
+      width: auto;
+      display: inline-block;
+    }
+  }
+
+  .tmon-row {
+    justify-content: space-between;
+    .half {
+      width: 49.5%;
+    }
+  }
+}
+
+.tmon-row {
+  display: flex;
+}

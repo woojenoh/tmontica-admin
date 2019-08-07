@@ -37,7 +37,7 @@ export default class Nav extends Component<Props, State> {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/" className="nav-link">
+              <Link to="/banner" className="nav-link">
                 <i className="far fa-flag feather" />
                 <h5>배너 관리</h5>
               </Link>
