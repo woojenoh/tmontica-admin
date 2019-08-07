@@ -1,7 +1,9 @@
 package com.internship.tmontica_admin.statistic.exception;
 
+import lombok.Getter;
 import org.springframework.validation.BindingResult;
 
+@Getter
 public class StatisticValidException extends RuntimeException{
     private String field;
     private String message;

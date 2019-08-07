@@ -38,9 +38,4 @@ public class Order {
         this.status = status;
         this.userId = userId;
     }
-
-    public boolean isRealSales(){
-
-        return status.equals("픽업완료");
-    }
 }
