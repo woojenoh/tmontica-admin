@@ -102,11 +102,12 @@ public interface OrderDao {
     @Select("select * from orders where order_date > curdate() ")
     List<Order> getTodayAllOrders();
 
-    // 오늘의 order Detail 정보 모두 가져오기 (통계)
-    @Select("select A.id, A.order_id, A.option, A.price, A.quantity, A.menu_id " +
-            "from orders B inner join order_details A " +
-            "   on B.id = A.order_id " +
-            "where order_date > curdate() and B.status=\"픽업완료\"")
-    List<OrderDetail> getTodayOrderDetails();
+    // 특정기간의 order Detail 정보 모두 가져오기 (통계)
+    @Select("select B.id, B.order_id, B.option, B.price, B.quantity, B.menu_id " +
+            "from orders A inner join order_details B " +
+            "   on A.id = B.order_id " +
+            "where A.order_date between date(#{startDate}) and date(#{endDate})+1 " +
+            "   and A.status=\"픽업완료\"")
+    List<OrderDetail> getTodayOrderDetails(String startDate, String endDate);
 
 }

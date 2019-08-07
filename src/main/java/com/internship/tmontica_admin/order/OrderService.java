@@ -41,8 +41,8 @@ public class OrderService {
             List<OrderStatusLogResp> orderStatusLogList = orderDao.getOrderStatusLogByOrderId(orderId).stream()
                     .filter(OrderStatusLogResp::isPickUp)
                     .collect(Collectors.toList());
-            // "픽업완료" 상태로 바뀌면 포인트 적립
-            if(orderStatusLogList.isEmpty()&&orderStatusReq.getStatus().equals(OrderStatusType.PICK_UP.getStatus())){
+            // "픽업완료" 상태로 바뀌면 포인트 적립 (최초 한번)
+            if(orderStatusLogList.isEmpty() && orderStatusReq.getStatus().equals(OrderStatusType.PICK_UP.getStatus())){
                 Order order = orderDao.getOrderByOrderId(orderId);
                 Point point = new Point(order.getUserId(), PointLogType.GET_POINT.getType(),
                         String.valueOf((int)(order.getTotalPrice()*(RESERVE_RATE)/100)), "결제 적립금 적립.");
