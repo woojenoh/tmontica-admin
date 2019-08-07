@@ -20,9 +20,8 @@ public class WebConfig implements WebMvcConfigurer {
     private final JwtService jwtService;
     private static final String[] EXCLUDE_PATH = {
             "/webjars/springfox-swagger-ui/**" , "/", "/csrf",
-            "/api/orders/**", "/api/carts/**",
-            "/api/users/signin", "/api/menus/**", "/api/options/**","/swagger*/**", "/resources/**" , "/images/**"
-            , "/**/*.jpg", "/**/*.js", "/**/*.css", "/error/**", "/api/statistic**", "/webjars/springfox-swagger-ui/**", "/csrf"
+            "/api/users/signin", "/swagger*/**", "/resources/**", "/images/**"
+            , "/**/*.jpg", "/**/*.js", "/**/*.css", "/error/**"
     };
 
     @Override
@@ -30,14 +29,15 @@ public class WebConfig implements WebMvcConfigurer {
         // 모든 uri에 대해 http://localhost:18080, http://localhost:8180 도메인은 접근을 허용한다.
         registry.addMapping("/**")
                 .allowedOrigins("*") //http://localhost:3000
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*");
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(new JwtInterceptor(jwtService))
-//                .addPathPatterns("/**")
-//                .excludePathPatterns(EXCLUDE_PATH);
+        registry.addInterceptor(new JwtInterceptor(jwtService))
+                .addPathPatterns("/**")
+                .excludePathPatterns(EXCLUDE_PATH);
     }
 
     @Override
