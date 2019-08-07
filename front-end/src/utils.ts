@@ -1,7 +1,6 @@
 import history from "./history";
-import React, { Component } from "react";
-import axios, { AxiosRequestConfig } from "axios";
-import jwt_decode from "jwt-decode";
+import { BaseSyntheticEvent } from "react";
+import { AxiosRequestConfig } from "axios";
 
 export const goToSignin = (message = "로그인이 필요합니다.") => {
   alert(message);
@@ -13,7 +12,7 @@ export const numberCommaRegex = (number: number | string): string => {
   return Number(number).toLocaleString();
 };
 
-export function handleChange(this: any, e: React.BaseSyntheticEvent) {
+export function handleChange(this: any, e: BaseSyntheticEvent) {
   let change = {
     [e.target.name]: e.target.value
   };
