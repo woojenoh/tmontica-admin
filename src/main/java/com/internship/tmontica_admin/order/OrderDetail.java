@@ -29,4 +29,9 @@ public class OrderDetail {
         this.quantity = quantity;
         this.menuId = menuId;
     }
+
+    public int getTotalPrice(){
+
+        return price * quantity;
+    }
 }

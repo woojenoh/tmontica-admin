@@ -1,4 +1,4 @@
-package com.internship.tmontica_admin.statistic.output;
+package com.internship.tmontica_admin.statistic.datatype;
 
 import com.internship.tmontica_admin.statistic.exception.StatisticException;
 import com.internship.tmontica_admin.statistic.exception.StatisticExceptionType;
