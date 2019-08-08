@@ -20,5 +20,5 @@ public class OrderResp {
     private int realPrice;
     private String status;
     private String userId;
-    private List<Order_MenusResp> menus;
+    private List<OrderMenusResp> menus;
 }

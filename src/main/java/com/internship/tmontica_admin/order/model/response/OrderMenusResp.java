@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Order_MenusResp {
+public class OrderMenusResp {
     private int menuId;
     private String nameEng;
     private String nameKo;
