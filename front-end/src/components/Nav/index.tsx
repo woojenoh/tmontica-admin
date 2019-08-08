@@ -28,7 +28,7 @@ export default class Nav extends PureComponent<Props, State> {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/statistics" className="nav-link">
+              <Link to="/stat" className="nav-link">
                 <h5>통계</h5>
               </Link>
             </li>

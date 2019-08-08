@@ -4,7 +4,7 @@ import { Bar, Doughnut, Pie } from "react-chartjs-2";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import * as menuTypes from "../../types/menu";
-import * as statTypes from "../../types/statistics";
+import * as statTypes from "../../types/stat";
 import { API_URL } from "../../api/common";
 import { withJWT } from "../../utils";
 import "./styles.scss";
@@ -45,9 +45,9 @@ const data3 = {
   ]
 };
 
-export interface IStatisticsProps {}
+export interface IStatProps {}
 
-export interface IStatisticsState {
+export interface IStatState {
   menus: menuTypes.IMenu[] | null;
   chartMenus: statTypes.IStatMenu[] | null;
   menuId: string;
@@ -91,7 +91,7 @@ export interface IInputState {
   userEndDate: string;
 }
 
-class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState> {
+class Stat extends React.PureComponent<IStatProps, IStatState> {
   state = {
     menus: null,
     chartMenus: null,
@@ -120,7 +120,7 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
       userStartDate: "",
       userEndDate: ""
     }
-  } as IStatisticsState;
+  } as IStatState;
 
   componentDidMount() {
     // 현재 등록돼있는 메뉴를 모두 불러온다.
@@ -578,7 +578,7 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
         <div className="main-wrapper">
           <Nav />
           <main className="main">
-            <section className="statistics p-4">
+            <section className="stat p-4">
               <div className="menu-chart">
                 <div className="chart-form-container">
                   <h1 className="mb-4 text-center">메뉴별 매출액</h1>
@@ -816,4 +816,4 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
   }
 }
 
-export default Statistics;
+export default Stat;
