@@ -66,7 +66,7 @@ public interface OrderDao {
     @Select("select count(*) from orders " +
             "where ${searchType} like '%${searchValue}%' " +
             "   and order_date between date(#{startDate}) and date(#{endDate})+1")
-    int getSearchOrderCntBySearchVal(String searchType, String searchValue, String startDate, String endDate);
+    int getSearchOrderCnt(String searchType, String searchValue, String startDate, String endDate);
 
     // 검색 조건과 날짜가 적용된 주문내역 검색하기(페이징)
     @Select("select * from orders " +
@@ -74,7 +74,7 @@ public interface OrderDao {
             "   and order_date between date(#{startDate}) and date(#{endDate})+1 " +
             "order by order_date desc " +
             "limit #{startList}, #{size}")
-    List<Order> searchOrderBySearchVal(String searchType, String searchValue, String startDate, String endDate, int startList, int size);
+    List<Order> searchOrder(String searchType, String searchValue, String startDate, String endDate, int startList, int size);
 
     // 날짜 적용된 주문 내역 개수 가져오기
     @Select("select count(*) from orders " +
@@ -88,6 +88,18 @@ public interface OrderDao {
             "limit #{startList}, #{size}")
     List<Order> searchOrderByDate(String startDate, String endDate, int startList, int size);
 
+    // 검색조건만 적용된 주문내역 개수 가져오기
+    @Select("select count(*) from orders " +
+            "where ${searchType} like '%${searchValue}%' ")
+    int getSearchOrderCntBySearchValue(String searchType, String searchValue);
+
+    // 검색조건만 적용된 주문내역 가져오기 (페이징)
+    @Select("select * from orders " +
+            "where ${searchType} like '%${searchValue}%' " +
+            "order by order_date desc " +
+            "limit #{startList}, #{size}")
+    List<Order> searchOrderBySearchValue(String searchType, String searchValue, int startList, int size);
+
     // 전체 주문 내역 개수 가져오기
     @Select("select count(*) from orders ")
     int getSearchAllOrderCnt();
@@ -98,6 +110,7 @@ public interface OrderDao {
             "limit #{startList}, #{size}")
     List<Order> searchAllOrder(int startList, int size);
 
+    // 미결제 상태인 주문 가져오기 (스케줄러)
     @Select("select * from orders where status=\"미결제\"")
     List<Order> getBeforePaymentOrders();
 }

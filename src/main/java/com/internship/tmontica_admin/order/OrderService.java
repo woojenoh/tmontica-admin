@@ -142,14 +142,19 @@ public class OrderService {
             pagination.pageInfo(page, size, totalCnt);
 
             orders = orderDao.searchOrderByDate(startDate, endDate, pagination.getStartList(), size);
+        }else if(!searchType.equals("") && !searchValue.equals("") && startDate.equals("") && endDate.equals("")){
+            // 검색 조건만 적용 (전체기간)
+            totalCnt = orderDao.getSearchOrderCntBySearchValue(OrderSearchType.getBysearchType(searchType), searchValue);
+            pagination.pageInfo(page, size, totalCnt);
+
+            orders = orderDao.searchOrderBySearchValue(OrderSearchType.getBysearchType(searchType), searchValue, pagination.getStartList(), size);
         }else {
             // 검색 조건과 날짜 모두 적용
-            totalCnt = orderDao.getSearchOrderCntBySearchVal(OrderSearchType.getBysearchType(searchType), searchValue, startDate, endDate);
+            totalCnt = orderDao.getSearchOrderCnt(OrderSearchType.getBysearchType(searchType), searchValue, startDate, endDate);
             pagination.pageInfo(page, size, totalCnt);
 
             // 검색조건에 맞는 데이터 가져오기
-            orders = orderDao.searchOrderBySearchVal(OrderSearchType.getBysearchType(searchType),searchValue,startDate,endDate,
-                                                        pagination.getStartList(), pagination.getSize());
+            orders = orderDao.searchOrder(OrderSearchType.getBysearchType(searchType),searchValue,startDate,endDate,pagination.getStartList(), size);
         }
 
         List<OrderResp> orderResps = new ArrayList<>();
