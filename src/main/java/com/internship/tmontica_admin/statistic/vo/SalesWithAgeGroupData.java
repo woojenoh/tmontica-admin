@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class SalesWithAgeData {
+public class SalesWithAgeGroupData {
 
     private String ageGroup;
     private int totalPrice;
 
-    public SalesWithAgeData(String ageGroup, int totalPrice){
+    public SalesWithAgeGroupData(String ageGroup, int totalPrice){
         this.ageGroup = ageGroup;
         this.totalPrice = totalPrice;
     }

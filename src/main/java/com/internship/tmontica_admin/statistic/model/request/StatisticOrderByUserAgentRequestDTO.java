@@ -7,8 +7,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter @Setter
-public class StatisticMenuByDateReqDTO extends StatisticReqDTO{
+public class StatisticOrderByUserAgentRequestDTO extends StatisticRequestDTO{
 
     @NotNull
-    private List<Integer> menuIds;
+    private List<String> userAgentList;
 }
