@@ -9,7 +9,7 @@ import { IBanner } from "../../types/banner";
 import { setImagePreview } from "../../utils";
 import { BASE_URL } from "../../api/common";
 import { CommonError } from "../../api/CommonError";
-import { addBanner } from "../../api/banner";
+import { addBanner, updateBanner, getBannerById, deleteBanner } from "../../api/banner";
 
 interface IBannerModalProps {
   show: boolean;
@@ -21,7 +21,7 @@ interface IBannerModalProps {
 
 interface IBannerModalState extends IBanner, Indexable {
   imgFile?: Blob | string;
-  imgUrl?: string | ArrayBuffer | null;
+  imgUrl?: string | null;
 }
 
 const dateFormat = "YYYY.MM.DD HH:mm:ss";
@@ -126,7 +126,7 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
     if (this.props.isReg) {
       this.addBanner(data);
     } else {
-      // this.updateMenu(data);
+      this.updateBanner(data);
     }
   }
 
@@ -136,6 +136,19 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
       if (res instanceof CommonError) throw res;
 
       alert("배너가 등록되었습니다.");
+      this.setState({ ...initState });
+      // this.props.getBanner();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async updateBanner(data: FormData) {
+    try {
+      const res = await updateBanner(data);
+      if (res instanceof CommonError) throw res;
+
+      alert("배너가 수정되었습니다.");
       this.setState({ ...initState });
       // this.props.getBanner();
     } catch (error) {
@@ -163,6 +176,37 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
     data.append("usable", `${this.state.usable}`);
 
     return data;
+  }
+
+  componentDidUpdate(prevProps: IBannerModalProps) {
+    if (prevProps.bannerId !== this.props.bannerId) {
+      this.getBannerById();
+    }
+  }
+
+  async getBannerById() {
+    if (this.props.isReg) {
+      this.setState({
+        ...initState
+      });
+      return;
+    }
+    try {
+      const data = await getBannerById(this.props.bannerId);
+      if (data instanceof CommonError) throw data;
+
+      this.setState(
+        Object.assign({}, data, {
+          imgFile: ""
+        } as IBannerModalState)
+      );
+    } catch (error) {
+      if (error instanceof CommonError) {
+        error.alertMessage();
+      } else {
+        console.dir(error);
+      }
+    }
   }
 
   render() {
@@ -345,14 +389,14 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
                 type="submit"
                 className="reg-menu__button btn btn-outline-primary"
                 value="삭제"
-                onClick={e => {
+                onClick={async e => {
                   e.preventDefault();
 
-                  // axios.delete(`${API_URL}/menus/${menuId}`, withJWT()).then(res => {
-                  //   alert("메뉴가 삭제되었습니다.");
-                  //   handleClose();
-                  //   getMenus();
-                  // });
+                  try {
+                    await deleteBanner(this.props.bannerId);
+                    alert("배너가 삭제되었습니다.");
+                    closeModal();
+                  } catch (error) {}
                 }}
               />
             ) : (
