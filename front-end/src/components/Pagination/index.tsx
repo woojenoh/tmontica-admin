@@ -1,4 +1,5 @@
 import * as React from "react";
+import _ from "underscore";
 import * as commonTypes from "../../types/common";
 
 export interface IPaginationProps {
@@ -6,11 +7,21 @@ export interface IPaginationProps {
   handleSelectPage(pageNumber: number): void;
 }
 
-const Pagination = React.memo((props: IPaginationProps) => {
-  const { pagination, handleSelectPage } = props;
+export interface IPaginationState {}
+
+export default class Pagination extends React.Component<IPaginationProps, IPaginationState> {
+  shouldComponentUpdate(nextProps: IPaginationProps) {
+    if (_.isEqual(this.props.pagination, nextProps.pagination)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   // 페이지 버튼 만드는 함수.
-  const buildPageButtons = () => {
+  buildPageButtons = () => {
+    const { pagination, handleSelectPage } = this.props;
+
     if (pagination) {
       var arr = [];
       for (
@@ -35,33 +46,36 @@ const Pagination = React.memo((props: IPaginationProps) => {
     }
   };
 
-  return (
-    <>
-      {pagination ? (
-        <ul className="pagination d-flex justify-content-center mb-0">
-          <li
-            className={`page-item ${!pagination.prev && "disabled"}`}
-            onClick={() =>
-              pagination.prev && handleSelectPage((pagination.range - 1) * pagination.rangeSize)
-            }
-          >
-            <span className="page-link cursor-pointer">이전</span>
-          </li>
-          {buildPageButtons()}
-          <li
-            className={`page-item ${!pagination.next && "disabled"}`}
-            onClick={() =>
-              pagination.next && handleSelectPage(pagination.range * pagination.rangeSize + 1)
-            }
-          >
-            <span className="page-link cursor-pointer">다음</span>
-          </li>
-        </ul>
-      ) : (
-        ""
-      )}
-    </>
-  );
-});
+  render() {
+    const { pagination, handleSelectPage } = this.props;
+    const { buildPageButtons } = this;
 
-export default Pagination;
+    return (
+      <>
+        {pagination ? (
+          <ul className="pagination d-flex justify-content-center mb-0">
+            <li
+              className={`page-item ${!pagination.prev && "disabled"}`}
+              onClick={() =>
+                pagination.prev && handleSelectPage((pagination.range - 1) * pagination.rangeSize)
+              }
+            >
+              <span className="page-link cursor-pointer">이전</span>
+            </li>
+            {buildPageButtons()}
+            <li
+              className={`page-item ${!pagination.next && "disabled"}`}
+              onClick={() =>
+                pagination.next && handleSelectPage(pagination.range * pagination.rangeSize + 1)
+              }
+            >
+              <span className="page-link cursor-pointer">다음</span>
+            </li>
+          </ul>
+        ) : (
+          ""
+        )}
+      </>
+    );
+  }
+}

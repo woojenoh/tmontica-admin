@@ -1,4 +1,5 @@
-import React, { PureComponent, SyntheticEvent } from "react";
+import React, { Component, SyntheticEvent } from "react";
+import _ from "underscore";
 import { IMenu } from "../../types/menu";
 import { IMAGE_URL } from "../../api/common";
 import "./styles.scss";
@@ -13,8 +14,17 @@ interface Props {
 }
 interface State {}
 
-export default class MenuRow extends PureComponent<Props, State> {
-  state = {};
+export default class MenuRow extends Component<Props, State> {
+  shouldComponentUpdate(nextProps: Props) {
+    if (
+      _.isEqual(this.props.menu, nextProps.menu) &&
+      this.props.isChecked === nextProps.isChecked
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   render() {
     const { menu, handleShowUpdateModal, isChecked } = this.props;
