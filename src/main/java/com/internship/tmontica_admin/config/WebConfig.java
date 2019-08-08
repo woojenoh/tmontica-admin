@@ -6,10 +6,7 @@ import com.internship.tmontica_admin.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -19,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final JwtService jwtService;
     private static final String[] EXCLUDE_PATH = {
-            "/webjars/springfox-swagger-ui/**" , "/", "/csrf",
+            "/webjars/springfox-swagger-ui/**" , "/**", "/signin/", "/csrf",
             "/api/users/signin", "/swagger*/**", "/resources/**", "/images/**"
             , "/**/*.jpg", "/**/*.js", "/**/*.css", "/error/**"
     };
@@ -44,6 +41,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:" + location);
-    }
 
+    }
 }
