@@ -2,20 +2,35 @@ import React, { PureComponent, SyntheticEvent } from "react";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import { Table } from "react-bootstrap";
-import Pagination from "../../components/Pagination";
 import { BannerModal } from "../../components/BannerModal";
 import { getBannerAll } from "../../api/banner";
 import { CommonError } from "../../api/CommonError";
+import { IBanner } from "../../types/banner";
+import { IPagination } from "../../types/common";
+import Pagination from "../../components/Pagination";
+import { BannerUsePageDict } from "../../constants";
+import { IMAGE_URL } from "../../api/common";
+import "./styles.scss";
+import moment from "moment";
 
 interface Props {}
-interface State {}
+interface State {
+  page: number;
+  show: boolean;
+  bannerId: number;
+  banners: IBanner[];
+  isReg: boolean;
+  checkedRows: number[];
+  isCheckedAll: boolean;
+  pagination: IPagination | null;
+}
 
 export default class Banner extends PureComponent<Props, State> {
   state = {
     page: 1,
     show: false,
     bannerId: -1,
-    banners: [],
+    banners: [] as IBanner[],
     isReg: true,
     checkedRows: [] as number[],
     isCheckedAll: false,
@@ -85,9 +100,8 @@ export default class Banner extends PureComponent<Props, State> {
                 >
                   배너 등록
                 </button>
-                <button className="btn btn-outline-primary">이달의 메뉴 보기</button>
               </div>
-              <Table striped size="sm" className="content-table">
+              <Table striped size="sm" id="banner-table" className="content-table">
                 <thead>
                   <tr>
                     <th>
@@ -105,9 +119,34 @@ export default class Banner extends PureComponent<Props, State> {
                     <th>사용여부</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="table-body">
                   {banners.length > 0 ? (
-                    <></>
+                    banners.map((banner, i) => (
+                      <tr
+                        key={i}
+                        className="banner"
+                        onClick={this.showModal({
+                          show: true,
+                          bannerId: banner.id,
+                          isReg: false
+                        })}
+                      >
+                        <td>
+                          <input type="checkbox" />
+                        </td>
+                        <td>{BannerUsePageDict[banner.usePage]}</td>
+                        <td className="img">
+                          <img src={`${IMAGE_URL}/${banner.imgUrl}`} alt="배너 미리보기" />
+                        </td>
+                        <td>
+                          {moment(banner.startDate).format("YYYY.MM.DD")}~
+                          {moment(banner.endDate).format("YYYY.MM.DD")}
+                        </td>
+                        <td>{banner.link}</td>
+                        <td>{banner.number}</td>
+                        <td>{banner.usable ? "Y" : "N"}</td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
                       <td colSpan={7}>배너를 등록해주세요.</td>

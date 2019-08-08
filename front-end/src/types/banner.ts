@@ -8,7 +8,7 @@ export interface IBanner {
   startDate: string;
   endDate: string;
   usePage: string;
-  imgUrl?: string | ArrayBuffer | null;
+  imgUrl?: string | null;
   imgFile?: Blob | string;
   usable: boolean;
 }
