@@ -11,8 +11,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuMainResp {
+public class MenuMainResponse {
     private String categoryKo;
     private String categoryEng;
-    private List<MenuSimpleResp> menus = new ArrayList<>();
+    private List<MenuSimpleResponse> menus = new ArrayList<>();
 }

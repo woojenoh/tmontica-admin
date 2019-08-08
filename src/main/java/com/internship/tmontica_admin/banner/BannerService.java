@@ -64,7 +64,7 @@ public class BannerService {
 
     // id로 배너 가져오기
     public Banner getBannerById(int id){
-        return getBannerById(id);
+        return bannerDao.getBannerById(id);
     }
     // 배너 수정하기
     public void updateBanner(Banner banner, MultipartFile multipartFile){

@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuUpdateReq {
+public class MenuUpdateRequest {
     @Min(1)
     private int menuId;
     @NotEmpty

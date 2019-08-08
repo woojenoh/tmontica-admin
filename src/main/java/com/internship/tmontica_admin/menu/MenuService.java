@@ -2,10 +2,10 @@ package com.internship.tmontica_admin.menu;
 
 import com.internship.tmontica_admin.menu.exception.MenuException;
 import com.internship.tmontica_admin.menu.exception.MenuExceptionType;
-import com.internship.tmontica_admin.menu.model.response.MenuByPageResp;
-import com.internship.tmontica_admin.menu.model.response.MenuCategoryResp;
-import com.internship.tmontica_admin.menu.model.response.MenuDetailResp;
-import com.internship.tmontica_admin.menu.model.response.MenuOptionResp;
+import com.internship.tmontica_admin.menu.model.response.MenuByPageResponse;
+import com.internship.tmontica_admin.menu.model.response.MenuCategoryResponse;
+import com.internship.tmontica_admin.menu.model.response.MenuDetailResponse;
+import com.internship.tmontica_admin.menu.model.response.MenuOptionResponse;
 import com.internship.tmontica_admin.option.Option;
 import com.internship.tmontica_admin.paging.Pagination;
 import com.internship.tmontica_admin.security.JwtService;
@@ -61,7 +61,7 @@ public class MenuService {
     }
 
     // 하나의 메뉴 상세 정보 가져오기 -- 관리자는 사용 불가능한 메뉴도 보여준다.
-    public MenuDetailResp getMenuDetailById(int id){
+    public MenuDetailResponse getMenuDetailById(int id){
         Menu menu = menuDao.getMenuById(id);
 
         // 메뉴의 옵션 정보 가져오기
@@ -71,17 +71,16 @@ public class MenuService {
             throw new MenuException(MenuExceptionType.MENU_NOT_EXIST_EXCEPTION);
         }
 
-        MenuDetailResp menuDetailResp = modelMapper.map(menu, MenuDetailResp.class);
-        List<MenuOptionResp> menuOptions = modelMapper.map(options, new TypeToken<List<MenuOptionResp>>(){}.getType());
+        MenuDetailResponse menuDetailResponse = modelMapper.map(menu, MenuDetailResponse.class);
+        List<MenuOptionResponse> menuOptions = modelMapper.map(options, new TypeToken<List<MenuOptionResponse>>(){}.getType());
 
-        menuDetailResp.setOption(menuOptions);
-        menuDetailResp.setImgUrl("/images/".concat(menuDetailResp.getImgUrl()));
+        menuDetailResponse.setOption(menuOptions);
 
-        return menuDetailResp;
+        return menuDetailResponse;
     }
 
     // 카테고리 별 메뉴 정보 가져오기
-    public MenuCategoryResp getMenusByCategory(String category, int page, int size){
+    public MenuCategoryResponse getMenusByCategory(String category, int page, int size){
         checkCategoryName(category);
         // 메뉴 전체 갯수
         int totalCnt = menuDao.getCategoryMenuCnt(category);
@@ -91,15 +90,15 @@ public class MenuService {
 
         List<Menu> menus = menuDao.getMenusByCategory(category, size, pagination.getStartList());
 
-        MenuCategoryResp menuCategoryResp = new MenuCategoryResp();
-        menuCategoryResp.setMenus(menus);
-        menuCategoryResp.setPagination(pagination);
+        MenuCategoryResponse menuCategoryResponse = new MenuCategoryResponse();
+        menuCategoryResponse.setMenus(menus);
+        menuCategoryResponse.setPagination(pagination);
 
-        return menuCategoryResp;
+        return menuCategoryResponse;
     }
 
     // 메뉴 정보 가져오기 (전체)
-    public MenuByPageResp getAllMenus(int page, int size){
+    public MenuByPageResponse getAllMenus(int page, int size){
         // 메뉴 전체 갯수
         int totalCnt = menuDao.getAllMenuCnt();
         // 페이지 객체 생성
@@ -108,10 +107,10 @@ public class MenuService {
         // 페이지에 맞는 메뉴 리스트 가져오기.
         List<Menu> menus = menuDao.getAllMenusByPage(size, pagination.getStartList());
 
-        MenuByPageResp menuByPageResp = new MenuByPageResp();
-        menuByPageResp.setMenus(menus);
-        menuByPageResp.setPagination(pagination);
-        return menuByPageResp;
+        MenuByPageResponse menuByPageResponse = new MenuByPageResponse();
+        menuByPageResponse.setMenus(menus);
+        menuByPageResponse.setPagination(pagination);
+        return menuByPageResponse;
 
     }
 
@@ -196,7 +195,7 @@ public class MenuService {
 
     // 메뉴 존재하는지 확인
     public boolean existMenu(int id){
-        return (menuDao.getMenuById(id) == null) ? false : true;
+        return menuDao.getMenuById(id) == null;
     }
 
     // 이달의 메뉴 상태 변경

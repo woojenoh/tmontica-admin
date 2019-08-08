@@ -13,7 +13,7 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class BannerUpdateReq {
+public class BannerUpdateRequest {
 
     @NotEmpty(message = "usePage는 필수입니다.")
     private String usePage;
