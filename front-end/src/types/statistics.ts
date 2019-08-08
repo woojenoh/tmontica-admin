@@ -9,6 +9,11 @@ export interface IStatAge {
   totalPrice: number;
 }
 
+export interface IStatUser {
+  userAgent: string;
+  count: number;
+}
+
 export interface IBarData {
   datasets: {
     label: string;

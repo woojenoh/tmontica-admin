@@ -66,6 +66,15 @@ export interface IStatisticsState {
     ageStartDate: string;
     ageEndDate: string;
   };
+
+  chartUsers: statTypes.IStatUser[] | null;
+  userAgent: string;
+  userStartDate: string;
+  userEndDate: string;
+  capturedUserDate: {
+    userStartDate: string;
+    userEndDate: string;
+  };
 }
 
 export interface IInputState {
@@ -76,6 +85,10 @@ export interface IInputState {
   ageGroup: string;
   ageStartDate: string;
   ageEndDate: string;
+
+  userAgent: string;
+  userStartDate: string;
+  userEndDate: string;
 }
 
 class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState> {
@@ -97,6 +110,15 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
     capturedAgeDate: {
       ageStartDate: "",
       ageEndDate: ""
+    },
+
+    chartUsers: null,
+    userAgent: "",
+    userStartDate: "",
+    userEndDate: "",
+    capturedUserDate: {
+      userStartDate: "",
+      userEndDate: ""
     }
   } as IStatisticsState;
 
@@ -188,27 +210,31 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
     const { chartMenus, menuStartDate, menuEndDate } = this.state;
     e.preventDefault();
     if (chartMenus) {
-      axios
-        .post(
-          `${API_URL}/statistic/menu`,
-          {
-            menuIds: chartMenus.map(m => m.menuId),
-            startDate: menuStartDate,
-            endDate: menuEndDate
-          },
-          withJWT()
-        )
-        .then(res =>
-          this.setState({
-            chartMenus: res.data.dataList,
-            // 적용된 날짜를 기억해둔다.
-            capturedMenuDate: {
-              menuStartDate: menuStartDate,
-              menuEndDate: menuEndDate
-            }
-          })
-        )
-        .catch(err => alert(err.response.data.message));
+      if (chartMenus.length) {
+        axios
+          .post(
+            `${API_URL}/statistic/menu`,
+            {
+              menuIds: chartMenus.map(m => m.menuId),
+              startDate: menuStartDate,
+              endDate: menuEndDate
+            },
+            withJWT()
+          )
+          .then(res =>
+            this.setState({
+              chartMenus: res.data.dataList,
+              // 적용된 날짜를 기억해둔다.
+              capturedMenuDate: {
+                menuStartDate: menuStartDate,
+                menuEndDate: menuEndDate
+              }
+            })
+          )
+          .catch(err => alert(err.response.data.message));
+      } else {
+        alert("메뉴를 먼저 추가하세요.");
+      }
     } else {
       alert("메뉴를 먼저 추가하세요.");
     }
@@ -218,28 +244,32 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
   handleMenuPeriodAllSubmit = () => {
     const { chartMenus } = this.state;
     if (chartMenus) {
-      axios
-        .post(
-          `${API_URL}/statistic/menu`,
-          {
-            menuIds: chartMenus.map(m => m.menuId),
-            startDate: "",
-            endDate: ""
-          },
-          withJWT()
-        )
-        .then(res =>
-          this.setState({
-            chartMenus: res.data.dataList,
-            menuStartDate: "",
-            menuEndDate: "",
-            capturedMenuDate: {
+      if (chartMenus.length) {
+        axios
+          .post(
+            `${API_URL}/statistic/menu`,
+            {
+              menuIds: chartMenus.map(m => m.menuId),
+              startDate: "",
+              endDate: ""
+            },
+            withJWT()
+          )
+          .then(res =>
+            this.setState({
+              chartMenus: res.data.dataList,
               menuStartDate: "",
-              menuEndDate: ""
-            }
-          })
-        )
-        .catch(err => alert(err.response.data.message));
+              menuEndDate: "",
+              capturedMenuDate: {
+                menuStartDate: "",
+                menuEndDate: ""
+              }
+            })
+          )
+          .catch(err => alert(err.response.data.message));
+      } else {
+        alert("메뉴를 먼저 추가하세요.");
+      }
     } else {
       alert("메뉴를 먼저 추가하세요.");
     }
@@ -312,27 +342,31 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
     const { chartAges, ageStartDate, ageEndDate } = this.state;
     e.preventDefault();
     if (chartAges) {
-      axios
-        .post(
-          `${API_URL}/statistic/age`,
-          {
-            ageGroups: chartAges.map(a => a.ageGroup),
-            startDate: ageStartDate,
-            endDate: ageEndDate
-          },
-          withJWT()
-        )
-        .then(res =>
-          this.setState({
-            chartAges: res.data.dataList,
-            // 적용된 날짜를 기억해둔다.
-            capturedAgeDate: {
-              ageStartDate: ageStartDate,
-              ageEndDate: ageEndDate
-            }
-          })
-        )
-        .catch(err => alert(err.response.data.message));
+      if (chartAges.length) {
+        axios
+          .post(
+            `${API_URL}/statistic/age`,
+            {
+              ageGroups: chartAges.map(a => a.ageGroup),
+              startDate: ageStartDate,
+              endDate: ageEndDate
+            },
+            withJWT()
+          )
+          .then(res =>
+            this.setState({
+              chartAges: res.data.dataList,
+              // 적용된 날짜를 기억해둔다.
+              capturedAgeDate: {
+                ageStartDate: ageStartDate,
+                ageEndDate: ageEndDate
+              }
+            })
+          )
+          .catch(err => alert(err.response.data.message));
+      } else {
+        alert("연령을 먼저 추가하세요.");
+      }
     } else {
       alert("연령을 먼저 추가하세요.");
     }
@@ -342,30 +376,166 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
   handleAgePeriodAllSubmit = () => {
     const { chartAges } = this.state;
     if (chartAges) {
+      if (chartAges.length) {
+        axios
+          .post(
+            `${API_URL}/statistic/age`,
+            {
+              ageGroups: chartAges.map(a => a.ageGroup),
+              startDate: "",
+              endDate: ""
+            },
+            withJWT()
+          )
+          .then(res =>
+            this.setState({
+              chartAges: res.data.dataList,
+              ageStartDate: "",
+              ageEndDate: "",
+              capturedAgeDate: {
+                ageStartDate: "",
+                ageEndDate: ""
+              }
+            })
+          )
+          .catch(err => alert(err.response.data.message));
+      } else {
+        alert("연령을 먼저 추가하세요.");
+      }
+    } else {
+      alert("연령을 먼저 추가하세요.");
+    }
+  };
+
+  // 차트에 기기별 유저 추가
+  handleUserSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const { userAgent, chartUsers, capturedUserDate } = this.state;
+    e.preventDefault();
+    if (userAgent) {
       axios
         .post(
-          `${API_URL}/statistic/age`,
+          `${API_URL}/statistic/useragent`,
           {
-            ageGroups: chartAges.map(a => a.ageGroup),
-            startDate: "",
-            endDate: ""
+            userAgentList: [userAgent],
+            startDate: capturedUserDate.userStartDate,
+            endDate: capturedUserDate.userEndDate
           },
           withJWT()
         )
-        .then(res =>
-          this.setState({
-            chartAges: res.data.dataList,
-            ageStartDate: "",
-            ageEndDate: "",
-            capturedAgeDate: {
-              ageStartDate: "",
-              ageEndDate: ""
+        .then(res => {
+          // null 체크
+          if (chartUsers) {
+            // 10개 이하인지 체크
+            if (chartUsers.length <= 10) {
+              // 같은 항목이 있는지
+              if (chartUsers.map(m => m.userAgent).indexOf(userAgent) < 0) {
+                this.setState({
+                  chartUsers: chartUsers.concat(res.data.dataList)
+                });
+              } else {
+                alert("이미 차트에 존재하는 기기입니다.");
+              }
+            } else {
+              alert("차트의 항목은 10개를 초과할 수 없습니다.");
             }
-          })
-        )
+          } else {
+            this.setState({
+              chartUsers: res.data.dataList
+            });
+          }
+        })
         .catch(err => alert(err.response.data.message));
     } else {
-      alert("연령을 먼저 추가하세요.");
+      alert("추가할 기기를 선택하세요.");
+    }
+  };
+
+  // 차트에 들어간 기기별 유저 삭제
+  handleUserRemove = (chartLabel: string) => {
+    const { chartUsers } = this.state;
+    if (chartUsers) {
+      // 길이가 있을 경우에만
+      if (chartUsers.length !== 0) {
+        this.setState({
+          chartUsers: chartUsers.filter((u: statTypes.IStatUser) => {
+            return u.userAgent !== chartLabel;
+          })
+        });
+      } else {
+        alert("기기를 추가하세요.");
+      }
+    } else {
+      alert("기기를 추가하세요.");
+    }
+  };
+
+  // 기기별 유저 차트에 기간 적용
+  handleUserPeriodSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const { chartUsers, userStartDate, userEndDate } = this.state;
+    e.preventDefault();
+    if (chartUsers) {
+      if (chartUsers.length) {
+        axios
+          .post(
+            `${API_URL}/statistic/useragent`,
+            {
+              userAgentList: chartUsers.map(u => u.userAgent),
+              startDate: userStartDate,
+              endDate: userEndDate
+            },
+            withJWT()
+          )
+          .then(res =>
+            this.setState({
+              chartUsers: res.data.dataList,
+              // 적용된 날짜를 기억해둔다.
+              capturedUserDate: {
+                userStartDate: userStartDate,
+                userEndDate: userEndDate
+              }
+            })
+          )
+          .catch(err => alert(err.response.data.message));
+      } else {
+        alert("기기를 먼저 추가하세요.");
+      }
+    } else {
+      alert("기기를 먼저 추가하세요.");
+    }
+  };
+
+  // 기기별 유저 차트에 기간 전체 적용
+  handleUserPeriodAllSubmit = () => {
+    const { chartUsers } = this.state;
+    if (chartUsers) {
+      if (chartUsers.length) {
+        axios
+          .post(
+            `${API_URL}/statistic/useragent`,
+            {
+              userAgentList: chartUsers.map(u => u.userAgent),
+              startDate: "",
+              endDate: ""
+            },
+            withJWT()
+          )
+          .then(res =>
+            this.setState({
+              chartUsers: res.data.dataList,
+              userStartDate: "",
+              userEndDate: "",
+              capturedUserDate: {
+                userStartDate: "",
+                userEndDate: ""
+              }
+            })
+          )
+          .catch(err => alert(err.response.data.message));
+      } else {
+        alert("기기를 먼저 추가하세요.");
+      }
+    } else {
+      alert("기기를 먼저 추가하세요.");
     }
   };
 
@@ -379,7 +549,11 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
       chartAges,
       ageGroup,
       ageStartDate,
-      ageEndDate
+      ageEndDate,
+      chartUsers,
+      userAgent,
+      userStartDate,
+      userEndDate
     } = this.state;
     const {
       handleInputChange,
@@ -391,7 +565,11 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
       handleAgeSubmit,
       handleAgeRemove,
       handleAgePeriodSubmit,
-      handleAgePeriodAllSubmit
+      handleAgePeriodAllSubmit,
+      handleUserSubmit,
+      handleUserRemove,
+      handleUserPeriodSubmit,
+      handleUserPeriodAllSubmit
     } = this;
 
     return (
@@ -561,29 +739,72 @@ class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState>
 
               <div className="device-chart">
                 <div className="chart-form-container">
-                  <h1 className="mb-4 text-center">기기별 접속자수</h1>
-                  <form className="chart-add-form">
-                    <select className="form-control">
-                      <option value="10대">10대</option>
-                      <option value="20대">20대</option>
+                  <h1 className="mb-4 text-center">기기별 구매자수</h1>
+                  <form className="chart-add-form" onSubmit={e => handleUserSubmit(e)}>
+                    <select
+                      className="form-control"
+                      name="userAgent"
+                      value={userAgent}
+                      onChange={e => handleSelectChange(e)}
+                      required
+                    >
+                      <option value="">선택</option>
+                      <option value="PC">PC</option>
+                      <option value="TABLET">TABLET</option>
+                      <option value="MOBILE">MOBILE</option>
                     </select>
                     <input className="btn btn-primary w-100 mt-2 mb-4" type="submit" value="추가" />
                   </form>
-                  <form className="chart-period-form">
-                    <input className="form-control mb-2" type="date" />
-                    <input className="form-control mb-2" type="date" />
+                  <form className="chart-period-form" onSubmit={e => handleUserPeriodSubmit(e)}>
+                    <input
+                      className="form-control mb-2"
+                      type="date"
+                      name="userStartDate"
+                      value={userStartDate}
+                      onChange={e => handleInputChange(e)}
+                      required
+                    />
+                    <input
+                      className="form-control mb-2"
+                      type="date"
+                      name="userEndDate"
+                      value={userEndDate}
+                      onChange={e => handleInputChange(e)}
+                      required
+                    />
                     <input className="btn btn-primary w-100 mb-4" type="submit" value="적용" />
-                    <button className="btn btn-outline-primary w-100">기간 전체 보기</button>
                   </form>
+                  <button
+                    className="btn btn-outline-primary w-100"
+                    onClick={() => handleUserPeriodAllSubmit()}
+                  >
+                    기간 전체 보기
+                  </button>
                 </div>
                 <div className="chart-wrapper pl-4">
                   <Doughnut
-                    data={data3}
+                    data={
+                      chartUsers
+                        ? ({
+                            labels: chartUsers.map(u => u.userAgent),
+                            datasets: [
+                              {
+                                backgroundColor: [...colors],
+                                hoverBackgroundColor: [...hoverColors],
+                                data: chartUsers.map(u => u.count)
+                              }
+                            ]
+                          } as statTypes.IPieData)
+                        : {}
+                    }
                     options={{
                       responsive: true,
                       maintainAspectRatio: false
                     }}
-                    getElementAtEvent={elem => console.log(elem)}
+                    getElementAtEvent={elem =>
+                      // 선택된 파이가 있을 경우에만 해당 파이 삭제.
+                      elem.length ? handleUserRemove(elem[0]._model.label) : {}
+                    }
                   />
                 </div>
               </div>

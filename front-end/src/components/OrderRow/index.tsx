@@ -7,8 +7,8 @@ import "./styles.scss";
 
 export interface IOrderRowProps {
   order: orderTypes.IOrder;
-  handleModalOpen(orderId: number): void;
   isChecked?: boolean;
+  handleModalOpen(orderId: number): void;
   handleCheckRow?(orderId: number): void;
   handleUncheckRow?(orderId: number): void;
 }
@@ -19,7 +19,7 @@ export default class OrderRow extends React.Component<IOrderRowProps, IOrderRowS
   shouldComponentUpdate(nextProps: IOrderRowProps) {
     if (
       _.isEqual(this.props.order, nextProps.order) &&
-      _.isEqual(this.props.isChecked, nextProps.isChecked)
+      this.props.isChecked === nextProps.isChecked
     ) {
       return false;
     } else {
