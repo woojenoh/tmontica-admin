@@ -1,6 +1,6 @@
 package com.internship.tmontica_admin.menu.validaton;
 
-import com.internship.tmontica_admin.menu.model.request.MenuUpdateReq;
+import com.internship.tmontica_admin.menu.model.request.MenuUpdateRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -9,12 +9,12 @@ import org.springframework.validation.Validator;
 public class MenuUpdateValidator implements Validator {
     @Override
     public boolean supports(Class<?> aClass) {
-        return MenuUpdateReq.class.isAssignableFrom(aClass);
+        return MenuUpdateRequest.class.isAssignableFrom(aClass);
     }
 
     @Override
     public void validate(Object obj, Errors errors) {
-        MenuUpdateReq menuReq = (MenuUpdateReq) obj;
+        MenuUpdateRequest menuReq = (MenuUpdateRequest) obj;
 
         // 1. sellPrice
         if(menuReq.getSellPrice() != menuReq.getProductPrice() * (100 - menuReq.getDiscountRate())/100 ){

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Setter
 @Getter
-public class MenuByPageResp {
+public class MenuByPageResponse {
     private Pagination pagination;
     private List<Menu> menus;
 }

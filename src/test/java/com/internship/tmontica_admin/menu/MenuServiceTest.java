@@ -1,7 +1,7 @@
 package com.internship.tmontica_admin.menu;
 
 import com.internship.tmontica_admin.menu.exception.MenuException;
-import com.internship.tmontica_admin.menu.model.response.MenuByPageResp;
+import com.internship.tmontica_admin.menu.model.response.MenuByPageResponse;
 import com.internship.tmontica_admin.option.OptionDao;
 import com.internship.tmontica_admin.security.JwtService;
 import com.internship.tmontica_admin.util.SaveImageFile;
@@ -69,7 +69,7 @@ public class MenuServiceTest {
                 .willReturn(menus.subList(0, (menus.size() < 10)? menus.size() : 10));
 
         // when
-        final MenuByPageResp allMenus = menuService.getAllMenus(1, 10);
+        final MenuByPageResponse allMenus = menuService.getAllMenus(1, 10);
 
         // then
         verify(menuDao, atLeastOnce()).getAllMenusByPage(anyInt(), anyInt());
