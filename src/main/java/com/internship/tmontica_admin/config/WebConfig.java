@@ -18,7 +18,8 @@ public class WebConfig implements WebMvcConfigurer {
     private static final String[] EXCLUDE_PATH = {
             "/webjars/springfox-swagger-ui/**" , "/", "/csrf",
             "/api/users/signin", "/swagger*/**", "/images/**"
-            , "/error/**", "/**/*.html", "/**/*.json", "/static/**", "/signin"
+            , "/error/**", "/**/*.html", "/**/*.json", "/static/**",
+            "/signin", "/menus", "/order", "/statistics"
     };
 
     @Override
