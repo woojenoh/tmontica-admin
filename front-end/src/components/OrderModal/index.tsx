@@ -10,7 +10,7 @@ export interface IOrderModalProps {
   orderDetail: orderTypes.IOrderDetail | null;
 }
 
-function OrderModal(props: IOrderModalProps) {
+const OrderModal = React.memo((props: IOrderModalProps) => {
   const { isModalOpen, handleModalClose, orderDetail } = props;
 
   return (
@@ -100,6 +100,6 @@ function OrderModal(props: IOrderModalProps) {
       </Modal.Footer>
     </Modal>
   );
-}
+});
 
 export default OrderModal;

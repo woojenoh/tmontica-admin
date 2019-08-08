@@ -78,7 +78,7 @@ export interface IInputState {
   ageEndDate: string;
 }
 
-class Statistics extends React.Component<IStatisticsProps, IStatisticsState> {
+class Statistics extends React.PureComponent<IStatisticsProps, IStatisticsState> {
   state = {
     menus: null,
     chartMenus: null,

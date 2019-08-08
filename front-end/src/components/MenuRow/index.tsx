@@ -1,4 +1,4 @@
-import React, { Component, SyntheticEvent } from "react";
+import React, { PureComponent, SyntheticEvent } from "react";
 import { IMenu } from "../../types/menu";
 import { IMAGE_URL } from "../../api/common";
 import "./styles.scss";
@@ -13,7 +13,7 @@ interface Props {
 }
 interface State {}
 
-export default class MenuRow extends Component<Props, State> {
+export default class MenuRow extends PureComponent<Props, State> {
   state = {};
 
   render() {

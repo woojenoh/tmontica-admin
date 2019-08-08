@@ -6,7 +6,7 @@ export interface IPaginationProps {
   handleSelectPage(pageNumber: number): void;
 }
 
-function Pagination(props: IPaginationProps) {
+const Pagination = React.memo((props: IPaginationProps) => {
   const { pagination, handleSelectPage } = props;
 
   // 페이지 버튼 만드는 함수.
@@ -62,6 +62,6 @@ function Pagination(props: IPaginationProps) {
       )}
     </>
   );
-}
+});
 
 export default Pagination;

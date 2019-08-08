@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import "../../assets/scss/admin.scss";
 import Header from "../../components/Header";
 import * as userTypes from "../../types/user";
@@ -15,7 +15,7 @@ export interface State {
   password: string;
 }
 
-export default class Signin extends Component<Props, State> {
+export default class Signin extends PureComponent<Props, State> {
   state = { id: "", password: "" };
 
   handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {

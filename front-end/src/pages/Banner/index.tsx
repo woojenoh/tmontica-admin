@@ -1,4 +1,4 @@
-import React, { Component, SyntheticEvent } from "react";
+import React, { PureComponent, SyntheticEvent } from "react";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import { Table } from "react-bootstrap";
@@ -10,7 +10,7 @@ import { CommonError } from "../../api/CommonError";
 interface Props {}
 interface State {}
 
-export default class Banner extends Component<Props, State> {
+export default class Banner extends PureComponent<Props, State> {
   state = {
     page: 1,
     show: false,

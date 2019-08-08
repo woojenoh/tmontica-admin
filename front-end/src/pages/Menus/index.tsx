@@ -1,4 +1,4 @@
-import React, { Component, MouseEvent } from "react";
+import React, { PureComponent, MouseEvent } from "react";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import { Table } from "react-bootstrap";
@@ -24,7 +24,7 @@ interface IMenusState {
   pagination: IPagination | null;
 }
 
-export default class Menus extends Component<IMenusProps, IMenusState> {
+export default class Menus extends PureComponent<IMenusProps, IMenusState> {
   state = {
     page: 1,
     show: false,

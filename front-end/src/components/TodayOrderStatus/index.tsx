@@ -9,7 +9,7 @@ export interface ITodayOrderStatusProps {
   handleClickTodayStatus(statusName: string): void;
 }
 
-function TodayOrderStatus(props: ITodayOrderStatusProps) {
+const TodayOrderStatus = React.memo((props: ITodayOrderStatusProps) => {
   const {
     statusName,
     statusCount,
@@ -31,6 +31,6 @@ function TodayOrderStatus(props: ITodayOrderStatusProps) {
       </div>
     </div>
   );
-}
+});
 
 export default TodayOrderStatus;

@@ -31,7 +31,7 @@ export interface ITodayOrderState {
   pagination: commonTypes.IPagination | null;
 }
 
-class TodayOrder extends React.Component<ITodayOrderProps, ITodayOrderState> {
+class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState> {
   componentDidMount() {
     // 처음에 전체내역을 한번 가져온다.
     axios

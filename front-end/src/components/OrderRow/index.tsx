@@ -12,7 +12,7 @@ export interface IOrderRowProps {
   handleUncheckRow?(orderId: number): void;
 }
 
-function OrderRow(props: IOrderRowProps) {
+const OrderRow = React.memo((props: IOrderRowProps) => {
   const { order, isChecked, handleModalOpen, handleCheckRow, handleUncheckRow } = props;
 
   return (
@@ -63,6 +63,6 @@ function OrderRow(props: IOrderRowProps) {
       )}
     </>
   );
-}
+});
 
 export default OrderRow;

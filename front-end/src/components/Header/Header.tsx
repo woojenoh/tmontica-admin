@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import "bootstrap/dist/css/bootstrap.css";
@@ -13,7 +13,7 @@ interface Props {
 }
 interface State {}
 
-export default class Header extends Component<Props, State> {
+export default class Header extends PureComponent<Props, State> {
   state = {};
 
   render() {

@@ -40,7 +40,7 @@ export interface InputState {
   searchValue: string;
 }
 
-class Order extends React.Component<IOrderProps, IOrderState> {
+class Order extends React.PureComponent<IOrderProps, IOrderState> {
   componentDidMount() {
     this.handleFetchAll();
   }

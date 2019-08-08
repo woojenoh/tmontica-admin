@@ -1,10 +1,10 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Link } from "react-router-dom";
 
 interface Props {}
 interface State {}
 
-export default class Nav extends Component<Props, State> {
+export default class Nav extends PureComponent<Props, State> {
   state = {};
 
   render() {
