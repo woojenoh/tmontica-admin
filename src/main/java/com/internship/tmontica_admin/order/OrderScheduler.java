@@ -16,7 +16,7 @@ public class OrderScheduler {
     private final OrderDao orderDao;
 
     /** 미결제 상태로 30분 이상인 주문 취소 */
-    @Scheduled(fixedDelay = 1000*60)
+    @Scheduled(fixedDelay = 1000*60*10)
     public void checkOrder(){
         log.info("[scheduler] start Order scheduler");
         // 미결제인 오더만 불러오기
