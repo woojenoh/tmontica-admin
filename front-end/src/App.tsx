@@ -13,7 +13,7 @@ import Signin from "./pages/Signin";
 import Menus from "./pages/Menus";
 import TodayOrder from "./pages/TodayOrder";
 import Order from "./pages/Order";
-import Statistics from "./pages/Statistics";
+import Stat from "./pages/Stat";
 import Banner from "./pages/Banner";
 
 export interface IAppProps extends RouteComponentProps {
@@ -81,7 +81,7 @@ class App extends React.Component<IAppProps> {
     return (
       <>
         <Switch>
-          <AdminRoute exact path="/statistics" component={Statistics} />
+          <AdminRoute exact path="/stat" component={Stat} />
           <AdminRoute exact path="/todayOrder" component={TodayOrder} />
           <AdminRoute exact path="/order" component={Order} />
           <AdminRoute exact path="/menus" component={Menus} />
