@@ -1,10 +1,11 @@
 import * as React from "react";
 import axios from "axios";
-import { Bar, Doughnut, Pie } from "react-chartjs-2";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
+import StatItem from "../../components/StatItem";
 import * as menuTypes from "../../types/menu";
 import * as statTypes from "../../types/stat";
+import { TCapturedDate, TSetCapturedDate } from "../../components/StatItem";
 import { API_URL } from "../../api/common";
 import { withJWT } from "../../utils";
 import "./styles.scss";
@@ -34,92 +35,21 @@ const hoverColors = [
   "#228be6"
 ];
 
-const data3 = {
-  labels: ["MOBILE", "PC", "TABLET"],
-  datasets: [
-    {
-      data: [200, 100, 50],
-      backgroundColor: [colors[0], colors[1], colors[2]],
-      hoverBackgroundColor: [hoverColors[0], hoverColors[1], hoverColors[2]]
-    }
-  ]
-};
-
 export interface IStatProps {}
 
 export interface IStatState {
   menus: menuTypes.IMenu[] | null;
   chartMenus: statTypes.IStatMenu[] | null;
-  menuId: string;
-  menuStartDate: string;
-  menuEndDate: string;
-  capturedMenuDate: {
-    menuStartDate: string;
-    menuEndDate: string;
-  };
-
   chartAges: statTypes.IStatAge[] | null;
-  ageGroup: string;
-  ageStartDate: string;
-  ageEndDate: string;
-  capturedAgeDate: {
-    ageStartDate: string;
-    ageEndDate: string;
-  };
-
   chartUsers: statTypes.IStatUser[] | null;
-  userAgent: string;
-  userStartDate: string;
-  userEndDate: string;
-  capturedUserDate: {
-    userStartDate: string;
-    userEndDate: string;
-  };
-}
-
-export interface IInputState {
-  menuId: string;
-  menuStartDate: string;
-  menuEndDate: string;
-
-  ageGroup: string;
-  ageStartDate: string;
-  ageEndDate: string;
-
-  userAgent: string;
-  userStartDate: string;
-  userEndDate: string;
 }
 
 class Stat extends React.PureComponent<IStatProps, IStatState> {
   state = {
     menus: null,
     chartMenus: null,
-    menuId: "",
-    menuStartDate: "",
-    menuEndDate: "",
-    capturedMenuDate: {
-      menuStartDate: "",
-      menuEndDate: ""
-    },
-
     chartAges: null,
-    ageGroup: "",
-    ageStartDate: "",
-    ageEndDate: "",
-    capturedAgeDate: {
-      ageStartDate: "",
-      ageEndDate: ""
-    },
-
-    chartUsers: null,
-    userAgent: "",
-    userStartDate: "",
-    userEndDate: "",
-    capturedUserDate: {
-      userStartDate: "",
-      userEndDate: ""
-    }
+    chartUsers: null
   } as IStatState;
 
   componentDidMount() {
@@ -131,21 +61,13 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
     });
   }
 
-  handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-    this.setState({
-      [e.currentTarget.name]: e.currentTarget.value
-    } as { [K in keyof IInputState]: IInputState[K] });
-  };
-
-  handleSelectChange = (e: React.FormEvent<HTMLSelectElement>) => {
-    this.setState({
-      [e.currentTarget.name]: e.currentTarget.value
-    } as { [K in keyof IInputState]: IInputState[K] });
-  };
-
   // 차트에 메뉴 추가
-  handleMenuSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const { menuId, chartMenus, capturedMenuDate } = this.state;
+  handleMenuSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    menuId: string,
+    capturedDate: TCapturedDate
+  ) => {
+    const { chartMenus } = this.state;
     e.preventDefault();
     if (menuId) {
       axios
@@ -153,8 +75,8 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           `${API_URL}/statistic/menu`,
           {
             menuIds: [Number(menuId)],
-            startDate: capturedMenuDate.menuStartDate,
-            endDate: capturedMenuDate.menuEndDate
+            startDate: capturedDate.startDate,
+            endDate: capturedDate.endDate
           },
           withJWT()
         )
@@ -187,14 +109,14 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
   };
 
   // 차트에 들어간 메뉴 삭제
-  handleMenuRemove = (chartIndex: number) => {
+  handleMenuRemove = (chartIndex: string) => {
     const { chartMenus } = this.state;
     if (chartMenus) {
       // 길이가 있을 경우에만
       if (chartMenus.length !== 0) {
         this.setState({
-          chartMenus: chartMenus.filter((m, index) => {
-            return index !== chartIndex;
+          chartMenus: chartMenus.filter(m => {
+            return m.menuName !== chartIndex;
           })
         });
       } else {
@@ -206,8 +128,13 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
   };
 
   // 메뉴 차트에 기간 적용
-  handleMenuPeriodSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const { chartMenus, menuStartDate, menuEndDate } = this.state;
+  handleMenuPeriodSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    menuStartDate: string,
+    menuEndDate: string,
+    setCapturedDate: TSetCapturedDate
+  ) => {
+    const { chartMenus } = this.state;
     e.preventDefault();
     if (chartMenus) {
       if (chartMenus.length) {
@@ -222,14 +149,12 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             withJWT()
           )
           .then(res =>
-            this.setState({
-              chartMenus: res.data.dataList,
-              // 적용된 날짜를 기억해둔다.
-              capturedMenuDate: {
-                menuStartDate: menuStartDate,
-                menuEndDate: menuEndDate
-              }
-            })
+            this.setState(
+              {
+                chartMenus: res.data.dataList
+              },
+              () => setCapturedDate(menuStartDate, menuEndDate)
+            )
           )
           .catch(err => alert(err.response.data.message));
       } else {
@@ -241,7 +166,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
   };
 
   // 메뉴 차트에 기간 전체 적용
-  handleMenuPeriodAllSubmit = () => {
+  handleMenuPeriodAllSubmit = (initializeDate: { (): void }) => {
     const { chartMenus } = this.state;
     if (chartMenus) {
       if (chartMenus.length) {
@@ -256,15 +181,12 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             withJWT()
           )
           .then(res =>
-            this.setState({
-              chartMenus: res.data.dataList,
-              menuStartDate: "",
-              menuEndDate: "",
-              capturedMenuDate: {
-                menuStartDate: "",
-                menuEndDate: ""
-              }
-            })
+            this.setState(
+              {
+                chartMenus: res.data.dataList
+              },
+              () => initializeDate()
+            )
           )
           .catch(err => alert(err.response.data.message));
       } else {
@@ -276,8 +198,12 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
   };
 
   // 차트에 연령 추가
-  handleAgeSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const { ageGroup, chartAges, capturedAgeDate } = this.state;
+  handleAgeSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    ageGroup: string,
+    capturedDate: TCapturedDate
+  ) => {
+    const { chartAges } = this.state;
     e.preventDefault();
     if (ageGroup) {
       axios
@@ -285,8 +211,8 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           `${API_URL}/statistic/age`,
           {
             ageGroups: [ageGroup],
-            startDate: capturedAgeDate.ageStartDate,
-            endDate: capturedAgeDate.ageEndDate
+            startDate: capturedDate.startDate,
+            endDate: capturedDate.endDate
           },
           withJWT()
         )
@@ -338,8 +264,13 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
   };
 
   // 연령 차트에 기간 적용
-  handleAgePeriodSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const { chartAges, ageStartDate, ageEndDate } = this.state;
+  handleAgePeriodSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    ageStartDate: string,
+    ageEndDate: string,
+    setCapturedDate: TSetCapturedDate
+  ) => {
+    const { chartAges } = this.state;
     e.preventDefault();
     if (chartAges) {
       if (chartAges.length) {
@@ -354,14 +285,12 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             withJWT()
           )
           .then(res =>
-            this.setState({
-              chartAges: res.data.dataList,
-              // 적용된 날짜를 기억해둔다.
-              capturedAgeDate: {
-                ageStartDate: ageStartDate,
-                ageEndDate: ageEndDate
-              }
-            })
+            this.setState(
+              {
+                chartAges: res.data.dataList
+              },
+              () => setCapturedDate(ageStartDate, ageEndDate)
+            )
           )
           .catch(err => alert(err.response.data.message));
       } else {
@@ -373,7 +302,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
   };
 
   // 연령 차트에 기간 전체 적용
-  handleAgePeriodAllSubmit = () => {
+  handleAgePeriodAllSubmit = (initializeDate: { (): void }) => {
     const { chartAges } = this.state;
     if (chartAges) {
       if (chartAges.length) {
@@ -388,15 +317,12 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             withJWT()
           )
           .then(res =>
-            this.setState({
-              chartAges: res.data.dataList,
-              ageStartDate: "",
-              ageEndDate: "",
-              capturedAgeDate: {
-                ageStartDate: "",
-                ageEndDate: ""
-              }
-            })
+            this.setState(
+              {
+                chartAges: res.data.dataList
+              },
+              () => initializeDate()
+            )
           )
           .catch(err => alert(err.response.data.message));
       } else {
@@ -408,8 +334,12 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
   };
 
   // 차트에 기기별 유저 추가
-  handleUserSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const { userAgent, chartUsers, capturedUserDate } = this.state;
+  handleUserSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    userAgent: string,
+    capturedDate: TCapturedDate
+  ) => {
+    const { chartUsers } = this.state;
     e.preventDefault();
     if (userAgent) {
       axios
@@ -417,8 +347,8 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           `${API_URL}/statistic/useragent`,
           {
             userAgentList: [userAgent],
-            startDate: capturedUserDate.userStartDate,
-            endDate: capturedUserDate.userEndDate
+            startDate: capturedDate.startDate,
+            endDate: capturedDate.endDate
           },
           withJWT()
         )
@@ -470,8 +400,13 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
   };
 
   // 기기별 유저 차트에 기간 적용
-  handleUserPeriodSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const { chartUsers, userStartDate, userEndDate } = this.state;
+  handleUserPeriodSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    userStartDate: string,
+    userEndDate: string,
+    setCapturedDate: TSetCapturedDate
+  ) => {
+    const { chartUsers } = this.state;
     e.preventDefault();
     if (chartUsers) {
       if (chartUsers.length) {
@@ -486,14 +421,12 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             withJWT()
           )
           .then(res =>
-            this.setState({
-              chartUsers: res.data.dataList,
-              // 적용된 날짜를 기억해둔다.
-              capturedUserDate: {
-                userStartDate: userStartDate,
-                userEndDate: userEndDate
-              }
-            })
+            this.setState(
+              {
+                chartUsers: res.data.dataList
+              },
+              () => setCapturedDate(userStartDate, userEndDate)
+            )
           )
           .catch(err => alert(err.response.data.message));
       } else {
@@ -505,7 +438,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
   };
 
   // 기기별 유저 차트에 기간 전체 적용
-  handleUserPeriodAllSubmit = () => {
+  handleUserPeriodAllSubmit = (initializeDate: { (): void }) => {
     const { chartUsers } = this.state;
     if (chartUsers) {
       if (chartUsers.length) {
@@ -520,15 +453,12 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             withJWT()
           )
           .then(res =>
-            this.setState({
-              chartUsers: res.data.dataList,
-              userStartDate: "",
-              userEndDate: "",
-              capturedUserDate: {
-                userStartDate: "",
-                userEndDate: ""
-              }
-            })
+            this.setState(
+              {
+                chartUsers: res.data.dataList
+              },
+              () => initializeDate()
+            )
           )
           .catch(err => alert(err.response.data.message));
       } else {
@@ -540,24 +470,8 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
   };
 
   render() {
+    const { menus, chartMenus, chartAges, chartUsers } = this.state;
     const {
-      menus,
-      chartMenus,
-      menuId,
-      menuStartDate,
-      menuEndDate,
-      chartAges,
-      ageGroup,
-      ageStartDate,
-      ageEndDate,
-      chartUsers,
-      userAgent,
-      userStartDate,
-      userEndDate
-    } = this.state;
-    const {
-      handleInputChange,
-      handleSelectChange,
       handleMenuSubmit,
       handleMenuRemove,
       handleMenuPeriodSubmit,
@@ -579,235 +493,96 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           <Nav />
           <main className="main">
             <section className="stat p-4">
-              <div className="menu-chart">
-                <div className="chart-form-container">
-                  <h1 className="mb-4 text-center">메뉴별 매출액</h1>
-                  <form className="chart-add-form" onSubmit={e => handleMenuSubmit(e)}>
-                    <select
-                      className="form-control"
-                      name="menuId"
-                      value={menuId}
-                      onChange={e => handleSelectChange(e)}
-                      required
-                    >
-                      <option value="">선택</option>
-                      {menus &&
-                        menus.map(m => {
-                          return (
-                            <option key={m.id} value={m.id}>
-                              {m.nameKo}
-                            </option>
-                          );
-                        })}
-                    </select>
-                    <input className="btn btn-primary w-100 mt-2 mb-4" type="submit" value="추가" />
-                  </form>
-                  <form className="chart-period-form" onSubmit={e => handleMenuPeriodSubmit(e)}>
-                    <input
-                      className="form-control mb-2"
-                      name="menuStartDate"
-                      type="date"
-                      value={menuStartDate}
-                      onChange={e => handleInputChange(e)}
-                      required
-                    />
-                    <input
-                      className="form-control mb-2"
-                      name="menuEndDate"
-                      type="date"
-                      value={menuEndDate}
-                      onChange={e => handleInputChange(e)}
-                      required
-                    />
-                    <input className="btn btn-primary w-100 mb-4" type="submit" value="적용" />
-                  </form>
-                  <button
-                    className="btn btn-outline-primary w-100"
-                    onClick={() => handleMenuPeriodAllSubmit()}
-                  >
-                    기간 전체 보기
-                  </button>
-                </div>
-                <div className="chart-wrapper pl-4">
-                  <Bar
-                    data={
-                      chartMenus
-                        ? ({
-                            datasets: chartMenus.map((m: statTypes.IStatMenu, index: number) => {
-                              return {
-                                label: m.menuName,
-                                backgroundColor: colors[index],
-                                hoverBackgroundColor: hoverColors[index],
-                                data: [m.totalPrice]
-                              };
-                            })
-                          } as statTypes.IBarData)
-                        : {}
-                    }
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      tooltips: {
-                        callbacks: {
-                          title: function() {}
-                        }
+              <StatItem
+                statTitle="메뉴별 매출액"
+                chartType="Bar"
+                optionArray={
+                  menus
+                    ? menus.map(m => {
+                        return {
+                          id: String(m.id),
+                          value: m.nameKo
+                        };
+                      })
+                    : null
+                }
+                chartData={
+                  chartMenus
+                    ? {
+                        datasets: chartMenus.map((m: statTypes.IStatMenu, index: number) => {
+                          return {
+                            label: m.menuName,
+                            backgroundColor: colors[index],
+                            hoverBackgroundColor: hoverColors[index],
+                            data: [m.totalPrice]
+                          };
+                        })
                       }
-                    }}
-                    getElementAtEvent={elem =>
-                      // 선택된 바가 있을 경우에만 해당 바 삭제.
-                      elem.length ? handleMenuRemove(elem[0]._datasetIndex) : {}
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="age-chart">
-                <div className="chart-form-container">
-                  <h1 className="mb-4 text-center">연령별 매출액</h1>
-                  <form className="chart-add-form" onSubmit={e => handleAgeSubmit(e)}>
-                    <select
-                      className="form-control"
-                      name="ageGroup"
-                      value={ageGroup}
-                      onChange={e => handleSelectChange(e)}
-                      required
-                    >
-                      <option value="">선택</option>
-                      <option value="영유아">영유아</option>
-                      <option value="10대">10대</option>
-                      <option value="20대">20대</option>
-                      <option value="30대">30대</option>
-                      <option value="40대">40대</option>
-                      <option value="50대">50대</option>
-                      <option value="60대">60대 이상</option>
-                    </select>
-                    <input className="btn btn-primary w-100 mt-2 mb-4" type="submit" value="추가" />
-                  </form>
-                  <form className="chart-period-form" onSubmit={e => handleAgePeriodSubmit(e)}>
-                    <input
-                      className="form-control mb-2"
-                      type="date"
-                      name="ageStartDate"
-                      value={ageStartDate}
-                      onChange={e => handleInputChange(e)}
-                      required
-                    />
-                    <input
-                      className="form-control mb-2"
-                      type="date"
-                      name="ageEndDate"
-                      value={ageEndDate}
-                      onChange={e => handleInputChange(e)}
-                      required
-                    />
-                    <input className="btn btn-primary w-100 mb-4" type="submit" value="적용" />
-                  </form>
-                  <button
-                    className="btn btn-outline-primary w-100"
-                    onClick={() => handleAgePeriodAllSubmit()}
-                  >
-                    기간 전체 보기
-                  </button>
-                </div>
-                <div className="chart-wrapper pl-4">
-                  <Pie
-                    data={
-                      chartAges
-                        ? ({
-                            labels: chartAges.map(a => a.ageGroup),
-                            datasets: [
-                              {
-                                backgroundColor: [...colors],
-                                hoverBackgroundColor: [...hoverColors],
-                                data: chartAges.map(a => a.totalPrice)
-                              }
-                            ]
-                          } as statTypes.IPieData)
-                        : {}
-                    }
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false
-                    }}
-                    getElementAtEvent={elem =>
-                      // 선택된 파이가 있을 경우에만 해당 파이 삭제.
-                      elem.length ? handleAgeRemove(elem[0]._model.label) : {}
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="device-chart">
-                <div className="chart-form-container">
-                  <h1 className="mb-4 text-center">기기별 구매자수</h1>
-                  <form className="chart-add-form" onSubmit={e => handleUserSubmit(e)}>
-                    <select
-                      className="form-control"
-                      name="userAgent"
-                      value={userAgent}
-                      onChange={e => handleSelectChange(e)}
-                      required
-                    >
-                      <option value="">선택</option>
-                      <option value="PC">PC</option>
-                      <option value="TABLET">TABLET</option>
-                      <option value="MOBILE">MOBILE</option>
-                    </select>
-                    <input className="btn btn-primary w-100 mt-2 mb-4" type="submit" value="추가" />
-                  </form>
-                  <form className="chart-period-form" onSubmit={e => handleUserPeriodSubmit(e)}>
-                    <input
-                      className="form-control mb-2"
-                      type="date"
-                      name="userStartDate"
-                      value={userStartDate}
-                      onChange={e => handleInputChange(e)}
-                      required
-                    />
-                    <input
-                      className="form-control mb-2"
-                      type="date"
-                      name="userEndDate"
-                      value={userEndDate}
-                      onChange={e => handleInputChange(e)}
-                      required
-                    />
-                    <input className="btn btn-primary w-100 mb-4" type="submit" value="적용" />
-                  </form>
-                  <button
-                    className="btn btn-outline-primary w-100"
-                    onClick={() => handleUserPeriodAllSubmit()}
-                  >
-                    기간 전체 보기
-                  </button>
-                </div>
-                <div className="chart-wrapper pl-4">
-                  <Doughnut
-                    data={
-                      chartUsers
-                        ? ({
-                            labels: chartUsers.map(u => u.userAgent),
-                            datasets: [
-                              {
-                                backgroundColor: [...colors],
-                                hoverBackgroundColor: [...hoverColors],
-                                data: chartUsers.map(u => u.count)
-                              }
-                            ]
-                          } as statTypes.IPieData)
-                        : {}
-                    }
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false
-                    }}
-                    getElementAtEvent={elem =>
-                      // 선택된 파이가 있을 경우에만 해당 파이 삭제.
-                      elem.length ? handleUserRemove(elem[0]._model.label) : {}
-                    }
-                  />
-                </div>
-              </div>
+                    : null
+                }
+                handleSubmit={handleMenuSubmit}
+                handleRemove={handleMenuRemove}
+                handlePeriodSubmit={handleMenuPeriodSubmit}
+                handlePeriodAllSubmit={handleMenuPeriodAllSubmit}
+              />
+              <StatItem
+                statTitle="연령별 매출액"
+                chartType="Pie"
+                optionArray={[
+                  { id: "영유아", value: "영유아" },
+                  { id: "10대", value: "10대" },
+                  { id: "20대", value: "20대" },
+                  { id: "30대", value: "30대" },
+                  { id: "40대", value: "40대" },
+                  { id: "50대", value: "50대" },
+                  { id: "60대 이상", value: "60대 이상" }
+                ]}
+                chartData={
+                  chartAges
+                    ? {
+                        labels: chartAges.map(a => a.ageGroup),
+                        datasets: [
+                          {
+                            backgroundColor: [...colors],
+                            hoverBackgroundColor: [...hoverColors],
+                            data: chartAges.map(a => a.totalPrice)
+                          }
+                        ]
+                      }
+                    : null
+                }
+                handleSubmit={handleAgeSubmit}
+                handleRemove={handleAgeRemove}
+                handlePeriodSubmit={handleAgePeriodSubmit}
+                handlePeriodAllSubmit={handleAgePeriodAllSubmit}
+              />
+              <StatItem
+                statTitle="기기별 구매자수"
+                chartType="Doughnut"
+                optionArray={[
+                  { id: "PC", value: "PC" },
+                  { id: "TABLET", value: "TABLET" },
+                  { id: "MOBILE", value: "MOBILE" }
+                ]}
+                chartData={
+                  chartUsers
+                    ? ({
+                        labels: chartUsers.map(u => u.userAgent),
+                        datasets: [
+                          {
+                            backgroundColor: [...colors],
+                            hoverBackgroundColor: [...hoverColors],
+                            data: chartUsers.map(u => u.count)
+                          }
+                        ]
+                      } as statTypes.IPieData)
+                    : null
+                }
+                handleSubmit={handleUserSubmit}
+                handleRemove={handleUserRemove}
+                handlePeriodSubmit={handleUserPeriodSubmit}
+                handlePeriodAllSubmit={handleUserPeriodAllSubmit}
+              />
             </section>
           </main>
         </div>
