@@ -14,38 +14,27 @@ export default class Nav extends PureComponent<Props, State> {
           <ul className="nav flex-column">
             <li className="nav-item">
               <Link to="/" className="nav-link">
-                <i className="fas fa-shopping-cart feather" />
                 <h5>오늘의 주문</h5>
               </Link>
             </li>
             <li className="nav-item">
               <Link to="/order" className="nav-link">
-                <i className="fas fa-shopping-cart feather" />
                 <h5>주문 내역 검색</h5>
               </Link>
             </li>
             <li className="nav-item">
               <Link to="/menus" className="nav-link">
-                <i className="fas fa-coffee feather" />
                 <h5>메뉴 관리</h5>
               </Link>
             </li>
             <li className="nav-item">
               <Link to="/statistics" className="nav-link">
-                <i className="far fa-chart-bar feather" />
                 <h5>통계</h5>
               </Link>
             </li>
             <li className="nav-item">
               <Link to="/banner" className="nav-link">
-                <i className="far fa-flag feather" />
                 <h5>배너 관리</h5>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/" className="nav-link">
-                <i className="fas fa-user feather" />
-                <h5>사용자 관리</h5>
               </Link>
             </li>
           </ul>
