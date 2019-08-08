@@ -16,9 +16,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final JwtService jwtService;
     private static final String[] EXCLUDE_PATH = {
-            "/webjars/springfox-swagger-ui/**" , "/**", "/signin/", "/csrf",
-            "/api/users/signin", "/swagger*/**", "/resources/**", "/images/**"
-            , "/**/*.jpg", "/**/*.js", "/**/*.css", "/error/**"
+            "/webjars/springfox-swagger-ui/**" , "/", "/csrf",
+            "/api/users/signin", "/swagger*/**", "/images/**"
+            , "/error/**", "/**/*.html", "/**/*.json", "/static/**", "/signin"
     };
 
     @Override

@@ -20,6 +20,8 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
 
+        System.out.println(request.getRequestURL().toString());
+
         if(CorsUtils.isPreFlightRequest(request)){
             response.setStatus(response.SC_OK);
             return true;
