@@ -1,5 +1,6 @@
 package com.internship.tmontica_admin.menu;
 
+import com.internship.tmontica_admin.menu.model.vo.MenuIdName;
 import com.internship.tmontica_admin.option.Option;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -65,5 +66,8 @@ public interface MenuDao {
 
     @Select("SELECT count(*) FROM menus WHERE category_eng = #{category}")
     int getCategoryMenuCnt(String category);
+
+    @Select("SELECT id, name_ko FROM menus")
+    List<MenuIdName> getAllMenuIdAndName();
 
 }
