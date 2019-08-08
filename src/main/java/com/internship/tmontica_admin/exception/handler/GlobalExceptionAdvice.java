@@ -10,6 +10,7 @@ import com.internship.tmontica_admin.order.exception.OrderSearchTypeException;
 import com.internship.tmontica_admin.order.exception.OrderValidException;
 import com.internship.tmontica_admin.security.exception.UnauthorizedException;
 import com.internship.tmontica_admin.statistic.exception.StatisticException;
+import com.internship.tmontica_admin.statistic.exception.StatisticValidException;
 import com.internship.tmontica_admin.user.exception.UserException;
 import com.internship.tmontica_admin.user.exception.UserValidException;
 import org.slf4j.Logger;
@@ -101,4 +102,10 @@ public class GlobalExceptionAdvice {
         return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getErrorMessage()), e.getBannerExceptionType().getResponseType());
     }
 
+    @ExceptionHandler(StatisticValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public TmonTicaExceptionFormat handleStatisticValidException(StatisticValidException e){
+        log.info("Statistic valid {}", e.getMessage());
+        return new TmonTicaExceptionFormat(e.getField(), e.getMessage(), e.getBindingResult());
+    }
 }

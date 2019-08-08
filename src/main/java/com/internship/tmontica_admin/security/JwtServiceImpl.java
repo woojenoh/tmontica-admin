@@ -62,6 +62,7 @@ public class JwtServiceImpl implements JwtService{
 
         return false;
     }
+
     public String getUserInfo(String key){
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -74,7 +75,7 @@ public class JwtServiceImpl implements JwtService{
             jws = Jwts.parser()
                     .setSigningKey(KEY)
                     .parseClaimsJws(jwtToken);
-        } catch (JwtException e) {
+        } catch (Exception e) {
             throw new UnauthorizedException();
         }
 

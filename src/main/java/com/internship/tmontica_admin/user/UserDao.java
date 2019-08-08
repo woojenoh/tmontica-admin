@@ -14,6 +14,4 @@ public interface UserDao {
     int updateUserPoint(int point, String id);
     @Select("SELECT point FROM users WHERE id = #{id}")
     int getUserPointByUserId(String id);
-    @Select("SELECT * FROM users")
-    List<User> getAllUser();
 }

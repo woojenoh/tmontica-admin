@@ -51,10 +51,22 @@ public class BannerController {
         return new ResponseEntity<>(banner, HttpStatus.OK);
     }
 
-    // usePage에 맞는 banner 가져오기.
+    // usePage에 맞는 배너 가져오기.
     @GetMapping("/{usePageEng:[a-z-]+}")
     public ResponseEntity<List<Banner>> getBannerByNumber(@PathVariable String usePageEng){
         List<Banner> banners = bannerService.getBannersByPage(usePageEng);
+        return new ResponseEntity<>(banners, HttpStatus.OK);
+    }
+
+    // 전체 배너 가져오기
+    @GetMapping
+    public ResponseEntity<List<Banner>> getAllBanners(){
+        List<Banner> banners = bannerService.getAllBanners();
+
+        if(banners.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
         return new ResponseEntity<>(banners, HttpStatus.OK);
     }
 
@@ -73,7 +85,7 @@ public class BannerController {
     }
 
     // 배너 삭제
-    @DeleteMapping("{/id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity deleteBanner(@PathVariable int id){
         bannerService.deleteBanner(id);
         return new ResponseEntity(HttpStatus.OK);

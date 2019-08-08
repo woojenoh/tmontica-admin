@@ -8,7 +8,7 @@ import com.internship.tmontica_admin.paging.Pagination;
 import com.internship.tmontica_admin.point.Point;
 import com.internship.tmontica_admin.point.PointLogType;
 import com.internship.tmontica_admin.point.PointService;
-import com.internship.tmontica_admin.security.JwtServiceImpl;
+import com.internship.tmontica_admin.security.JwtService;
 import com.internship.tmontica_admin.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class OrderService {
     private final OptionDao optionDao;
     private static final double RESERVE_RATE = 10.0;
     private final PointService pointService;
-    private final JwtServiceImpl jwtService;
+    private final JwtService jwtService;
 
     // 주문 상태 변경 api(관리자)
     @Transactional
