@@ -40,12 +40,12 @@ public class MenuController {
     @Value("${menu.imagepath}")
     private String location;
 
-    @InitBinder("menuReq")
+    @InitBinder("menuRequest")
     private void initMenuBinder(WebDataBinder dataBinder){
         dataBinder.addValidators(menuValidator);
     }
 
-    @InitBinder("menuUpdateReq")
+    @InitBinder("menuUpdateRequest")
     private void initMenuUpdateBinder(WebDataBinder dataBinder){
         dataBinder.addValidators(menuUpdateValidator);
     }

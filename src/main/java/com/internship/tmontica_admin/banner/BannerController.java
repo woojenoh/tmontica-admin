@@ -3,6 +3,7 @@ package com.internship.tmontica_admin.banner;
 import com.internship.tmontica_admin.banner.exception.BannerValidException;
 import com.internship.tmontica_admin.banner.model.request.BannerRequest;
 import com.internship.tmontica_admin.banner.model.request.BannerUpdateRequest;
+import com.internship.tmontica_admin.banner.validator.BannerUpdateValidator;
 import com.internship.tmontica_admin.banner.validator.BannerValidator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -26,10 +27,15 @@ public class BannerController {
 
     private final BannerValidator bannerValidator;
 
-    @InitBinder
-    private void initBinder(WebDataBinder dataBinder) {
+    private final BannerUpdateValidator bannerUpdateValidator;
+
+    @InitBinder("bannerRequest")
+    private void initAddBinder(WebDataBinder dataBinder) {
         dataBinder.addValidators(bannerValidator);
     }
+
+    @InitBinder("bannerUpdateReuqest")
+    private void initUpdateBinder(WebDataBinder dataBinder){ dataBinder.addValidators(bannerUpdateValidator);}
 
     @PostMapping
     public ResponseEntity createBanner(@ModelAttribute @Valid BannerRequest bannerRequest, BindingResult bindingResult){
@@ -45,7 +51,7 @@ public class BannerController {
 
     // id로 배너 조회하기
     @GetMapping("/{id:\\d+}")
-    public ResponseEntity<Banner> getBannerByNumber(@PathVariable int id){
+    public ResponseEntity<Banner> getBannerById(@PathVariable int id){
         Banner banner = bannerService.getBannerById(id);
         banner.setImgUrl("/images/".concat(banner.getImgUrl()));
         return new ResponseEntity<>(banner, HttpStatus.OK);

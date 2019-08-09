@@ -64,13 +64,15 @@ public class MenuControllerTest {
 
         Menu menu = modelMapper.map(menuForm, Menu.class);
 
+
         // when
         Mockito.when(menuService.addMenu(menu, optionIds, mockMultipartFile)).thenReturn(10);
 
         // then
 //        mockMvc.perform(post("/api/menus")
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .content(menuForm))
+//                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+//                       // .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//                        )
 
 
     }

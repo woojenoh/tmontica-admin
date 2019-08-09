@@ -114,35 +114,6 @@ public class MenuService {
 
     }
 
-    // 사용 가능한 메뉴 정보 가져오기 (전체)
-    public List<Menu> getAllUsableMenus(int page, int size){
-        // 페이지에 맞는 메뉴들만 리턴한다.
-        List<Menu> usableMenus = MenuScheduler.getUsableMenus();
-        // 사용가능한 메뉴가 존재하지 않을 경우
-        if(usableMenus.isEmpty()){
-            return new ArrayList<>();
-        }
-        return getMenusByPage(page, size, usableMenus);
-
-    }
-
-    // 카테고리 별 사용 가능한 메뉴 정보 가져오기
-    public List<Menu> getUsableMenusByCategory(String category, int page, int size){
-        // 카테고리 이름 체크
-        checkCategoryName(category);
-
-        List<Menu> usableMenus = MenuScheduler.getUsableMenus();
-        // 사용가능한 메뉴가 존재하지 않을 경우
-        if(usableMenus.isEmpty()){
-            return new ArrayList<>();
-        }
-        // 해당 카테고리의 모든 메뉴를 가져온다.
-        List<Menu> categoryMenus = usableMenus.stream().filter(menu -> menu.getCategoryEng().equals(category))
-                .collect(Collectors.toList());
-        // 가져온 메뉴들 중 페이지에 맞는 메뉴들만 리턴한다.
-        return getMenusByPage(page, size, categoryMenus);
-
-    }
 
     private List<Menu> getMenusByPage(int page, int size, List<Menu> menus) {
         int startIndex = (page - 1) * size;
@@ -195,7 +166,7 @@ public class MenuService {
 
     // 메뉴 존재하는지 확인
     public boolean existMenu(int id){
-        return menuDao.getMenuById(id) == null;
+        return menuDao.getMenuById(id) != null;
     }
 
     // 이달의 메뉴 상태 변경

@@ -20,7 +20,6 @@ public class BannerUpdateRequest {
 
     private boolean usable = true;
 
-    @NotNull
     private MultipartFile imgFile;
 
     @NotEmpty(message = "link는 필수입니다.")

@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 @Component
-public class MenuUpdateValidator implements Validator {
+public class  MenuUpdateValidator implements Validator {
     @Override
     public boolean supports(Class<?> aClass) {
         return MenuUpdateRequest.class.isAssignableFrom(aClass);
