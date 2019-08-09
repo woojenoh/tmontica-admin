@@ -194,7 +194,28 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void 주문내역검색_날짜만(){
+    public void 주문내역검색_검색조건만있을때(){
+        // given
+        when(orderDao.getSearchOrderCntBySearchValue(anyString(),anyString())).thenReturn(2);
+        List<Order> orders = new ArrayList<>();
+        orders.add(order1);
+        orders.add(order2);
+        when(orderDao.searchOrderBySearchValue(anyString(),anyString(),anyInt(),anyInt())).thenReturn(orders);
+        when(orderDao.getOrderDetailByOrderId(1)).thenReturn(menus);
+        when(orderDao.getOrderDetailByOrderId(2)).thenReturn(menus2);
+        menus리스트_옵션문자열_이미지url_셋팅();
+
+        // when
+        OrderHistoryResp orderHistoryResp = orderService.getOrderHistory("주문자","testid","","",10,1);
+
+        // then
+        verify(orderDao,times(1)).getSearchOrderCntBySearchValue(anyString(),anyString());
+        verify(orderDao,times(1)).searchOrderBySearchValue(anyString(),anyString(),anyInt(),anyInt());
+        System.out.println(orderHistoryResp);
+    }
+
+    @Test
+    public void 주문내역검색_날짜만있을때(){
         // given
         when(orderDao.getSearchOrderCntByDate(anyString(),anyString())).thenReturn(2);
         List<Order> orders = new ArrayList<>();
@@ -214,8 +235,26 @@ public class OrderServiceTest {
         System.out.println(orderHistoryResp);
     }
 
+    @Test
+    public void 주문내역검색_모든파라미터_있을떄(){
+        // given
+        when(orderDao.getSearchOrderCnt(anyString(),anyString(),anyString(),anyString())).thenReturn(2);
+        List<Order> orders = new ArrayList<>();
+        orders.add(order1);
+        orders.add(order2);
+        when(orderDao.searchOrder(anyString(),anyString(),anyString(),anyString(),anyInt(),anyInt())).thenReturn(orders);
+        when(orderDao.getOrderDetailByOrderId(1)).thenReturn(menus);
+        when(orderDao.getOrderDetailByOrderId(2)).thenReturn(menus2);
+        menus리스트_옵션문자열_이미지url_셋팅();
 
-    
+        // when
+        OrderHistoryResp orderHistoryResp = orderService.getOrderHistory("주문자","testid","2019-08-02","2019-08-09",10,1);
+
+        // then
+        verify(orderDao,times(1)).getSearchOrderCnt(anyString(),anyString(),anyString(),anyString());
+        verify(orderDao,times(1)).searchOrder(anyString(),anyString(),anyString(),anyString(),anyInt(),anyInt());
+        System.out.println(orderHistoryResp);
+    }
 
     @Test
     public void DB옵션문자열변환() {
