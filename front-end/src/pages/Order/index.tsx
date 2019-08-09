@@ -279,7 +279,6 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
                       name="startDate"
                       value={startDate}
                       onChange={e => handleInputChange(e)}
-                      required
                     />
                     <input
                       type="date"
@@ -287,7 +286,6 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
                       name="endDate"
                       value={endDate}
                       onChange={e => handleInputChange(e)}
-                      required
                     />
                   </div>
                   <div className="order-search d-flex">
