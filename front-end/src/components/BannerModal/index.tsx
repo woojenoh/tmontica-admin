@@ -16,7 +16,7 @@ interface IBannerModalProps {
   bannerId: number;
   isReg: boolean;
   closeModal(): void;
-  // getBanners(): void;
+  getBanners(): void;
 }
 
 interface IBannerModalState extends IBanner, Indexable {
@@ -127,7 +127,7 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
 
       alert("배너가 등록되었습니다.");
       this.setState({ ...initState });
-      // this.props.getBanner();
+      this.props.getBanners();
     } catch (error) {
       console.log(error);
     }
@@ -140,7 +140,7 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
 
       alert("배너가 수정되었습니다.");
       this.setState({ ...initState });
-      // this.props.getBanner();
+      this.props.getBanners();
     } catch (error) {
       console.log(error);
     }

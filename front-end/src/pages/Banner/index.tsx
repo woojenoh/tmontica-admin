@@ -161,7 +161,7 @@ export default class Banner extends PureComponent<Props, State> {
               closeModal={this.closeModal}
               bannerId={this.state.bannerId}
               isReg={this.state.isReg}
-              // getMenus={this.getMenus.bind(this, this.state.page)}
+              getBanners={this.getBannerAll.bind(this)}
             />
           </main>
         </div>

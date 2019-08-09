@@ -145,7 +145,7 @@ export default class Menus extends PureComponent<IMenusProps, IMenusState> {
                 <button className="btn btn-outline-primary mr-2" onClick={handleShowRegModal}>
                   메뉴 추가
                 </button>
-                <button className="btn btn-outline-primary">이달의 메뉴 보기</button>
+                {/*<button className="btn btn-outline-primary">이달의 메뉴 보기</button>*/}
               </div>
               <table className="table table-striped table-sm content-table">
                 <thead>
