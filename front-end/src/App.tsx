@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { lazy, Suspense } from "react";
 import {
   Switch,
   Route,
@@ -9,12 +9,7 @@ import {
 } from "react-router-dom";
 import { connect } from "react-redux";
 import * as rootTypes from "./types/index";
-import Signin from "./pages/Signin";
-import Menus from "./pages/Menus";
-import TodayOrder from "./pages/TodayOrder";
-import Order from "./pages/Order";
-import Stat from "./pages/Stat";
-import Banner from "./pages/Banner";
+import "./assets/scss/admin.scss";
 
 export interface IAppProps extends RouteComponentProps {
   isSignin: boolean;
@@ -77,19 +72,27 @@ class App extends React.Component<IAppProps> {
 
   render() {
     const { PublicRoute, AdminRoute } = this;
+    const Signin = lazy(() => import("./pages/Signin"));
+    const TodayOrder = lazy(() => import("./pages/TodayOrder"));
+    const Banner = lazy(() => import("./pages/Banner"));
+    const Menus = lazy(() => import("./pages/Menus"));
+    const Order = lazy(() => import("./pages/Order"));
+    const Stat = lazy(() => import("./pages/Stat"));
 
     return (
       <>
-        <Switch>
-          <AdminRoute exact path="/stat" component={Stat} />
-          <AdminRoute exact path="/todayOrder" component={TodayOrder} />
-          <AdminRoute exact path="/order" component={Order} />
-          <AdminRoute exact path="/menus" component={Menus} />
-          <AdminRoute exact path="/menus/:menuId([0-9]+)" component={Menus} />
-          <AdminRoute exact path="/banner" component={Banner} />
-          <AdminRoute exact path="/" component={TodayOrder} />
-          <PublicRoute exact path="/signin" component={Signin} />
-        </Switch>
+        <Suspense fallback={<div>로딩 중입니다.</div>}>
+          <Switch>
+            <AdminRoute exact path="/stat" component={Stat} />
+            <AdminRoute exact path="/todayOrder" component={TodayOrder} />
+            <AdminRoute exact path="/order" component={Order} />
+            <AdminRoute exact path="/menus" component={Menus} />
+            <AdminRoute exact path="/menus/:menuId([0-9]+)" component={Menus} />
+            <AdminRoute exact path="/banner" component={Banner} />
+            <AdminRoute exact path="/" component={TodayOrder} />
+            <PublicRoute exact path="/signin" component={Signin} />
+          </Switch>
+        </Suspense>
       </>
     );
   }
