@@ -1,6 +1,5 @@
 import React, { PureComponent, MouseEvent } from "react";
 import Header from "../../components/Header";
-import Nav from "../../components/Nav";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
 import { MenuModal } from "../../components/MenuModal";
@@ -138,10 +137,9 @@ export default class Menus extends PureComponent<IMenusProps, IMenusState> {
       <>
         <Header title="메뉴 관리" />
         <div className="main-wrapper">
-          <Nav />
-          <main id="menus" className="col-md-10">
+          <main id="menus" className="main">
             <section>
-              <div className="content-head d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+              <div className="content-head d-flex flex-wrap flex-md-nowrap align-items-center mb-4">
                 <button className="btn btn-outline-primary mr-2" onClick={handleShowRegModal}>
                   메뉴 추가
                 </button>

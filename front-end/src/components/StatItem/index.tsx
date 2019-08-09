@@ -1,4 +1,5 @@
 import * as React from "react";
+import _ from "underscore";
 import { Bar, Pie, Doughnut } from "react-chartjs-2";
 import * as statTypes from "../../types/stat";
 import "./styles.scss";
@@ -53,7 +54,7 @@ export interface IInputState {
   endDate: string;
 }
 
-export default class StatItem extends React.Component<IStatItemProps, IStatItemState> {
+export default class StatItem extends React.PureComponent<IStatItemProps, IStatItemState> {
   state = {
     selectName: "",
     startDate: "",

@@ -1,5 +1,4 @@
 import React, { PureComponent } from "react";
-import "../../assets/scss/admin.scss";
 import Header from "../../components/Header";
 import * as userTypes from "../../types/user";
 import "./styles.scss";

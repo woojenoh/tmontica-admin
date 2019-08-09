@@ -1,7 +1,6 @@
 import * as React from "react";
 import axios from "axios";
 import Header from "../../components/Header";
-import Nav from "../../components/Nav";
 import StatItem from "../../components/StatItem";
 import * as menuTypes from "../../types/menu";
 import * as statTypes from "../../types/stat";
@@ -74,7 +73,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
         .post(
           `${API_URL}/statistic/menu`,
           {
-            menuIds: [Number(menuId)],
+            menuIdList: [Number(menuId)],
             startDate: capturedDate.startDate,
             endDate: capturedDate.endDate
           },
@@ -142,7 +141,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           .post(
             `${API_URL}/statistic/menu`,
             {
-              menuIds: chartMenus.map(m => m.menuId),
+              menuIdList: chartMenus.map(m => m.menuId),
               startDate: menuStartDate,
               endDate: menuEndDate
             },
@@ -174,7 +173,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           .post(
             `${API_URL}/statistic/menu`,
             {
-              menuIds: chartMenus.map(m => m.menuId),
+              menuIdList: chartMenus.map(m => m.menuId),
               startDate: "",
               endDate: ""
             },
@@ -210,7 +209,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
         .post(
           `${API_URL}/statistic/age`,
           {
-            ageGroups: [ageGroup],
+            ageGroupList: [ageGroup],
             startDate: capturedDate.startDate,
             endDate: capturedDate.endDate
           },
@@ -278,7 +277,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           .post(
             `${API_URL}/statistic/age`,
             {
-              ageGroups: chartAges.map(a => a.ageGroup),
+              ageGroupList: chartAges.map(a => a.ageGroup),
               startDate: ageStartDate,
               endDate: ageEndDate
             },
@@ -310,7 +309,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           .post(
             `${API_URL}/statistic/age`,
             {
-              ageGroups: chartAges.map(a => a.ageGroup),
+              ageGroupList: chartAges.map(a => a.ageGroup),
               startDate: "",
               endDate: ""
             },
@@ -490,9 +489,8 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
       <>
         <Header title="통계" />
         <div className="main-wrapper">
-          <Nav />
           <main className="main">
-            <section className="stat p-4">
+            <section className="stat">
               <StatItem
                 statTitle="메뉴별 매출액"
                 chartType="Bar"

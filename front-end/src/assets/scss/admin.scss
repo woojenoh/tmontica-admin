@@ -23,8 +23,13 @@ nav {
 
 .main-wrapper {
   display: flex;
-  flex-wrap: wrap;
   height: calc(100% - 65px);
+}
+
+.main {
+  min-width: 1200px;
+  padding: 20px;
+  margin: 0 auto;
 }
 
 .content-head h3 {
