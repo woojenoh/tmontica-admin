@@ -27,8 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
         // 모든 uri에 대해 http://localhost:18080, http://localhost:8180 도메인은 접근을 허용한다.
         registry.addMapping("/**")
                 .allowedOrigins("*") //http://localhost:3000
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*");
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 
     @Override

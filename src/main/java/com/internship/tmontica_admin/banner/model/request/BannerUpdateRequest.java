@@ -1,6 +1,5 @@
 package com.internship.tmontica_admin.banner.model.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,16 +12,14 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class BannerReq {
+public class BannerUpdateRequest {
 
     @NotEmpty(message = "usePage는 필수입니다.")
     private String usePage;
 
     private boolean usable = true;
 
-    @NotNull
     private MultipartFile imgFile;
 
     @NotEmpty(message = "link는 필수입니다.")
@@ -39,5 +36,4 @@ public class BannerReq {
     @NotNull(message = "순서는 필수입니다.")
     @Min(1) @Max(10)
     private int number;
-
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuCategoryResp {
+public class MenuCategoryResponse {
     private String categoryKo;
     private String categoryEng;
     private Pagination pagination;

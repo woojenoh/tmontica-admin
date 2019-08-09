@@ -1,6 +1,6 @@
 package com.internship.tmontica_admin.statistic.model.response;
 
-import com.internship.tmontica_admin.statistic.vo.SalesWithAgeData;
+import com.internship.tmontica_admin.statistic.vo.OrderWithUserAgentData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class StatisticSalesByAgeRespDTO {
+public class StatisticOrderByUserAgentResponseDTO {
 
-    private List<SalesWithAgeData> dataList;
+    private List<OrderWithUserAgentData> dataList;
 }

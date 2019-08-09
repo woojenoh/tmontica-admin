@@ -2,12 +2,12 @@ package com.internship.tmontica_admin.menu;
 
 
 import com.internship.tmontica_admin.menu.exception.MenuValidException;
-import com.internship.tmontica_admin.menu.model.request.MenuMonthlyUpdateReq;
-import com.internship.tmontica_admin.menu.model.request.MenuReq;
-import com.internship.tmontica_admin.menu.model.request.MenuUpdateReq;
-import com.internship.tmontica_admin.menu.model.response.MenuByPageResp;
-import com.internship.tmontica_admin.menu.model.response.MenuCategoryResp;
-import com.internship.tmontica_admin.menu.model.response.MenuDetailResp;
+import com.internship.tmontica_admin.menu.model.request.MenuMonthlyUpdateRequest;
+import com.internship.tmontica_admin.menu.model.request.MenuRequest;
+import com.internship.tmontica_admin.menu.model.request.MenuUpdateRequest;
+import com.internship.tmontica_admin.menu.model.response.MenuByPageResponse;
+import com.internship.tmontica_admin.menu.model.response.MenuCategoryResponse;
+import com.internship.tmontica_admin.menu.model.response.MenuDetailResponse;
 import com.internship.tmontica_admin.menu.validaton.MenuUpdateValidator;
 import com.internship.tmontica_admin.menu.validaton.MenuValidator;
 import lombok.RequiredArgsConstructor;
@@ -40,12 +40,12 @@ public class MenuController {
     @Value("${menu.imagepath}")
     private String location;
 
-    @InitBinder("menuReq")
+    @InitBinder("menuRequest")
     private void initMenuBinder(WebDataBinder dataBinder){
         dataBinder.addValidators(menuValidator);
     }
 
-    @InitBinder("menuUpdateReq")
+    @InitBinder("menuUpdateRequest")
     private void initMenuUpdateBinder(WebDataBinder dataBinder){
         dataBinder.addValidators(menuUpdateValidator);
     }
@@ -53,72 +53,72 @@ public class MenuController {
 
     /** 전체 메뉴 가져오기 (관리자용) **/
     @GetMapping
-    public ResponseEntity<MenuByPageResp> getAllMenus(@RequestParam(value = "page", required = false, defaultValue = "1")int page,
-                                                  @RequestParam(value = "size", required = false, defaultValue = "10")int size){
+    public ResponseEntity<MenuByPageResponse> getAllMenus(@RequestParam(value = "page", required = false, defaultValue = "1")int page,
+                                                          @RequestParam(value = "size", required = false, defaultValue = "10")int size){
 
-        MenuByPageResp menuByPageResp = menuService.getAllMenus(page, size);
-        return new ResponseEntity<>(menuByPageResp, HttpStatus.OK);
+        MenuByPageResponse menuByPageResponse = menuService.getAllMenus(page, size);
+        return new ResponseEntity<>(menuByPageResponse, HttpStatus.OK);
 
     }
 
     /** 카테고리 별 메뉴 가져오기 (관리자용) **/
     @GetMapping("/{category:[a-z-]+}")
-    public ResponseEntity<MenuCategoryResp> getMenusByCategory(@PathVariable("category")String category,
-                                                               @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                                                               @RequestParam(value = "size", required = false, defaultValue = "10") int size){
+    public ResponseEntity<MenuCategoryResponse> getMenusByCategory(@PathVariable("category")String category,
+                                                                   @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                                                   @RequestParam(value = "size", required = false, defaultValue = "10") int size){
 
-        MenuCategoryResp menuCategoryResp = menuService.getMenusByCategory(category, page, size);
-        menuCategoryResp.setCategoryEng(category);
-        menuCategoryResp.setCategoryKo(CategoryName.convertEngToKo(category));
+        MenuCategoryResponse menuCategoryResponse = menuService.getMenusByCategory(category, page, size);
+        menuCategoryResponse.setCategoryEng(category);
+        menuCategoryResponse.setCategoryKo(CategoryName.convertEngToKo(category));
 
-        for(Menu menu : menuCategoryResp.getMenus())
+        for(Menu menu : menuCategoryResponse.getMenus())
             menu.setImgUrl("/images/".concat(menu.getImgUrl()));
 
-        return new ResponseEntity<>(menuCategoryResp, HttpStatus.OK);
+        return new ResponseEntity<>(menuCategoryResponse, HttpStatus.OK);
     }
 
     /** 상세 메뉴 정보 가져오기 **/
     @GetMapping("/{menuId:\\d+}")
-    public ResponseEntity<MenuDetailResp> getMenuDetail(@PathVariable("menuId")int menuId){
-        MenuDetailResp menuDetailResp = menuService.getMenuDetailById(menuId);
+    public ResponseEntity<MenuDetailResponse> getMenuDetail(@PathVariable("menuId")int menuId){
+        MenuDetailResponse menuDetailResponse = menuService.getMenuDetailById(menuId);
         // 메뉴가 없으면 no content
-        if(menuDetailResp == null) {
+        if(menuDetailResponse == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(menuDetailResp, HttpStatus.OK);
+        return new ResponseEntity<>(menuDetailResponse, HttpStatus.OK);
     }
 
     /** 메뉴 추가하기 **/
     @PostMapping
-    public ResponseEntity addMenu(@ModelAttribute @Valid MenuReq menuReq, BindingResult bindingResult){
+    public ResponseEntity addMenu(@ModelAttribute @Valid MenuRequest menuRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()) {
             throw new MenuValidException("Menu Create Form", "메뉴 추가 폼 데이터가 올바르지 않습니다.", bindingResult);
         }
         log.info("[menu api] 메뉴 추가하기");
-        log.info("menuReq : {}", menuReq.toString());
+        log.info("menuRequest : {}", menuRequest.toString());
 
         Menu menu = new Menu();
-        modelMapper.map(menuReq, menu);
+        modelMapper.map(menuRequest, menu);
 
         // 메뉴 저장
-        menuService.addMenu(menu, menuReq.getOptionIds(), menuReq.getImgFile());
+        menuService.addMenu(menu, menuRequest.getOptionIds(), menuRequest.getImgFile());
         return new ResponseEntity(HttpStatus.OK);
     }
 
     /** 메뉴 수정하기 **/
     @PutMapping
-    public ResponseEntity updateMenu(@ModelAttribute @Valid MenuUpdateReq menuUpdateReq, BindingResult bindingResult){
+    public ResponseEntity updateMenu(@ModelAttribute @Valid MenuUpdateRequest menuUpdateRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()) {
             throw new MenuValidException("Menu Update Form", "메뉴 수정 폼 데이터가 올바르지 않습니다.", bindingResult);
         }
         log.info("[menu api] 메뉴 수정하기");
-        log.info("menuReq : {}", menuUpdateReq.toString());
+        log.info("menuReq : {}", menuUpdateRequest.toString());
 
         Menu menu = new Menu();
-        menu.setId(menuUpdateReq.getMenuId());
-        modelMapper.map(menuUpdateReq, menu);
+        menu.setId(menuUpdateRequest.getMenuId());
+        modelMapper.map(menuUpdateRequest, menu);
 
-        int result = menuService.updateMenu(menu, menuUpdateReq.getOptionIds(), menuUpdateReq.getImgFile());
+        int result = menuService.updateMenu(menu, menuUpdateRequest.getOptionIds(), menuUpdateRequest.getImgFile());
         return new ResponseEntity(result < 1 ? HttpStatus.BAD_REQUEST : HttpStatus.OK);
     }
 
@@ -134,8 +134,8 @@ public class MenuController {
 
     /** 이달의 메뉴 여러개 변경하기 **/
     @PutMapping("/monthly-menu")
-    public ResponseEntity updateMonthlyMenu(@RequestBody MenuMonthlyUpdateReq menuMonthlyUpdateReq){
-        menuService.updateMonthlyMenu(menuMonthlyUpdateReq.getMenuIds());
+    public ResponseEntity updateMonthlyMenu(@RequestBody MenuMonthlyUpdateRequest menuMonthlyUpdateRequest){
+        menuService.updateMonthlyMenu(menuMonthlyUpdateRequest.getMenuIds());
         return new ResponseEntity(HttpStatus.OK);
     }
 

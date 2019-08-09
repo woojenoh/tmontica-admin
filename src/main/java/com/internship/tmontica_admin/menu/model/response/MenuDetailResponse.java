@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuDetailResp {
+public class MenuDetailResponse {
     private int id;
     private String nameEng;
     private String nameKo;
@@ -26,5 +26,9 @@ public class MenuDetailResp {
     private Date startDate;
     private Date endDate;
     private boolean usable;
-    private List<MenuOptionResp> option;
+    private List<MenuOptionResponse> option;
+
+    public void setImgUrl(String imgUrl){
+        this.imgUrl = "/images/".concat(imgUrl);
+    }
 }

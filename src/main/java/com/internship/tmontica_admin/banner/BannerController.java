@@ -1,11 +1,11 @@
 package com.internship.tmontica_admin.banner;
 
 import com.internship.tmontica_admin.banner.exception.BannerValidException;
-import com.internship.tmontica_admin.banner.model.request.BannerReq;
-import com.internship.tmontica_admin.banner.model.request.BannerUpdateReq;
+import com.internship.tmontica_admin.banner.model.request.BannerRequest;
+import com.internship.tmontica_admin.banner.model.request.BannerUpdateRequest;
+import com.internship.tmontica_admin.banner.validator.BannerUpdateValidator;
 import com.internship.tmontica_admin.banner.validator.BannerValidator;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,33 +27,39 @@ public class BannerController {
 
     private final BannerValidator bannerValidator;
 
-    @InitBinder
-    private void initBinder(WebDataBinder dataBinder) {
+    private final BannerUpdateValidator bannerUpdateValidator;
+
+    @InitBinder("bannerRequest")
+    private void initAddBinder(WebDataBinder dataBinder) {
         dataBinder.addValidators(bannerValidator);
     }
 
+    @InitBinder("bannerUpdateReuqest")
+    private void initUpdateBinder(WebDataBinder dataBinder){ dataBinder.addValidators(bannerUpdateValidator);}
+
     @PostMapping
-    public ResponseEntity createBanner(@ModelAttribute @Valid BannerReq bannerReq , BindingResult bindingResult){
+    public ResponseEntity createBanner(@ModelAttribute @Valid BannerRequest bannerRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new BannerValidException("Banner create form" , "배너 추가 폼 데이터가 올바르지 않습니다.", bindingResult);
         }
 
-        Banner banner = modelMapper.map(bannerReq, Banner.class);
-        bannerService.addBanner(banner, bannerReq.getImgFile());
+        Banner banner = modelMapper.map(bannerRequest, Banner.class);
+        bannerService.addBanner(banner, bannerRequest.getImgFile());
 
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     // id로 배너 조회하기
     @GetMapping("/{id:\\d+}")
-    public ResponseEntity<Banner> getBannerByNumber(@PathVariable int id){
+    public ResponseEntity<Banner> getBannerById(@PathVariable int id){
         Banner banner = bannerService.getBannerById(id);
+        banner.setImgUrl("/images/".concat(banner.getImgUrl()));
         return new ResponseEntity<>(banner, HttpStatus.OK);
     }
 
     // usePage에 맞는 배너 가져오기.
     @GetMapping("/{usePageEng:[a-z-]+}")
-    public ResponseEntity<List<Banner>> getBannerByNumber(@PathVariable String usePageEng){
+    public ResponseEntity<List<Banner>> getBannerByUsePage(@PathVariable String usePageEng){
         List<Banner> banners = bannerService.getBannersByPage(usePageEng);
         return new ResponseEntity<>(banners, HttpStatus.OK);
     }
@@ -72,13 +78,13 @@ public class BannerController {
 
     // 배너 업데이트
     @PutMapping
-    public ResponseEntity updateBanner(@ModelAttribute @Valid BannerUpdateReq bannerUpdateReq, BindingResult bindingResult){
+    public ResponseEntity updateBanner(@ModelAttribute @Valid BannerUpdateRequest bannerUpdateRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new BannerValidException("Banner update form", "배너 업데이트 폼 데이터가 올바르지 않습니다.", bindingResult);
         }
 
-        Banner banner = modelMapper.map(bannerUpdateReq, Banner.class);
-        bannerService.updateBanner(banner, bannerUpdateReq.getImgFile());
+        Banner banner = modelMapper.map(bannerUpdateRequest, Banner.class);
+        bannerService.updateBanner(banner, bannerUpdateRequest.getImgFile());
 
         return new ResponseEntity(HttpStatus.OK);
 
