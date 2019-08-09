@@ -261,7 +261,7 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
 
     return (
       <>
-        <Header title="주문 내역" />
+        <Header title="주문 내역 검색" />
         <div className="main-wrapper">
           <main className="main">
             <section className="order">

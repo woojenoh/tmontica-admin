@@ -390,13 +390,13 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
 
     return (
       <>
-        <Header title="주문 관리" />
+        <Header title="오늘의 주문" />
         <div className="main-wrapper">
           <main className="main">
             {/* <!-- 오늘의 현황 --> */}
             <section className="today-order">
               <div className="mb-3 border-bottom">
-                <h1 className="mb-3">오늘의 주문 현황</h1>
+                <h1 className="mb-3">주문 현황</h1>
               </div>
               <div className="today-order-circles">
                 {statusCount
@@ -420,7 +420,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
             {/* <!-- 주문내역 --> */}
             <section className="today-order-list pt-3 mt-3">
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h1>오늘의 주문 내역({selectedTodayStatus ? selectedTodayStatus : "전체"})</h1>
+                <h1>주문 내역({selectedTodayStatus ? selectedTodayStatus : "전체"})</h1>
                 <div className="order-select d-flex">
                   <select
                     className="custom-select mr-2"
