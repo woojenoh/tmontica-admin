@@ -1,7 +1,6 @@
 import React, { PureComponent, MouseEvent } from "react";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
-import { Table } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
 import { MenuModal } from "../../components/MenuModal";

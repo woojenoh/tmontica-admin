@@ -1,5 +1,5 @@
 import React, { ChangeEvent, PureComponent, BaseSyntheticEvent, FormEvent } from "react";
-import { Modal, Row } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
@@ -38,12 +38,6 @@ const initState = {
   usable: false
 } as IBanner;
 
-const categoryDict: { [index: string]: string } = {
-  ade: "에이드",
-  coffee: "커피",
-  bread: "빵"
-};
-
 export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalState>
   implements Indexable {
   [key: string]: any;
@@ -52,10 +46,6 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
   state = {
     ...(initState as IBanner)
   };
-
-  constructor(props: IBannerModalProps, state: IBannerModalState) {
-    super(props, state);
-  }
 
   setRef = (name: string) => (el: any) => {
     this[name] = el;
