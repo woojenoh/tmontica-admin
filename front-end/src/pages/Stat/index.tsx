@@ -555,7 +555,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
                 handlePeriodAllSubmit={handleAgePeriodAllSubmit}
               />
               <StatItem
-                statTitle="기기별 구매자수"
+                statTitle="기기별 주문건수"
                 chartType="Doughnut"
                 optionArray={[
                   { id: "PC", value: "PC" },

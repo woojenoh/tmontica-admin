@@ -83,7 +83,7 @@ export default class Banner extends PureComponent<Props, State> {
 
     return (
       <>
-        <Header title="메뉴 관리" />
+        <Header title="배너 관리" />
         <div className="main-wrapper">
           <main id="menus" className="main">
             <section>
