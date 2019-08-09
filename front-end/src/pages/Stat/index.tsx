@@ -1,7 +1,6 @@
 import * as React from "react";
 import axios from "axios";
 import Header from "../../components/Header";
-import Nav from "../../components/Nav";
 import StatItem from "../../components/StatItem";
 import * as menuTypes from "../../types/menu";
 import * as statTypes from "../../types/stat";
@@ -490,9 +489,8 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
       <>
         <Header title="통계" />
         <div className="main-wrapper">
-          <Nav />
           <main className="main">
-            <section className="stat p-4">
+            <section className="stat">
               <StatItem
                 statTitle="메뉴별 매출액"
                 chartType="Bar"

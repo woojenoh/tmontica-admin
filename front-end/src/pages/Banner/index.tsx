@@ -1,6 +1,5 @@
 import React, { PureComponent, SyntheticEvent } from "react";
 import Header from "../../components/Header";
-import Nav from "../../components/Nav";
 import { Table } from "react-bootstrap";
 import { BannerModal } from "../../components/BannerModal";
 import { getBannerAll } from "../../api/banner";
@@ -86,10 +85,9 @@ export default class Banner extends PureComponent<Props, State> {
       <>
         <Header title="메뉴 관리" />
         <div className="main-wrapper">
-          <Nav />
-          <main id="menus" className="col-md-10">
+          <main id="menus" className="main">
             <section>
-              <div className="content-head d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+              <div className="content-head d-flex flex-wrap flex-md-nowrap align-items-center mb-4">
                 <button
                   className="btn btn-outline-primary mr-1"
                   onClick={this.showModal({

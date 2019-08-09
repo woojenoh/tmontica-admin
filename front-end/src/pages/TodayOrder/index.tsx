@@ -2,7 +2,6 @@ import * as React from "react";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import _ from "underscore";
 import Header from "../../components/Header";
-import Nav from "../../components/Nav";
 import OrderRow from "../../components/OrderRow";
 import OrderModal from "../../components/OrderModal";
 import TodayOrderStatus from "../../components/TodayOrderStatus";
@@ -393,8 +392,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
       <>
         <Header title="주문 관리" />
         <div className="main-wrapper">
-          <Nav />
-          <main className="main col-md-10 p-4">
+          <main className="main">
             {/* <!-- 오늘의 현황 --> */}
             <section className="today-order">
               <div className="mb-3 border-bottom">
@@ -425,7 +423,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
                 <h1>오늘의 주문 내역({selectedTodayStatus ? selectedTodayStatus : "전체"})</h1>
                 <div className="order-select d-flex">
                   <select
-                    className="custom-select mr-2 w-75"
+                    className="custom-select mr-2"
                     value={selectedSelectStatus}
                     onChange={e => handleChangeSelectStatus(e)}
                   >
@@ -438,7 +436,8 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
                     })}
                   </select>
                   <button
-                    className="btn btn-primary w-50"
+                    className="btn btn-primary"
+                    style={{ width: "100px" }}
                     onClick={() => handleChangeStatusSubmit()}
                   >
                     적용

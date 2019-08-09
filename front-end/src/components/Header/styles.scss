@@ -1,17 +1,17 @@
-header {
-  height: 65px;
-}
-
-header.bg-dark.text-light.flex-row {
-  padding: 10px 15px;
-}
-
-header .menu-icon {
-  font-size: 37px;
-  margin-right: 17px;
-}
-
-header .title {
-  margin-bottom: 0;
-  font-size: 37px;
+.header-container {
+  display: flex;
+  align-items: center;
+  height: 70px;
+  .header {
+    width: 1200px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  h1 {
+    margin: 0;
+  }
 }

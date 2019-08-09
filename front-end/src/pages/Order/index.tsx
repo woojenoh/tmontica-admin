@@ -1,7 +1,6 @@
 import * as React from "react";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import Header from "../../components/Header";
-import Nav from "../../components/Nav";
 import OrderRow from "../../components/OrderRow";
 import OrderModal from "../../components/OrderModal";
 import Pagination from "../../components/Pagination";
@@ -264,12 +263,10 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
       <>
         <Header title="주문 내역" />
         <div className="main-wrapper">
-          <Nav />
-          <main className="main col-md-10 p-4">
+          <main className="main">
             <section className="order">
               <div className="order-top mb-4 d-flex justify-content-between">
-                <div className="order-title d-flex flex-column justify-content-between">
-                  <h1 className="m-0">주문 내역 검색</h1>
+                <div className="order-title d-flex flex-column justify-content-end">
                   <button className="btn btn-outline-primary" onClick={() => handleFetchAll()}>
                     전체 내역 보기
                   </button>

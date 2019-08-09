@@ -1,0 +1,12 @@
+.sidebar {
+  position: fixed;
+  min-width: 200px;
+  height: 100%;
+  padding: 20px;
+  left: -200px;
+  transition: 0.5s left ease;
+  z-index: 100;
+  &.sidebar--open {
+    left: 0;
+  }
+}
