@@ -17,8 +17,9 @@ public class OrderScheduler {
 
     /** 미결제 상태로 30분 이상인 주문 취소 */
     @Scheduled(fixedDelay = 1000*60*10)
+    @Transactional
     public void checkOrder(){
-        log.info("[scheduler] start Order scheduler");
+        log.info("[OrderScheduler] start Order scheduler");
         // 미결제인 오더만 불러오기
         List<Order> orders = orderDao.getBeforePaymentOrders();
         for (Order order:orders) {
@@ -28,8 +29,8 @@ public class OrderScheduler {
             // 현재시간과 주문시간의 차이(분)
             long diff = now.getTime() - orderDate.getTime();
             long min = diff/(1000*60);
-            log.info("min: {}", min);
             if(min > 30){
+                log.info("[OrderScheduler] cancel order , min: {}", min);
                 // 주문취소로 상태 변경
                 // orders 테이블에서 status 수정
                 orderDao.updateOrderStatus(order.getId(), OrderStatusType.CANCEL.getStatus());
@@ -38,7 +39,7 @@ public class OrderScheduler {
                 orderDao.addOrderStatusLog(orderStatusLog);
             }
         }
-        log.info("[scheduler] end Order scheduler");
+        log.info("[OrderScheduler] end Order scheduler");
     }
 
 }
