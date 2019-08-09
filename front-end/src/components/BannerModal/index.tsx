@@ -10,6 +10,7 @@ import { setImagePreview } from "../../utils";
 import { BASE_URL } from "../../api/common";
 import { CommonError } from "../../api/CommonError";
 import { addBanner, updateBanner, getBannerById, deleteBanner } from "../../api/banner";
+import { BannerUsePageDict } from "../../constants";
 
 interface IBannerModalProps {
   show: boolean;
@@ -153,7 +154,7 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
       data.append("id", `${this.props.bannerId}`);
     }
     data.append("link", this.state.link);
-    data.append("usePage", this.state.usePage);
+    data.append("usePage", BannerUsePageDict[this.state.usePage]);
     data.append("startDate", moment(this.state.startDate).format(dateFormat));
     data.append("endDate", moment(this.state.endDate).format(dateFormat));
     data.append("number", this.state.number.toString());
@@ -262,8 +263,8 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
                   value={this.state.usePage}
                   onChange={this.handleChangeValue("usePage")}
                 >
-                  <option value="메인-상단">메인-상단</option>
-                  <option value="메인-하단">메인-하단</option>
+                  <option value="main-top">메인-상단</option>
+                  <option value="main-bottom">메인-하단</option>
                 </select>
               </div>
             </div>
