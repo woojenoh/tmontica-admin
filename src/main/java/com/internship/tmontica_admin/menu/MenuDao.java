@@ -61,10 +61,10 @@ public interface MenuDao {
             "ON menu_options.menu_id = #{id} WHERE menu_options.option_id = options.id")
     List<Option> getOptionsById(int id);
 
-    @Select("SELECT count(*) FROM menus ")
+    @Select("SELECT count(*) FROM menus WHERE deleted = 0")
     int getAllMenuCnt();
 
-    @Select("SELECT count(*) FROM menus WHERE category_eng = #{category}")
+    @Select("SELECT count(*) FROM menus WHERE category_eng = #{category} AND  deleted = 0")
     int getCategoryMenuCnt(String category);
 
     @Select("SELECT id, name_ko FROM menus")

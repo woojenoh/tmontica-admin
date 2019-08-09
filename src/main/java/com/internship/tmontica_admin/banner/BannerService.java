@@ -66,6 +66,7 @@ public class BannerService {
     public Banner getBannerById(int id){
         return bannerDao.getBannerById(id);
     }
+
     // 배너 수정하기
     public void updateBanner(Banner banner, MultipartFile multipartFile){
 

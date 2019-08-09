@@ -14,6 +14,8 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class BannerUpdateRequest {
+    @Min(1)
+    private int id;
 
     @NotEmpty(message = "usePage는 필수입니다.")
     private String usePage;
