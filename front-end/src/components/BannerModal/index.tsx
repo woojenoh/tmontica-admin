@@ -164,14 +164,11 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
     }
     data.append("link", this.state.link);
     data.append("usePage", this.state.usePage);
-    data.append("startDate", this.state.startDate);
-    data.append("endDate", this.state.endDate);
+    data.append("startDate", moment(this.state.startDate).format(dateFormat));
+    data.append("endDate", moment(this.state.endDate).format(dateFormat));
     data.append("number", this.state.number.toString());
-    if (typeof this.state.imgFile !== "undefined") {
+    if (typeof this.state.imgFile !== "undefined" && this.state.imgFile) {
       data.append("imgFile", this.state.imgFile);
-    }
-    if (typeof this.state.imgUrl === "string") {
-      data.append("imgUrl", this.state.imgUrl);
     }
     data.append("usable", `${this.state.usable}`);
 
