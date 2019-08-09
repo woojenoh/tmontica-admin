@@ -1,5 +1,6 @@
 package com.internship.tmontica_admin.order;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Order {
     private int id;            // 주문번호
 

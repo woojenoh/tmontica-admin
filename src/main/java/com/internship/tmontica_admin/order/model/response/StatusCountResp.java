@@ -1,8 +1,12 @@
 package com.internship.tmontica_admin.order.model.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class StatusCountResp {
 
     private int beforePayment;
