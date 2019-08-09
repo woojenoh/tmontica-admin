@@ -74,7 +74,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
         .post(
           `${API_URL}/statistic/menu`,
           {
-            menuIds: [Number(menuId)],
+            menuIdList: [Number(menuId)],
             startDate: capturedDate.startDate,
             endDate: capturedDate.endDate
           },
@@ -142,7 +142,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           .post(
             `${API_URL}/statistic/menu`,
             {
-              menuIds: chartMenus.map(m => m.menuId),
+              menuIdList: chartMenus.map(m => m.menuId),
               startDate: menuStartDate,
               endDate: menuEndDate
             },
@@ -174,7 +174,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           .post(
             `${API_URL}/statistic/menu`,
             {
-              menuIds: chartMenus.map(m => m.menuId),
+              menuIdList: chartMenus.map(m => m.menuId),
               startDate: "",
               endDate: ""
             },
@@ -210,7 +210,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
         .post(
           `${API_URL}/statistic/age`,
           {
-            ageGroups: [ageGroup],
+            ageGroupList: [ageGroup],
             startDate: capturedDate.startDate,
             endDate: capturedDate.endDate
           },
@@ -278,7 +278,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           .post(
             `${API_URL}/statistic/age`,
             {
-              ageGroups: chartAges.map(a => a.ageGroup),
+              ageGroupList: chartAges.map(a => a.ageGroup),
               startDate: ageStartDate,
               endDate: ageEndDate
             },
@@ -310,7 +310,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           .post(
             `${API_URL}/statistic/age`,
             {
-              ageGroups: chartAges.map(a => a.ageGroup),
+              ageGroupList: chartAges.map(a => a.ageGroup),
               startDate: "",
               endDate: ""
             },
