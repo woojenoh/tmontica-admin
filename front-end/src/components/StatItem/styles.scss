@@ -1,0 +1,21 @@
+.stat-item {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 400px;
+  margin-bottom: 40px;
+  .stat-item-form-container {
+    flex: 1;
+    margin-top: 20px;
+    h1 {
+      font-size: 30px;
+    }
+  }
+  .stat-item-wrapper {
+    flex: 2.5;
+    .chartjs-render-monitor {
+      border: 1px solid #adb5bd;
+      padding: 15px;
+    }
+  }
+}
