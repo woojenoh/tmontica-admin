@@ -8,11 +8,16 @@ import TodayOrderStatus from "../../components/TodayOrderStatus";
 import Pagination from "../../components/Pagination";
 import * as orderTypes from "../../types/order";
 import * as commonTypes from "../../types/common";
-import { API_URL } from "../../api/common";
+import { API_URL, handleError } from "../../api/common";
 import { withJWT } from "../../utils";
 import "./styles.scss";
+import { number } from "prop-types";
+import { getTodayOrder } from "../../api/order";
+import { CommonError } from "../../api/CommonError";
 
-export interface ITodayOrderProps {}
+export interface ITodayOrderProps {
+  signout(): void;
+}
 
 export interface ITodayOrderState {
   orders: orderTypes.IOrder[] | null;
@@ -31,31 +36,41 @@ export interface ITodayOrderState {
 }
 
 class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState> {
+  async getTodayOrder(
+    page: number,
+    size: number,
+    status: orderTypes.TOrderStatusKor | null = null,
+    afterSetStates: Pick<ITodayOrderState, "selectedTodayStatus" | "currentPage"> = {} as Pick<
+      ITodayOrderState,
+      "selectedTodayStatus" | "currentPage"
+    >
+  ) {
+    try {
+      const result = await getTodayOrder(page, size, status);
+
+      if (result instanceof CommonError) throw result;
+
+      this.setState({
+        orders: result.orders,
+        statusCount: result.statusCount,
+        pagination: result.pagination,
+        ...afterSetStates
+      });
+    } catch (error) {
+      const result = await handleError(error);
+      if (result === "signout") {
+        this.props.signout();
+      }
+
+      if (this.state.intervalId) {
+        clearInterval(this.state.intervalId);
+      }
+    }
+  }
+
   componentDidMount() {
     // 처음에 전체내역을 한번 가져온다.
-    axios
-      .get(
-        `${API_URL}/orders/today`,
-        withJWT({
-          params: {
-            page: 1,
-            size: this.state.pageSize
-          }
-        })
-      )
-      .then((res: AxiosResponse) => {
-        this.setState({
-          orders: res.data.orders,
-          statusCount: res.data.statusCount,
-          pagination: res.data.pagination
-        });
-      })
-      .catch((err: AxiosError) => {
-        alert(err);
-        if (this.state.intervalId) {
-          clearInterval(this.state.intervalId);
-        }
-      });
+    this.getTodayOrder(1, this.state.pageSize);
 
     // 실시간으로 주문내역을 확인하기 위해 반복.
     this.startInterval(1000);
@@ -70,27 +85,11 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
 
   startInterval = (time: number) => {
     const intervalId = setInterval(() => {
-      axios
-        .get(
-          `${API_URL}/orders/today`,
-          withJWT({
-            params: {
-              page: this.state.currentPage,
-              size: this.state.pageSize,
-              status: this.state.selectedTodayStatus
-            }
-          })
-        )
-        .then((res: AxiosResponse) => {
-          this.setState({
-            orders: res.data.orders,
-            statusCount: res.data.statusCount,
-            pagination: res.data.pagination
-          });
-        })
-        .catch((err: AxiosError) => {
-          alert(err);
-        });
+      this.getTodayOrder(
+        this.state.currentPage,
+        this.state.pageSize,
+        this.state.selectedTodayStatus
+      );
     }, time);
     this.setState({
       intervalId: intervalId
@@ -167,54 +166,17 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
   };
 
   handleClickTodayStatus = (statusName: orderTypes.TOrderStatusKor) => {
-    axios
-      .get(
-        `${API_URL}/orders/today`,
-        withJWT({
-          params: {
-            page: this.state.currentPage,
-            size: this.state.pageSize,
-            status: statusName
-          }
-        })
-      )
-      .then((res: AxiosResponse) => {
-        this.setState({
-          orders: res.data.orders,
-          statusCount: res.data.statusCount,
-          selectedTodayStatus: statusName,
-          pagination: res.data.pagination,
-          currentPage: 1
-        });
-      })
-      .catch((err: AxiosError) => {
-        alert(err);
-      });
+    this.getTodayOrder(this.state.currentPage, this.state.pageSize, statusName, {
+      selectedTodayStatus: statusName,
+      currentPage: 1
+    });
   };
 
   initializeTodayStatus = () => {
-    axios
-      .get(
-        `${API_URL}/orders/today`,
-        withJWT({
-          params: {
-            page: this.state.currentPage,
-            size: this.state.pageSize
-          }
-        })
-      )
-      .then((res: AxiosResponse) => {
-        this.setState({
-          orders: res.data.orders,
-          statusCount: res.data.statusCount,
-          selectedTodayStatus: null,
-          pagination: res.data.pagination,
-          currentPage: 1
-        });
-      })
-      .catch((err: AxiosError) => {
-        alert(err);
-      });
+    this.getTodayOrder(this.state.currentPage, this.state.pageSize, null, {
+      selectedTodayStatus: null,
+      currentPage: 1
+    });
   };
 
   handleChangeSelectStatus = (e: React.FormEvent<HTMLSelectElement>) => {
@@ -337,25 +299,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
         currentPage: pageNumber
       },
       () => {
-        axios
-          .get(
-            `${API_URL}/orders/today`,
-            withJWT({
-              params: {
-                page: this.state.currentPage,
-                size: this.state.pageSize
-              }
-            })
-          )
-          .then((res: AxiosResponse) => {
-            this.setState({
-              orders: res.data.orders,
-              pagination: res.data.pagination
-            });
-          })
-          .catch((err: AxiosError) => {
-            alert(err);
-          });
+        this.getTodayOrder(this.state.currentPage, this.state.pageSize);
       }
     );
   };

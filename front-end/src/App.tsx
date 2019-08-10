@@ -10,11 +10,19 @@ import {
 import { connect } from "react-redux";
 import * as rootTypes from "./types/index";
 import "./assets/scss/admin.scss";
+import { Dispatch } from "redux";
+import { signout } from "./redux/actionCreators/user";
 
 export interface IAppProps extends RouteComponentProps {
   isSignin: boolean;
   isAdmin: boolean;
 }
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    signout: () => dispatch(signout())
+  };
+};
 
 class App extends React.Component<IAppProps> {
   AdminRoute = ({ component: Component, ...rest }: RouteProps) => {
@@ -83,13 +91,62 @@ class App extends React.Component<IAppProps> {
       <>
         <Suspense fallback={<div>로딩 중입니다.</div>}>
           <Switch>
-            <AdminRoute exact path="/stat" component={Stat} />
-            <AdminRoute exact path="/todayOrder" component={TodayOrder} />
-            <AdminRoute exact path="/order" component={Order} />
-            <AdminRoute exact path="/menus" component={Menus} />
-            <AdminRoute exact path="/menus/:menuId([0-9]+)" component={Menus} />
-            <AdminRoute exact path="/banner" component={Banner} />
-            <AdminRoute exact path="/" component={TodayOrder} />
+            <AdminRoute
+              exact
+              path="/stat"
+              component={connect(
+                null,
+                mapDispatchToProps
+              )(Stat)}
+            />
+            <AdminRoute
+              exact
+              path="/todayOrder"
+              component={connect(
+                null,
+                mapDispatchToProps
+              )(TodayOrder)}
+            />
+            <AdminRoute
+              exact
+              path="/order"
+              component={connect(
+                null,
+                mapDispatchToProps
+              )(Order)}
+            />
+            <AdminRoute
+              exact
+              path="/menus"
+              component={connect(
+                null,
+                mapDispatchToProps
+              )(Menus)}
+            />
+            <AdminRoute
+              exact
+              path="/menus/:menuId([0-9]+)"
+              component={connect(
+                null,
+                mapDispatchToProps
+              )(Menus)}
+            />
+            <AdminRoute
+              exact
+              path="/banner"
+              component={connect(
+                null,
+                mapDispatchToProps
+              )(Banner)}
+            />
+            <AdminRoute
+              exact
+              path="/"
+              component={connect(
+                null,
+                mapDispatchToProps
+              )(TodayOrder)}
+            />
             <PublicRoute exact path="/signin" component={Signin} />
           </Switch>
         </Suspense>

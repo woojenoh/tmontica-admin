@@ -9,8 +9,11 @@ import Pagination from "../../components/Pagination";
 import { IPagination } from "../../types/common";
 import { getMenuPaging } from "../../api/menu";
 import { CommonError } from "../../api/CommonError";
+import { handleError } from "../../api/common";
 
-interface IMenusProps {}
+interface IMenusProps {
+  signout(): void;
+}
 interface IMenusState {
   page: number;
   show: boolean;
@@ -113,8 +116,11 @@ export default class Menus extends PureComponent<IMenusProps, IMenusState> {
         menus,
         pagination
       });
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      const result = await handleError(error);
+      if (result === "signout") {
+        this.props.signout();
+      }
     }
   }
 
@@ -198,6 +204,7 @@ export default class Menus extends PureComponent<IMenusProps, IMenusState> {
               menuId={menuId}
               isReg={isReg}
               getMenus={this.getMenus.bind(this, this.state.page)}
+              signout={this.props.signout}
             />
           </main>
         </div>

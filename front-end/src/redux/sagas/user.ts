@@ -1,4 +1,4 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import history from "../../history";
 import jwt from "jwt-decode";
@@ -6,6 +6,12 @@ import * as userActionTypes from "../actionTypes/user";
 import * as userActionCreators from "../actionCreators/user";
 import * as userTypes from "../../types/user";
 import { API_URL } from "../../api/common";
+
+export function* signout() {
+  localStorage.removeItem("jwt");
+  history.push("/signin");
+  yield put(userActionCreators.signoutFulfilled());
+}
 
 function* fetchSignupSagas(action: userTypes.IFetchSignup) {
   try {
@@ -112,4 +118,5 @@ export default function* userSagas() {
   yield takeLatest(userActionTypes.FETCH_FIND_ID, fetchFindIdSagas);
   yield takeLatest(userActionTypes.FETCH_FIND_ID_CONFIRM, fetchFindIdConfirmSagas);
   yield takeLatest(userActionTypes.FETCH_FIND_PASSWORD, fetchFindPasswordSagas);
+  yield takeEvery(userActionTypes.SIGNOUT, signout);
 }

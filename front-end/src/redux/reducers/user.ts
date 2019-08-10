@@ -55,8 +55,6 @@ export default function(state = INITIAL_STATE, action: userTypes.TUserAction) {
         error: action.error
       };
     case actionTypes.SIGNOUT:
-      localStorage.removeItem("jwt");
-      history.push("/");
       return {
         ...state,
         user: null,

@@ -7,10 +7,11 @@ import { Indexable } from "../../types/index";
 import moment from "moment";
 import { IBanner } from "../../types/banner";
 import { setImagePreview } from "../../utils";
-import { BASE_URL } from "../../api/common";
+import { BASE_URL } from "../../constants";
 import { CommonError } from "../../api/CommonError";
 import { addBanner, updateBanner, getBannerById, deleteBanner } from "../../api/banner";
 import { BannerUsePageDict } from "../../constants";
+import { handleError } from "../../api/common";
 
 interface IBannerModalProps {
   show: boolean;
@@ -18,6 +19,7 @@ interface IBannerModalProps {
   isReg: boolean;
   closeModal(): void;
   getBanners(): void;
+  signout(): void;
 }
 
 interface IBannerModalState extends IBanner, Indexable {
@@ -39,7 +41,7 @@ const initState = {
   usable: false
 } as IBanner;
 
-export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalState>
+export default class BannerModal extends PureComponent<IBannerModalProps, IBannerModalState>
   implements Indexable {
   [key: string]: any;
   form?: HTMLFormElement;
@@ -130,7 +132,10 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
       this.setState({ ...initState });
       this.props.getBanners();
     } catch (error) {
-      console.log(error);
+      const result = await handleError(error);
+      if (result === "signout") {
+        this.props.signout();
+      }
     }
   }
 
@@ -143,7 +148,10 @@ export class BannerModal extends PureComponent<IBannerModalProps, IBannerModalSt
       this.setState({ ...initState });
       this.props.getBanners();
     } catch (error) {
-      console.log(error);
+      const result = await handleError(error);
+      if (result === "signout") {
+        this.props.signout();
+      }
     }
   }
 

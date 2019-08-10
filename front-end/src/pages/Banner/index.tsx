@@ -1,18 +1,21 @@
 import React, { PureComponent, SyntheticEvent } from "react";
 import Header from "../../components/Header";
 import { Table } from "react-bootstrap";
-import { BannerModal } from "../../components/BannerModal";
+import BannerModal from "../../components/BannerModal";
 import { getBannerAll } from "../../api/banner";
 import { CommonError } from "../../api/CommonError";
 import { IBanner } from "../../types/banner";
 import { IPagination } from "../../types/common";
 import Pagination from "../../components/Pagination";
 import { BannerUsePageDict } from "../../constants";
-import { IMAGE_URL } from "../../api/common";
+import { IMAGE_URL } from "../../constants";
 import "./styles.scss";
 import moment from "moment";
+import { handleError } from "../../api/common";
 
-interface Props {}
+interface Props {
+  signout(): void;
+}
 interface State {
   page: number;
   show: boolean;
@@ -66,10 +69,9 @@ export default class Banner extends PureComponent<Props, State> {
         banners
       });
     } catch (error) {
-      if (error instanceof CommonError) {
-        error.alertMessage();
-      } else {
-        console.log(error);
+      const result = await handleError(error);
+      if (result === "signout") {
+        this.props.signout();
       }
     }
   };
@@ -160,6 +162,7 @@ export default class Banner extends PureComponent<Props, State> {
               bannerId={this.state.bannerId}
               isReg={this.state.isReg}
               getBanners={this.getBannerAll.bind(this)}
+              signout={this.props.signout}
             />
           </main>
         </div>

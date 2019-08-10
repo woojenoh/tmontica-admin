@@ -4,7 +4,8 @@ import DatePicker from "react-datepicker";
 import { setImagePreview, withJWT } from "../../utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
-import { API_URL, BASE_URL } from "../../api/common";
+import { BASE_URL } from "../../constants";
+import { API_URL, handleError } from "../../api/common";
 import axios from "axios";
 import { Indexable } from "../../types/index";
 import { addMenu, updateMenu, getMenuById } from "../../api/menu";
@@ -17,6 +18,7 @@ interface IMenuModalProps {
   isReg: boolean;
   handleClose(): void;
   getMenus(): void;
+  signout(): void;
 }
 
 interface IMenuModalState extends Indexable {
@@ -94,7 +96,10 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
       this.setState({ ...initState });
       this.props.getMenus();
     } catch (error) {
-      console.log(error);
+      const result = await handleError(error);
+      if (result === "signout") {
+        this.props.signout();
+      }
     }
   }
 

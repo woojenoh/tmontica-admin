@@ -10,7 +10,9 @@ import { API_URL } from "../../api/common";
 import { withJWT } from "../../utils";
 import "./styles.scss";
 
-export interface IOrderProps {}
+export interface IOrderProps {
+  signout(): void;
+}
 
 export interface IOrderState {
   orders: orderTypes.IOrder[] | null;

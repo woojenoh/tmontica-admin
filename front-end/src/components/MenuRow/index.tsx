@@ -1,7 +1,7 @@
 import React, { Component, SyntheticEvent } from "react";
 import _ from "underscore";
 import { IMenu } from "../../types/menu";
-import { IMAGE_URL } from "../../api/common";
+import { IMAGE_URL } from "../../constants";
 import "./styles.scss";
 import { formatDate } from "../../utils";
 

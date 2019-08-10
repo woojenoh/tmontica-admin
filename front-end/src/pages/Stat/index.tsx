@@ -34,7 +34,9 @@ const hoverColors = [
   "#228be6"
 ];
 
-export interface IStatProps {}
+export interface IStatProps {
+  signout(): void;
+}
 
 export interface IStatState {
   menus: menuTypes.IMenu[] | null;
