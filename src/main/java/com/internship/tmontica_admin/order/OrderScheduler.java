@@ -6,7 +6,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -15,31 +14,26 @@ import java.util.List;
 public class OrderScheduler {
     private final OrderDao orderDao;
 
-    /** 미결제 상태로 30분 이상인 주문 취소 */
-    @Scheduled(fixedDelay = 1000*60*10)
+    /**
+     * 미결제 상태로 30분 이상인 주문 취소
+     */
+    @Scheduled(fixedDelay = 1000 * 60 * 10)
     @Transactional
-    public void checkOrder(){
+    public void checkOrder() {
         log.info("[OrderScheduler] start Order scheduler");
-        // 미결제인 오더만 불러오기
-        List<Order> orders = orderDao.getBeforePaymentOrders();
-        for (Order order:orders) {
-            Date orderDate = order.getOrderDate();
-            Date now = new Date();
+        // 미결제인상태로 30분이 지난 오더만 불러오기
+        List<Order> orders = orderDao.getBeforePaymentOrdersFor30Minutes();
 
-            // 현재시간과 주문시간의 차이(분)
-            long diff = now.getTime() - orderDate.getTime();
-            long min = diff/(1000*60);
-            if(min > 30){
-                log.info("[OrderScheduler] cancel order , min: {}", min);
-                // 주문취소로 상태 변경
-                // orders 테이블에서 status 수정
-                orderDao.updateOrderStatus(order.getId(), OrderStatusType.CANCEL.getStatus());
-                // order_status_log 테이블에도 로그 추가
-                OrderStatusLog orderStatusLog = new OrderStatusLog(OrderStatusType.CANCEL.getStatus(), "SYSTEM", order.getId());
-                orderDao.addOrderStatusLog(orderStatusLog);
-            }
+        if (orders.size() > 0) {
+            // 주문취소로 상태 변경
+            // orders 테이블에서 status 수정
+            orderDao.updateOrderListStatus(orders, OrderStatusType.CANCEL.getStatus());
+
+            // order_status_log 테이블에도 로그 추가
+            orderDao.insertOrderStatusLogList(orders, OrderStatusType.CANCEL.getStatus(), "SYSTEM");
         }
-        log.info("[OrderScheduler] end Order scheduler");
+
+        log.info("[OrderScheduler] end Order scheduler : {}", orders.size() + " orders canceled");
     }
 
 }

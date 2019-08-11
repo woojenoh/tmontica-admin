@@ -110,7 +110,24 @@ public interface OrderDao {
             "limit #{startList}, #{size}")
     List<Order> searchAllOrder(int startList, int size);
 
-    // 미결제 상태인 주문 가져오기 (스케줄러)
-    @Select("select * from orders where status=\"미결제\"")
-    List<Order> getBeforePaymentOrders();
+    // 미결제 상태로 30분 이상된 주문 가져오기 (스케줄러)
+    @Select("select * from orders where status=\"미결제\" and timestampdiff(minute, order_date, now()) >= 30")
+    List<Order> getBeforePaymentOrdersFor30Minutes();
+
+    // order의 주문상태 일괄 변경 (스케줄러)
+    @Update("<script>" +
+                "<foreach collection='orders' item='order'>" +
+                    "update orders set status = #{status} where id = #{order.id}; " +
+                "</foreach>" +
+            "</script>")
+    void updateOrderListStatus(@Param("orders") List<Order> orders, @Param("status") String status);
+
+    // order_status_log 에 일괄 추가 (스케줄러)
+    @Insert("<script>" +
+                "<foreach collection='orders' item='order'>" +
+                    "insert into order_status_logs (id, status, editor_id, order_id) " +
+                    "values (0, #{status}, #{editorId}, #{order.id});" +
+                "</foreach>" +
+            "</script>")
+    void insertOrderStatusLogList(@Param("orders") List<Order> orders, @Param("status") String status, @Param("editorId") String editorId );
 }

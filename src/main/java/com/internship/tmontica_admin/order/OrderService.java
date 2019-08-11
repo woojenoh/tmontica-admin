@@ -45,7 +45,7 @@ public class OrderService {
             if(orderStatusLogList.isEmpty() && orderStatusReq.getStatus().equals(OrderStatusType.PICK_UP.getStatus())){
                 Order order = orderDao.getOrderByOrderId(orderId);
                 Point point = new Point(order.getUserId(), PointLogType.GET_POINT.getType(),
-                        String.valueOf((int)(order.getTotalPrice()*(RESERVE_RATE)/100)), "결제 적립금 적립.");
+                        String.valueOf((int)(order.getRealPrice()*(RESERVE_RATE)/100)), "결제 적립금 적립.");
                 pointService.updateUserPoint(point);
             }
 
