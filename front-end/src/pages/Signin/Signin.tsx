@@ -70,7 +70,7 @@ export default class Signin extends PureComponent<Props, State> {
         </main>
       </>
     ) : (
-      <Redirect to={"/menus"} />
+      <Redirect to={"/TodayOrder"} />
     );
   }
 }
