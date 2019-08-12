@@ -52,11 +52,17 @@ const OrderModal = React.memo((props: IOrderModalProps) => {
                 <tfoot>
                   <tr>
                     <td colSpan={3} className="text-right">
-                      총 결제금액:{" "}
-                      <span className="total-price">
-                        {numberCommaRegex(orderDetail.totalPrice)}
-                      </span>
-                      원
+                      <div className="d-flex justify-content-between">
+                        <span className="total-price d-block">
+                          주문금액: {numberCommaRegex(orderDetail.totalPrice)}원
+                        </span>
+                        <span className="total-discount d-block">
+                          할인금액: {numberCommaRegex(orderDetail.usedPoint)}원
+                        </span>
+                        <span className="total-result d-block">
+                          최종금액: {numberCommaRegex(orderDetail.realPrice)}원
+                        </span>
+                      </div>
                     </td>
                   </tr>
                 </tfoot>

@@ -54,7 +54,9 @@ export default class OrderRow extends React.Component<IOrderRowProps, IOrderRowS
                 : `${order.menus[0].nameKo}`}
             </td>
             <td className="order__td order-payment">{order.payment}</td>
-            <td className="order__td order-price">{numberCommaRegex(order.totalPrice)}</td>
+            <td className="order__td order-price">
+              {numberCommaRegex(order.totalPrice - order.usedPoint)}
+            </td>
             <td className="order__td order-date">{moment(order.orderDate).format("HH시 mm분")}</td>
             <td className="order__td order-status">{order.status}</td>
           </tr>
@@ -70,7 +72,9 @@ export default class OrderRow extends React.Component<IOrderRowProps, IOrderRowS
                 : `${order.menus[0].nameKo}`}
             </td>
             <td className="order__td order-payment">{order.payment}</td>
-            <td className="order__td order-price">{numberCommaRegex(order.totalPrice)}</td>
+            <td className="order__td order-price">
+              {numberCommaRegex(order.totalPrice - order.usedPoint)}
+            </td>
             <td className="order__td order-date">
               {moment(order.orderDate).format("YYYY년 MM월 DD일 HH시 mm분")}
             </td>

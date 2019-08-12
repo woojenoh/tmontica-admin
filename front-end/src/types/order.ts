@@ -37,6 +37,8 @@ export interface IOrderDetail {
   orderId: number;
   orderStatusLogs: IOrderStatusLog[];
   totalPrice: number;
+  usedPoint: number;
+  realPrice: number;
   userId: string;
 }
 
