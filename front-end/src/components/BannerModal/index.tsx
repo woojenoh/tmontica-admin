@@ -206,7 +206,7 @@ export default class BannerModal extends PureComponent<IBannerModalProps, IBanne
   }
 
   render() {
-    const { bannerId, show, isReg, closeModal } = this.props;
+    const { show, isReg, closeModal } = this.props;
 
     const { link, startDate, endDate, imgUrl, usable, number } = this.state;
 

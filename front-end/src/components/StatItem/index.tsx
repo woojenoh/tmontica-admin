@@ -1,5 +1,4 @@
 import * as React from "react";
-import _ from "underscore";
 import { Bar, Pie, Doughnut } from "react-chartjs-2";
 import * as statTypes from "../../types/stat";
 import "./styles.scss";
