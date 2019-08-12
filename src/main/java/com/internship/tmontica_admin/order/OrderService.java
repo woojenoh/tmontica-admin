@@ -117,7 +117,7 @@ public class OrderService {
         // orderId로 주문상태 로그 리스트 가져오기
         List<OrderStatusLogResp> orderStatusLogs = orderDao.getOrderStatusLogByOrderId(orderId);
 
-        OrderDetailResp orderDetailResp = new OrderDetailResp(order.getUserId(), orderId, order.getTotalPrice(),menus, orderStatusLogs);
+        OrderDetailResp orderDetailResp = new OrderDetailResp(order.getUserId(), orderId, order.getTotalPrice(), order.getUsedPoint(), order.getRealPrice(),menus, orderStatusLogs);
         return orderDetailResp;
     }
 
