@@ -27,7 +27,7 @@ public interface BannerDao {
     @Update("UPDATE banners SET usable = 0 WHERE number = #{number} AND use_page = #{usePage} AND id != #{id}")
     void updateBannerUnusable(int number, String usePage, int id);
 
-    @Update("UPDATE banners SET use_page = #{usePage}, img = #{img}, link = #{link}, usable = #{usable}," +
+    @Update("UPDATE banners SET use_page = #{usePage}, img_url = #{imgUrl}, link = #{link}, usable = #{usable}," +
             "start_date = #{startDate}, end_Date = #{endDate}, number = #{number} " +
             "WHERE id = #{id}")
     void updateBanner(Banner banner);

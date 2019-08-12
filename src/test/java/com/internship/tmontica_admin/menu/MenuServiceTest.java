@@ -105,6 +105,7 @@ public class MenuServiceTest {
         MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("cold-brew","cold-brew-image.file","image/png",new byte[]{1,2,3,4,5,66,7,7,8,9,77,8,9,0});
 
+        given(saveImageFile.saveImg(mockMultipartFile, menu.getNameEng(), "/images/")).willReturn("/imagefiles/2019/8/10/cold-brew");
         given(menuDao.addMenu(menu)).willReturn(1);
         given(jwtService.getUserInfo("userInfo")).willReturn("{ \"id\" : \"test123\"}");
 
@@ -206,6 +207,17 @@ public class MenuServiceTest {
     public void 카테고리_메뉴_가져오기(){
 //        menuDao.getCategoryMenuCnt(category);
 //        menuDao.getMenusByCategory(category, size, pagination.getStartList());
+        //given
+        given(menuDao.getCategoryMenuCnt("coffee")).willReturn(3);
+        given(menuDao.getMenusByCategory("coffee", 10, 0)).willReturn(menus);
+
+        //when
+        menuService.getMenusByCategory("coffee", 1, 10);
+
+        //then
+        verify(menuDao, atLeastOnce()).getCategoryMenuCnt("coffee");
+        verify(menuDao, atLeastOnce()).getMenusByCategory("coffee", 10, 0);
+
     }
 
 
@@ -229,4 +241,5 @@ public class MenuServiceTest {
         //then
         verify(menuDao, atLeastOnce()).getMenuById(anyInt());
     }
+
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class RoutingController {
 
     @GetMapping(value={"/signin", "/order", "/menus", "/statistics"})
-    public String signin(){
+    public String routing(){
         return "/index.html";
     }
 

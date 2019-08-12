@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -114,17 +113,6 @@ public class MenuService {
 
     }
 
-
-    private List<Menu> getMenusByPage(int page, int size, List<Menu> menus) {
-        int startIndex = (page - 1) * size;
-
-        if(startIndex < 0 || startIndex >= menus.size())
-            return new ArrayList<>();
-
-        int endIndex = (startIndex + size < menus.size())? startIndex + size : menus.size();
-
-        return menus.subList(startIndex, endIndex);
-    }
 
 
     // 하나의 메뉴 정보 가져오기

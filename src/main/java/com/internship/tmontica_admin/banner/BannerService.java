@@ -31,7 +31,6 @@ public class BannerService {
     // 배너 등록하기
     @Transactional
     public int addBanner(Banner banner, MultipartFile multipartFile){
-        // TODO : 등록하는 관리자 정보 가져오기
         String creatorId = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id");
         banner.setCreatorId(creatorId);
 
