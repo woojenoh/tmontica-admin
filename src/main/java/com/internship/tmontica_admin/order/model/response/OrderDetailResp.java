@@ -13,6 +13,8 @@ public class OrderDetailResp {
     private String userId; // 주문한 유저 아이디
     private int orderId;
     private int totalPrice;
+    private int usedPoint;
+    private int realPrice;
     private List<OrderMenusResp> menus;
     private List<OrderStatusLogResp> orderStatusLogs;
 }
