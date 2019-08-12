@@ -55,12 +55,14 @@ class App extends React.Component<IAppProps> {
     const { isSignin } = this.props;
 
     if (Component) {
+      debugger;
       return (
         <Route
           {...rest}
           render={props =>
             // 로그인이 돼있는 상태에서 로그인 페이지로 이동하면 리다이렉트한다.
-            isSignin && (rest.path === "/signin" || rest.path === "/find") ? (
+            isSignin &&
+            (rest.path === "/signin" || rest.path === "/find" || rest.path === "/admin") ? (
               <Redirect
                 to={{
                   pathname: "/",
@@ -148,6 +150,7 @@ class App extends React.Component<IAppProps> {
               )(TodayOrder)}
             />
             <PublicRoute exact path="/signin" component={Signin} />
+            <PublicRoute path="/" component={Signin} />
           </Switch>
         </Suspense>
       </>
