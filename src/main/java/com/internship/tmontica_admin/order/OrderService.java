@@ -2,6 +2,7 @@ package com.internship.tmontica_admin.order;
 
 import com.internship.tmontica_admin.option.Option;
 import com.internship.tmontica_admin.option.OptionDao;
+import com.internship.tmontica_admin.option.OptionType;
 import com.internship.tmontica_admin.order.model.request.OrderStatusReq;
 import com.internship.tmontica_admin.order.model.response.*;
 import com.internship.tmontica_admin.paging.Pagination;
@@ -187,14 +188,14 @@ public class OrderService {
             String[] oneOption = opStr.split("__");
             Option tmpOption = optionDao.getOptionById(Integer.parseInt(oneOption[0]));
 
-            if (tmpOption.getType().equals("Temperature")) {
+            if (tmpOption.getType().equals(OptionType.TEMPERATURE.getType())) {
                 convert.append(tmpOption.getName());
-            } else if(tmpOption.getType().equals("Shot")){
-                convert.append("/샷추가("+oneOption[1]+"개)");
-            } else if(tmpOption.getType().equals("Syrup")){
-                convert.append("/시럽추가("+oneOption[1]+"개)");
-            } else if(tmpOption.getType().equals("Size")){
-                convert.append("/사이즈업");
+            } else if(tmpOption.getType().equals(OptionType.SHOT.getType())){
+                convert.append("/"+OptionType.SHOT.getName()+"("+oneOption[1]+"개)");
+            } else if(tmpOption.getType().equals(OptionType.SYRUP.getType())){
+                convert.append("/"+OptionType.SYRUP.getName()+"("+oneOption[1]+"개)");
+            } else if(tmpOption.getType().equals(OptionType.SIZE.getType())){
+                convert.append("/"+OptionType.SIZE.getName());
             }
         }
         return convert.toString();
