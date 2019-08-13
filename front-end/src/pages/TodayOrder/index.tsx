@@ -302,7 +302,11 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
           checkedOrderIds: [],
           isCheckedAll: false
         });
-        this.getTodayOrder(this.state.currentPage, this.state.pageSize);
+        this.getTodayOrder(
+          this.state.currentPage,
+          this.state.pageSize,
+          this.state.selectedTodayStatus
+        );
       }
     );
   };
