@@ -104,13 +104,13 @@ export default class Banner extends PureComponent<Props, State> {
               <Table striped size="sm" id="banner-table" className="content-table">
                 <thead>
                   <tr>
-                    <th>
+                    {/*<th>
                       <input
                         type="checkbox"
                         aria-label="Checkbox for following text input"
                         onChange={e => {}}
                       />
-                    </th>
+                    </th>*/}
                     <th>위치</th>
                     <th>이미지</th>
                     <th>기간</th>
@@ -131,9 +131,9 @@ export default class Banner extends PureComponent<Props, State> {
                           isReg: false
                         })}
                       >
-                        <td>
+                        {/*<td>
                           <input type="checkbox" />
-                        </td>
+                        </td>*/}
                         <td>{BannerUsePageDict[banner.usePage]}</td>
                         <td className="img">
                           <img src={`${IMAGE_URL}/${banner.imgUrl}`} alt="배너 미리보기" />

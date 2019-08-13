@@ -154,7 +154,9 @@ export default class Menus extends PureComponent<IMenusProps, IMenusState> {
               <table className="table table-striped table-sm content-table">
                 <thead>
                   <tr>
-                    <th>
+                    {
+                      // 전체선택 삭제 기능 미지원으로 숨김
+                      /*<th>
                       <input
                         type="checkbox"
                         aria-label="Checkbox for following text input"
@@ -166,7 +168,8 @@ export default class Menus extends PureComponent<IMenusProps, IMenusState> {
                           }
                         }}
                       />
-                    </th>
+                      </th>*/
+                    }
                     <th>미리보기</th>
                     <th>카테고리</th>
                     <th>메뉴명</th>
