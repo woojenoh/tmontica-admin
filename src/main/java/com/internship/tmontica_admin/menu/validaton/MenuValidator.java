@@ -18,7 +18,8 @@ public class MenuValidator implements Validator {
         MenuRequest menuRequest = (MenuRequest) obj;
 
         // 1. sellPrice
-        if(menuRequest.getSellPrice() != menuRequest.getProductPrice() * (100 - menuRequest.getDiscountRate())/100 ){
+        int calculatedPrice =(int) Math.round(menuRequest.getProductPrice() * (100 - menuRequest.getDiscountRate())/100.0);
+        if(menuRequest.getSellPrice() != calculatedPrice){
             errors.rejectValue("sellPrice" , "wrongValue", "판매가격이 잘못되었습니다.");
         }
 
