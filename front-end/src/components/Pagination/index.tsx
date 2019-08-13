@@ -34,7 +34,8 @@ export default class Pagination extends React.Component<IPaginationProps, IPagin
           <li
             key={i}
             className={`page-item cursor-pointer ${i === pagination.page && "active"}`}
-            onClick={() => handleSelectPage(i)}
+            // 현재 페이지와 같은 페이지가 아닐 때만
+            onClick={() => (pagination.page !== i ? handleSelectPage(i) : {})}
           >
             <span className="page-link">{i}</span>
           </li>

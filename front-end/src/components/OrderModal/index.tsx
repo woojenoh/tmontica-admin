@@ -42,7 +42,9 @@ const OrderModal = React.memo((props: IOrderModalProps) => {
                   {orderDetail.menus.map((m, index) => {
                     return (
                       <tr key={index} className="text-center">
-                        <td>{m.nameKo}</td>
+                        <td>
+                          {m.nameKo}({m.quantity})
+                        </td>
                         <td>{m.option}</td>
                         <td>{numberCommaRegex(m.price)}원</td>
                       </tr>

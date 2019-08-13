@@ -1,7 +1,7 @@
 import React, { ChangeEvent, PureComponent, FormEvent, BaseSyntheticEvent } from "react";
 import { Modal } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import { setImagePreview, withJWT } from "../../utils";
+import { setImagePreview, withJWT, trimIfString } from "../../utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
 import { BASE_URL } from "../../constants";
@@ -67,6 +67,23 @@ const categoryDict: { [index: string]: string } = {
   bread: "빵"
 };
 
+const Category = (() => {
+  return {
+    hasIceOnly: (categoryEng: string) => {
+      return /^ade$/.test(categoryEng);
+    },
+    hasHotOnly: (categoryEng: string) => {
+      return /^tea$/.test(categoryEng);
+    },
+    hasHotIce: (categoryEng: string) => {
+      return /^coffee$/.test(categoryEng);
+    },
+    hasNoOption: (categoryEng: string) => {
+      return categoryEng.length === 0 || /^bread$/.test(categoryEng);
+    }
+  };
+})();
+
 export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   implements Indexable {
   [key: string]: any;
@@ -127,7 +144,24 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   // 타겟 value를 state에 넣을 때 사용하는 onChange 핸들러
   handleChangeValue = (name: string) => (e: BaseSyntheticEvent) => {
     this.setState({
-      [name]: e.currentTarget.value
+      [name]: trimIfString(e.currentTarget.value)
+    });
+  };
+
+  // 카테고리 선택 이벤트
+  handleSelectCategory = (e: ChangeEvent<HTMLSelectElement>) => {
+    const newState = {
+      categoryEng: e.currentTarget.value
+    };
+
+    // 빵인 경우 옵션 초기화
+    if (Category.hasNoOption(e.currentTarget.value) && this.state.optionIds.size > 0) {
+      Object.assign(newState, {
+        optionIds: new Set([]) as Set<number>
+      });
+    }
+    this.setState({
+      ...newState
     });
   };
 
@@ -166,7 +200,18 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   }
 
   isValidForm(): boolean {
-    const { nameKo, nameEng, categoryEng, imgFile } = this.state;
+    const {
+      nameKo,
+      nameEng,
+      categoryEng,
+      imgFile,
+      productPrice,
+      discountRate,
+      startDate,
+      endDate,
+      stock,
+      optionIds
+    } = this.state;
     const { isReg } = this.props;
 
     if (!nameKo) {
@@ -174,11 +219,37 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
       this.nameKo.focus();
       return false;
     }
+
+    if (/[ㄱ-ㅎㅏ-ㅣ]/.test(nameKo)) {
+      alert("자음 또는 모음만 입력하셨나요? -_-+");
+      this.nameKo.focus();
+      return false;
+    }
+
     if (!nameEng) {
       alert("영문명을 입력해주세요.");
       this.nameEng.focus();
       return false;
     }
+
+    if (nameKo.length >= 30) {
+      alert("메뉴명은 30자 이내로 입력해주세요. :(");
+      this.nameKo.focus();
+      return false;
+    }
+
+    if (nameEng.length >= 50) {
+      alert("영문명은 50자 이내로 입력해주세요. :(");
+      this.nameEng.focus();
+      return false;
+    }
+
+    if (/[가-힣ㄱ-ㅎㅏ-ㅣ]/.test(nameEng)) {
+      alert("영문명엔 한글을 입력할 수 없습니다. :(");
+      this.nameEng.focus();
+      return false;
+    }
+
     if (!categoryEng) {
       alert("카테고리를 선택해주세요.");
       this.categoryEng.focus();
@@ -188,6 +259,45 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
       alert("이미지를 등록해주세요.");
       return false;
     }
+
+    if (productPrice > 10000000) {
+      alert("상품가에 너무 큰 금액을 입력하지 말아주세요 :(");
+      this.productPrice.focus();
+      return false;
+    }
+
+    if (discountRate > 100 || discountRate < 0) {
+      alert("할인율은 0 ~ 100으로 설정하셔야 합니다 :(");
+      this.discountRate.focus();
+      return false;
+    }
+
+    if (!Number.isInteger(discountRate)) {
+      alert("할인율은 정수만 입력 가능합니다 :(");
+      this.discountRate.focus();
+      return false;
+    }
+
+    if (Date.parse(startDate) > Date.parse(endDate)) {
+      alert("시작일은 종료일보다 커야 합니다.");
+      return false;
+    }
+
+    if (stock === 0 && !window.confirm("재고 0이 맞습니까?")) {
+      return false;
+    }
+
+    if (!Category.hasNoOption(categoryEng) && !optionIds.has(1) && !optionIds.has(2)) {
+      alert(
+        Category.hasHotIce(categoryEng)
+          ? "HOT/ICE 중 하나를 선택해야 합니다!"
+          : Category.hasHotOnly(categoryEng)
+          ? "HOT 옵션을 선택해야 합니다."
+          : "ICE 옵션을 선택해야 합니다."
+      );
+      return false;
+    }
+
     return true;
   }
 
@@ -342,7 +452,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                         this["categoryEng"] = el;
                       }}
                       value={categoryEng}
-                      onChange={this.handleChangeValue("categoryEng")}
+                      onChange={this.handleSelectCategory.bind(this)}
                     >
                       <option value="">카테고리</option>
                       <option value="coffee">커피</option>
@@ -412,7 +522,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                           productPrice,
                           sellPrice: Number(
                             productPrice > 0
-                              ? productPrice * ((100 - discountRate) / 100)
+                              ? Number(productPrice * ((100 - discountRate) / 100)).toFixed(0)
                               : productPrice
                           )
                         });
@@ -443,7 +553,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                           discountRate,
                           sellPrice: Number(
                             productPrice > 0
-                              ? productPrice * ((100 - discountRate) / 100)
+                              ? Number(productPrice * ((100 - discountRate) / 100)).toFixed(0)
                               : productPrice
                           )
                         });
@@ -528,54 +638,62 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                   </div>
                 </div>
 
-                {/coffee|ade/.test(categoryEng) ? (
+                {!Category.hasNoOption(categoryEng) ? (
                   <div className="input-group options">
                     <div className="input-group-prepend">
                       <span className="input-group-text">옵션</span>
                     </div>
                     <div className="form-control">
-                      <div className="input-group align-items-center">
-                        <input
-                          name="optionIds[]"
-                          value="1"
-                          checked={optionIds.has(1) ? true : false}
-                          type="checkbox"
-                          className="option__checkbox mr-1"
-                          onChange={e => {
-                            const value = parseInt(e.target.value);
-                            if (e.target.checked) {
-                              optionIds.add(value);
-                            } else {
-                              optionIds.delete(value);
-                            }
-                            this.setState({
-                              optionIds: new Set(optionIds)
-                            });
-                          }}
-                        />
-                        <label className="option-name m-0">HOT</label>
-                      </div>
-                      <div className="input-group align-items-center">
-                        <input
-                          name="optionIds[]"
-                          value="2"
-                          checked={optionIds.has(2) ? true : false}
-                          type="checkbox"
-                          className="option__checkbox mr-1"
-                          onChange={e => {
-                            const value = parseInt(e.target.value);
-                            if (e.target.checked) {
-                              optionIds.add(value);
-                            } else {
-                              optionIds.delete(value);
-                            }
-                            this.setState({
-                              optionIds: new Set(optionIds)
-                            });
-                          }}
-                        />
-                        <label className="option-name m-0">ICE</label>
-                      </div>
+                      {Category.hasHotIce(categoryEng) || Category.hasHotOnly(categoryEng) ? (
+                        <div className="input-group align-items-center">
+                          <input
+                            name="optionIds[]"
+                            value="1"
+                            checked={optionIds.has(1) ? true : false}
+                            type="checkbox"
+                            className="option__checkbox mr-1"
+                            onChange={e => {
+                              const value = parseInt(e.target.value);
+                              if (e.target.checked) {
+                                optionIds.add(value);
+                              } else {
+                                optionIds.delete(value);
+                              }
+                              this.setState({
+                                optionIds: new Set(optionIds)
+                              });
+                            }}
+                          />
+                          <label className="option-name m-0">HOT</label>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      {Category.hasHotIce(categoryEng) || Category.hasIceOnly(categoryEng) ? (
+                        <div className="input-group align-items-center">
+                          <input
+                            name="optionIds[]"
+                            value="2"
+                            checked={optionIds.has(2) ? true : false}
+                            type="checkbox"
+                            className="option__checkbox mr-1"
+                            onChange={e => {
+                              const value = parseInt(e.target.value);
+                              if (e.target.checked) {
+                                optionIds.add(value);
+                              } else {
+                                optionIds.delete(value);
+                              }
+                              this.setState({
+                                optionIds: new Set(optionIds)
+                              });
+                            }}
+                          />
+                          <label className="option-name m-0">ICE</label>
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       <div className="input-group align-items-center pr-1">
                         <input
                           name="optionIds[]"

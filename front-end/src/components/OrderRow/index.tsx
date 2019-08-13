@@ -50,8 +50,9 @@ export default class OrderRow extends React.Component<IOrderRowProps, IOrderRowS
             <td className="order__td order-user">{order.userId}</td>
             <td className="order__td order-menus">
               {order.menus.length > 1
-                ? `${order.menus[0].nameKo} 외 ${order.menus.length - 1}개`
-                : `${order.menus[0].nameKo}`}
+                ? `${order.menus[0].nameKo}(${order.menus[0].quantity}) 외 ${order.menus.length -
+                    1}개`
+                : `${order.menus[0].nameKo}(${order.menus[0].quantity})`}
             </td>
             <td className="order__td order-payment">{order.payment}</td>
             <td className="order__td order-price">
