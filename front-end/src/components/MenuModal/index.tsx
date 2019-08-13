@@ -67,6 +67,23 @@ const categoryDict: { [index: string]: string } = {
   bread: "빵"
 };
 
+const Category = (() => {
+  return {
+    hasIceOnly: (categoryEng: string) => {
+      return /^ade$/.test(categoryEng);
+    },
+    hasHotOnly: (categoryEng: string) => {
+      return /^tea$/.test(categoryEng);
+    },
+    hasHotIce: (categoryEng: string) => {
+      return /^coffee$/.test(categoryEng);
+    },
+    hasNoOption: (categoryEng: string) => {
+      return categoryEng.length === 0 || /^bread$/.test(categoryEng);
+    }
+  };
+})();
+
 export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   implements Indexable {
   [key: string]: any;
@@ -138,7 +155,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
     };
 
     // 빵인 경우 옵션 초기화
-    if (e.currentTarget.value === "bread" && this.state.optionIds.size > 0) {
+    if (Category.hasNoOption(e.currentTarget.value) && this.state.optionIds.size > 0) {
       Object.assign(newState, {
         optionIds: new Set([]) as Set<number>
       });
@@ -192,7 +209,8 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
       discountRate,
       startDate,
       endDate,
-      stock
+      stock,
+      optionIds
     } = this.state;
     const { isReg } = this.props;
 
@@ -266,6 +284,17 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
     }
 
     if (stock === 0 && !window.confirm("재고 0이 맞습니까?")) {
+      return false;
+    }
+
+    if (!Category.hasNoOption(categoryEng) && !optionIds.has(1) && !optionIds.has(2)) {
+      alert(
+        Category.hasHotIce(categoryEng)
+          ? "HOT/ICE 중 하나를 선택해야 합니다!"
+          : Category.hasHotOnly(categoryEng)
+          ? "HOT 옵션을 선택해야 합니다."
+          : "ICE 옵션을 선택해야 합니다."
+      );
       return false;
     }
 
@@ -609,54 +638,62 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                   </div>
                 </div>
 
-                {/coffee|ade/.test(categoryEng) ? (
+                {!Category.hasNoOption(categoryEng) ? (
                   <div className="input-group options">
                     <div className="input-group-prepend">
                       <span className="input-group-text">옵션</span>
                     </div>
                     <div className="form-control">
-                      <div className="input-group align-items-center">
-                        <input
-                          name="optionIds[]"
-                          value="1"
-                          checked={optionIds.has(1) ? true : false}
-                          type="checkbox"
-                          className="option__checkbox mr-1"
-                          onChange={e => {
-                            const value = parseInt(e.target.value);
-                            if (e.target.checked) {
-                              optionIds.add(value);
-                            } else {
-                              optionIds.delete(value);
-                            }
-                            this.setState({
-                              optionIds: new Set(optionIds)
-                            });
-                          }}
-                        />
-                        <label className="option-name m-0">HOT</label>
-                      </div>
-                      <div className="input-group align-items-center">
-                        <input
-                          name="optionIds[]"
-                          value="2"
-                          checked={optionIds.has(2) ? true : false}
-                          type="checkbox"
-                          className="option__checkbox mr-1"
-                          onChange={e => {
-                            const value = parseInt(e.target.value);
-                            if (e.target.checked) {
-                              optionIds.add(value);
-                            } else {
-                              optionIds.delete(value);
-                            }
-                            this.setState({
-                              optionIds: new Set(optionIds)
-                            });
-                          }}
-                        />
-                        <label className="option-name m-0">ICE</label>
-                      </div>
+                      {Category.hasHotIce(categoryEng) || Category.hasHotOnly(categoryEng) ? (
+                        <div className="input-group align-items-center">
+                          <input
+                            name="optionIds[]"
+                            value="1"
+                            checked={optionIds.has(1) ? true : false}
+                            type="checkbox"
+                            className="option__checkbox mr-1"
+                            onChange={e => {
+                              const value = parseInt(e.target.value);
+                              if (e.target.checked) {
+                                optionIds.add(value);
+                              } else {
+                                optionIds.delete(value);
+                              }
+                              this.setState({
+                                optionIds: new Set(optionIds)
+                              });
+                            }}
+                          />
+                          <label className="option-name m-0">HOT</label>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      {Category.hasHotIce(categoryEng) || Category.hasIceOnly(categoryEng) ? (
+                        <div className="input-group align-items-center">
+                          <input
+                            name="optionIds[]"
+                            value="2"
+                            checked={optionIds.has(2) ? true : false}
+                            type="checkbox"
+                            className="option__checkbox mr-1"
+                            onChange={e => {
+                              const value = parseInt(e.target.value);
+                              if (e.target.checked) {
+                                optionIds.add(value);
+                              } else {
+                                optionIds.delete(value);
+                              }
+                              this.setState({
+                                optionIds: new Set(optionIds)
+                              });
+                            }}
+                          />
+                          <label className="option-name m-0">ICE</label>
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       <div className="input-group align-items-center pr-1">
                         <input
                           name="optionIds[]"
