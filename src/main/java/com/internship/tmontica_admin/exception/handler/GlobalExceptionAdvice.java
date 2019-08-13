@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @RestControllerAdvice
 public class GlobalExceptionAdvice {
@@ -49,11 +50,11 @@ public class GlobalExceptionAdvice {
     }
 
     // 통계
-     @ExceptionHandler(StatisticException.class)
-     public ResponseEntity<TmonTicaExceptionFormat> handleStatisticException(StatisticException  e){
-        log.debug("StatisticExceptionMessage : {}", e.getMessage());
-        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getLocalizedMessage(), e.getMessage()), e.getStatisticExceptionType().getResponseType());
-     }
+    @ExceptionHandler(StatisticException.class)
+    public ResponseEntity<TmonTicaExceptionFormat> handleStatisticException(StatisticException  e){
+    log.debug("StatisticExceptionMessage : {}", e.getMessage());
+    return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getLocalizedMessage(), e.getMessage()), e.getStatisticExceptionType().getResponseType());
+    }
 
     // 오더
     @ExceptionHandler(OrderValidException.class)
@@ -87,6 +88,12 @@ public class GlobalExceptionAdvice {
     public ResponseEntity<TmonTicaExceptionFormat> handleMenuException(MenuException e){
         log.info("MenuException : {}" , e.getErrorMessage());
         return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getErrorMessage()), e.getMenuExceptionType().getResponseType());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus
+    public TmonTicaExceptionFormat handleMaxUploadSizeException(MaxUploadSizeExceededException e){
+        return new TmonTicaExceptionFormat("imgFile", "이미지 파일은 10MB 까지 업로드 가능합니다.");
     }
 
     // 배너

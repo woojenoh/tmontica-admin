@@ -65,25 +65,25 @@ public interface OrderDao {
     // 검색 조건과 날짜가 적용된 주문내역 전체 개수 가져오기
     @Select("select count(*) from orders " +
             "where ${searchType} like '%${searchValue}%' " +
-            "   and order_date between date(#{startDate}) and date(#{endDate})+1")
+            "   and order_date between date(#{startDate}) and date_add((#{endDate}), interval 1 day)")
     int getSearchOrderCnt(String searchType, String searchValue, String startDate, String endDate);
 
     // 검색 조건과 날짜가 적용된 주문내역 검색하기(페이징)
     @Select("select * from orders " +
             "where ${searchType} like '%${searchValue}%' " +
-            "   and order_date between date(#{startDate}) and date(#{endDate})+1 " +
+            "   and order_date between date(#{startDate}) and date_add((#{endDate}), interval 1 day) " +
             "order by order_date desc " +
             "limit #{startList}, #{size}")
     List<Order> searchOrder(String searchType, String searchValue, String startDate, String endDate, int startList, int size);
 
     // 날짜 적용된 주문 내역 개수 가져오기
     @Select("select count(*) from orders " +
-            "where order_date between date(#{startDate}) and date(#{endDate})+1 ")
+            "where order_date between date(#{startDate}) and date_add((#{endDate}), interval 1 day) ")
     int getSearchOrderCntByDate(String startDate, String endDate);
 
     // 날짜 적용된 주문 내역 가져오기 (페이징)
     @Select("select * from orders " +
-            "where order_date between date(#{startDate}) and date(#{endDate})+1 " +
+            "where order_date between date(#{startDate}) and date_add((#{endDate}), interval 1 day) " +
             "order by order_date desc " +
             "limit #{startList}, #{size}")
     List<Order> searchOrderByDate(String startDate, String endDate, int startList, int size);
