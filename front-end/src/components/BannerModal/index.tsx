@@ -390,6 +390,7 @@ export default class BannerModal extends PureComponent<IBannerModalProps, IBanne
                   try {
                     await deleteBanner(this.props.bannerId);
                     alert("배너가 삭제되었습니다.");
+                    this.props.getBanners();
                     closeModal();
                   } catch (error) {}
                 }}
