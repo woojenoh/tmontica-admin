@@ -10,7 +10,6 @@ import { setImagePreview } from "../../utils";
 import { BASE_URL } from "../../constants";
 import { CommonError } from "../../api/CommonError";
 import { addBanner, updateBanner, getBannerById, deleteBanner } from "../../api/banner";
-import { BannerUsePageDict } from "../../constants";
 import { handleError } from "../../api/common";
 
 interface IBannerModalProps {
@@ -32,7 +31,7 @@ const dateFormat = "YYYY.MM.DD HH:mm:ss";
 const initState = {
   id: -1,
   link: "",
-  usePage: "메인-상단",
+  usePage: "main_top",
   startDate: moment().format(dateFormat),
   endDate: moment().format(dateFormat),
   number: 1,
@@ -162,7 +161,7 @@ export default class BannerModal extends PureComponent<IBannerModalProps, IBanne
       data.append("id", `${this.props.bannerId}`);
     }
     data.append("link", this.state.link);
-    data.append("usePage", BannerUsePageDict[this.state.usePage]);
+    data.append("usePage", this.state.usePage);
     data.append("startDate", moment(this.state.startDate).format(dateFormat));
     data.append("endDate", moment(this.state.endDate).format(dateFormat));
     data.append("number", this.state.number.toString());
@@ -271,8 +270,8 @@ export default class BannerModal extends PureComponent<IBannerModalProps, IBanne
                   value={this.state.usePage}
                   onChange={this.handleChangeValue("usePage")}
                 >
-                  <option value="main-top">메인-상단</option>
-                  <option value="main-bottom">메인-하단</option>
+                  <option value="main_top">메인-상단</option>
+                  <option value="main_bottom">메인-하단</option>
                 </select>
               </div>
             </div>
