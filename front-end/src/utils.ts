@@ -19,6 +19,11 @@ export function handleChange(this: any, e: BaseSyntheticEvent) {
   this.setState(change);
 }
 
+// 문자열이면 트림
+export function trimIfString(value: any) {
+  return typeof value === "string" ? value.trim() : value;
+}
+
 function _formatDatetime(date: Date, format: string) {
   const _padStart = (value: number): string => value.toString().padStart(2, "0");
   return format
@@ -46,7 +51,7 @@ export function formatDate(date: any, format?: string): string {
 
 // 이미지 미리보기 업로드 > IE10
 export function setImagePreview(files: FileList | null, callback: Function) {
-  if (files && files.length > 0 && /(\.jpg|\.jpeg|\.png)$/.test(files[0].name)) {
+  if (files && files.length > 0 && /(\.jpg|\.jpeg|\.png|\.gif)$/.test(files[0].name)) {
     const reader = new FileReader();
     reader.onload = (e: ProgressEvent) => {
       const target = e.target as FileReader;
@@ -56,7 +61,7 @@ export function setImagePreview(files: FileList | null, callback: Function) {
 
     reader.readAsDataURL(files[0]);
   } else {
-    alert("이미지 파일을 등록해 주세요.");
+    alert("이미지 파일을 등록해 주세요.(jpg, jpeg, png, gif 가능)");
   }
 }
 

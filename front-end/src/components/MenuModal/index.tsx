@@ -1,7 +1,7 @@
 import React, { ChangeEvent, PureComponent, FormEvent, BaseSyntheticEvent } from "react";
 import { Modal } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import { setImagePreview, withJWT } from "../../utils";
+import { setImagePreview, withJWT, trimIfString } from "../../utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.scss";
 import { BASE_URL } from "../../constants";
@@ -127,7 +127,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   // 타겟 value를 state에 넣을 때 사용하는 onChange 핸들러
   handleChangeValue = (name: string) => (e: BaseSyntheticEvent) => {
     this.setState({
-      [name]: e.currentTarget.value
+      [name]: trimIfString(e.currentTarget.value)
     });
   };
 
@@ -166,7 +166,17 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
   }
 
   isValidForm(): boolean {
-    const { nameKo, nameEng, categoryEng, imgFile } = this.state;
+    const {
+      nameKo,
+      nameEng,
+      categoryEng,
+      imgFile,
+      productPrice,
+      discountRate,
+      startDate,
+      endDate,
+      stock
+    } = this.state;
     const { isReg } = this.props;
 
     if (!nameKo) {
@@ -174,11 +184,37 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
       this.nameKo.focus();
       return false;
     }
+
+    if (/[ㄱ-ㅎㅏ-ㅣ]/.test(nameKo)) {
+      alert("자음 또는 모음만 입력하셨나요? -_-+");
+      this.nameKo.focus();
+      return false;
+    }
+
     if (!nameEng) {
       alert("영문명을 입력해주세요.");
       this.nameEng.focus();
       return false;
     }
+
+    if (nameKo.length >= 30) {
+      alert("메뉴명은 30자 이내로 입력해주세요. :(");
+      this.nameKo.focus();
+      return false;
+    }
+
+    if (nameEng.length >= 50) {
+      alert("영문명은 50자 이내로 입력해주세요. :(");
+      this.nameEng.focus();
+      return false;
+    }
+
+    if (/[가-힣ㄱ-ㅎㅏ-ㅣ]/.test(nameEng)) {
+      alert("영문명엔 한글을 입력할 수 없습니다. :(");
+      this.nameEng.focus();
+      return false;
+    }
+
     if (!categoryEng) {
       alert("카테고리를 선택해주세요.");
       this.categoryEng.focus();
@@ -188,6 +224,34 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
       alert("이미지를 등록해주세요.");
       return false;
     }
+
+    if (productPrice > 10000000) {
+      alert("상품가에 너무 큰 금액을 입력하지 말아주세요 :(");
+      this.productPrice.focus();
+      return false;
+    }
+
+    if (discountRate > 100 || discountRate < 0) {
+      alert("할인율은 0 ~ 100으로 설정하셔야 합니다 :(");
+      this.discountRate.focus();
+      return false;
+    }
+
+    if (!Number.isInteger(discountRate)) {
+      alert("할인율은 정수만 입력 가능합니다 :(");
+      this.discountRate.focus();
+      return false;
+    }
+
+    if (Date.parse(startDate) > Date.parse(endDate)) {
+      alert("시작일은 종료일보다 커야 합니다.");
+      return false;
+    }
+
+    if (stock === 0 && !window.confirm("재고 0이 맞습니까?")) {
+      return false;
+    }
+
     return true;
   }
 
@@ -412,7 +476,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                           productPrice,
                           sellPrice: Number(
                             productPrice > 0
-                              ? productPrice * ((100 - discountRate) / 100)
+                              ? Number(productPrice * ((100 - discountRate) / 100)).toFixed(0)
                               : productPrice
                           )
                         });
@@ -443,7 +507,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                           discountRate,
                           sellPrice: Number(
                             productPrice > 0
-                              ? productPrice * ((100 - discountRate) / 100)
+                              ? Number(productPrice * ((100 - discountRate) / 100)).toFixed(0)
                               : productPrice
                           )
                         });
