@@ -131,6 +131,23 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
     });
   };
 
+  // 카테고리 선택 이벤트
+  handleSelectCategory = (e: ChangeEvent<HTMLSelectElement>) => {
+    const newState = {
+      categoryEng: e.currentTarget.value
+    };
+
+    // 빵인 경우 옵션 초기화
+    if (e.currentTarget.value === "bread" && this.state.optionIds.size > 0) {
+      Object.assign(newState, {
+        optionIds: new Set([]) as Set<number>
+      });
+    }
+    this.setState({
+      ...newState
+    });
+  };
+
   //
   handleChangeProductPrice = (discountRate: number) => (e: BaseSyntheticEvent) => {
     const numericValue = parseInt(e.target.value.replace(/,/g, ""));
@@ -406,7 +423,7 @@ export class MenuModal extends PureComponent<IMenuModalProps, IMenuModalState>
                         this["categoryEng"] = el;
                       }}
                       value={categoryEng}
-                      onChange={this.handleChangeValue("categoryEng")}
+                      onChange={this.handleSelectCategory.bind(this)}
                     >
                       <option value="">카테고리</option>
                       <option value="coffee">커피</option>
