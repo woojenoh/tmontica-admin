@@ -299,6 +299,10 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
         currentPage: pageNumber
       },
       () => {
+        this.setState({
+          checkedOrderIds: [],
+          isCheckedAll: false
+        });
         this.getTodayOrder(this.state.currentPage, this.state.pageSize);
       }
     );
