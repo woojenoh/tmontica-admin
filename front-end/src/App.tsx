@@ -55,7 +55,6 @@ class App extends React.Component<IAppProps> {
     const { isSignin } = this.props;
 
     if (Component) {
-      debugger;
       return (
         <Route
           {...rest}
