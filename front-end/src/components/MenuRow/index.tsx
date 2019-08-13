@@ -37,20 +37,23 @@ export default class MenuRow extends Component<Props, State> {
           handleShowUpdateModal(menu.id);
         }}
       >
-        <td className="menu__td check">
-          <input
-            type="checkbox"
-            aria-label="Checkbox for following text input"
-            checked={isChecked}
-            onChange={e => {
-              if (e.target.checked) {
-                this.props.handleCheckRow(this.props.menu.id);
-              } else {
-                this.props.handleUncheckRow(this.props.menu.id);
-              }
-            }}
-          />
-        </td>
+        {
+          // 전체삭제 기능 미지원으로 숨김
+          /* <td className="menu__td check">
+            <input
+              type="checkbox"
+              aria-label="Checkbox for following text input"
+              checked={isChecked}
+              onChange={e => {
+                if (e.target.checked) {
+                  this.props.handleCheckRow(this.props.menu.id);
+                } else {
+                  this.props.handleUncheckRow(this.props.menu.id);
+                }
+              }}
+            />
+          </td>*/
+        }
         <td className="menu__td preview">
           <img src={`${IMAGE_URL}/${menu.imgUrl}`} alt={menu.nameEng} />
         </td>
