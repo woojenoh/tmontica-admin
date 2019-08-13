@@ -140,7 +140,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
     const { selectedOrderId, orderDetail } = this.state;
     if (orderId !== selectedOrderId || orderDetail === null) {
       axios
-        .get(`API_URL/orders/detail/${orderId}`, withJWT())
+        .get(`${API_URL}/orders/detail/${orderId}`, withJWT())
         .then((res: AxiosResponse) => {
           this.setState({
             orderDetail: res.data,
