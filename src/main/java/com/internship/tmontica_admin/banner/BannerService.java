@@ -46,12 +46,6 @@ public class BannerService {
         return banner.getId();
     }
 
-    // usePage로 배너 가져오기
-    public List<Banner> getBannersByPage(UsePage usePage){
-        List<Banner> banners = bannerDao.getBannersByUsePage(usePage.toString());
-        return banners;
-    }
-
     //전체 배너 가져오기
     public List<Banner> getAllBanners(){
         List<Banner> banners = bannerDao.getAllBanner();
