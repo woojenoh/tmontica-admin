@@ -37,6 +37,7 @@ public class BannerController {
     @InitBinder("bannerUpdateReuqest")
     private void initUpdateBinder(WebDataBinder dataBinder){ dataBinder.addValidators(bannerUpdateValidator);}
 
+    /**  배너 추가하기 **/
     @PostMapping
     public ResponseEntity createBanner(@ModelAttribute @Valid BannerRequest bannerRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -49,7 +50,7 @@ public class BannerController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    // id로 배너 조회하기
+    /** id로 배너 조회하기 **/
     @GetMapping("/{id:\\d+}")
     public ResponseEntity<Banner> getBannerById(@PathVariable int id){
         Banner banner = bannerService.getBannerById(id);
@@ -57,14 +58,14 @@ public class BannerController {
         return new ResponseEntity<>(banner, HttpStatus.OK);
     }
 
-    // usePage에 맞는 배너 가져오기.
-    @GetMapping("/{usePageEng:[a-z-]+}")
-    public ResponseEntity<List<Banner>> getBannerByUsePage(@PathVariable String usePageEng){
-        List<Banner> banners = bannerService.getBannersByPage(usePageEng);
+    /** usePage에 맞는 배너 가져오기.**/
+    @GetMapping("/{usePage}")
+    public ResponseEntity<List<Banner>> getBannerByUsePage(@PathVariable UsePage usePage){
+        List<Banner> banners = bannerService.getBannersByPage(usePage);
         return new ResponseEntity<>(banners, HttpStatus.OK);
     }
 
-    // 전체 배너 가져오기
+    /** 전체 배너 가져오기 **/
     @GetMapping
     public ResponseEntity<List<Banner>> getAllBanners(){
         List<Banner> banners = bannerService.getAllBanners();
@@ -76,7 +77,7 @@ public class BannerController {
         return new ResponseEntity<>(banners, HttpStatus.OK);
     }
 
-    // 배너 업데이트
+    /** 배너 업데이트 **/
     @PutMapping
     public ResponseEntity updateBanner(@ModelAttribute @Valid BannerUpdateRequest bannerUpdateRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -90,7 +91,7 @@ public class BannerController {
 
     }
 
-    // 배너 삭제
+    /** 배너 삭제 **/
     @DeleteMapping("/{id}")
     public ResponseEntity deleteBanner(@PathVariable int id){
         bannerService.deleteBanner(id);

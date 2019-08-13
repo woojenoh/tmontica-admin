@@ -34,13 +34,11 @@ public class BannerService {
         String creatorId = JsonUtil.getJsonElementValue(jwtService.getUserInfo("userInfo"), "id");
         banner.setCreatorId(creatorId);
 
-        //usePage 영어로 저장
+        //usePage 체크
         checkUsePage(banner.getUsePage());
-        String usePage = BannerUsePage.convertKoToEng(banner.getUsePage());
-        banner.setUsePage(usePage);
 
         // 이미지 저장
-        String imgUrl = saveImageFile.saveImg(multipartFile, usePage , location);
+        String imgUrl = saveImageFile.saveImg(multipartFile, banner.getUsePage(), location);
         banner.setImgUrl(imgUrl);
         // 배너 등록
         bannerDao.addBanner(banner);
@@ -49,9 +47,8 @@ public class BannerService {
     }
 
     // usePage로 배너 가져오기
-    public List<Banner> getBannersByPage(String usePage){
-        checkUsePageEng(usePage);
-        List<Banner> banners = bannerDao.getBannersByUsePage(usePage);
+    public List<Banner> getBannersByPage(UsePage usePage){
+        List<Banner> banners = bannerDao.getBannersByUsePage(usePage.toString());
         return banners;
     }
 
@@ -69,17 +66,15 @@ public class BannerService {
     // 배너 수정하기
     public void updateBanner(Banner banner, MultipartFile multipartFile){
 
-        //usePage 영어로 저장
+        //usePage 확인
         checkUsePage(banner.getUsePage());
-        String usePage = BannerUsePage.convertKoToEng(banner.getUsePage());
-        banner.setUsePage(usePage);
 
         // 이미지 파일 업데이트
         if(multipartFile == null || multipartFile.isEmpty()){
             Banner beforeBanner = bannerDao.getBannerById(banner.getId());
             banner.setImgUrl(beforeBanner.getImgUrl());
         }else{
-            String imgUrl = saveImageFile.saveImg(multipartFile, usePage, location);
+            String imgUrl = saveImageFile.saveImg(multipartFile, banner.getUsePage(), location);
             banner.setImgUrl(imgUrl);
         }
 
@@ -92,24 +87,15 @@ public class BannerService {
     }
 
     // usepage check
-    public void checkUsePage(String usePage){
+    public void checkUsePage(String checkPage){
 
-        for(BannerUsePage bannerUsePage : BannerUsePage.values()){
-            if(bannerUsePage.getUsePageKo().equals(usePage)){
+        for(UsePage usePage : UsePage.values()){
+            if(usePage.toString().equals(checkPage)){
                 return;
             }
         }
         throw new BannerException(BannerExceptionType.USEPAGE_MISMATCH_EXCEPTION);
     }
 
-    public void checkUsePageEng(String usePageEng){
-
-        for(BannerUsePage bannerUsePage : BannerUsePage.values()){
-            if(bannerUsePage.getUsePageEng().equals(usePageEng)){
-                return;
-            }
-        }
-        throw  new BannerException(BannerExceptionType.USEPAGE_MISMATCH_EXCEPTION);
-    }
 
 }
