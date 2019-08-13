@@ -1,4 +1,3 @@
-import history from "../../history";
 import jwt from "jwt-decode";
 import * as actionTypes from "../actionTypes/user";
 import * as userTypes from "../../types/user";
