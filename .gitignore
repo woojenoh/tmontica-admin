@@ -95,3 +95,5 @@ hs_err_pid*
 
 #*.sql
 .factorypath
+
+src/main/resources/static/*
