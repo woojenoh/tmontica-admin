@@ -83,6 +83,7 @@ export default class BannerModal extends PureComponent<IBannerModalProps, IBanne
       alert("이미지를 등록해주세요.");
       return false;
     }
+
     return true;
   }
 
@@ -250,6 +251,11 @@ export default class BannerModal extends PureComponent<IBannerModalProps, IBanne
                   // https://hyunseob.github.io/2018/06/24/debounce-react-synthetic-event/
                   e.persist();
                   setImagePreview(e.target.files, (imgUrl: any) => {
+                    if (e.target.files![0].size >= 1024 * 1024 * 5) {
+                      alert("이미지 크기는 5MB를 넘을 수 없습니다.");
+                      return false;
+                    }
+
                     this.setState({
                       imgUrl,
                       imgFile: e.target.files !== null ? (e.target.files[0] as Blob) : ""
