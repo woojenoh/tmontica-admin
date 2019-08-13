@@ -26,4 +26,14 @@ public enum CategoryName {
         return "non";
     }
 
+    public static boolean isBeverage(String categoryEng){
+        // 커피 , 에이드는 음료.
+        if(CATEGORY_ADE.getCategoryEng().equals(categoryEng)
+                || CATEGORY_COFFEE.getCategoryEng().equals(categoryEng)){
+            return true;
+        }
+        return false;
+    }
+
+
 }
