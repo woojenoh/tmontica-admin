@@ -69,7 +69,7 @@ export default class MenuRow extends Component<Props, State> {
         <td className="menu__td edit-date">
           {menu.updatedDate ? formatDate(menu.updatedDate).substr(0, 10) : ""}
         </td>
-        <td className="menu__td editor" />
+        <td className="menu__td editor">{menu.updaterId}</td>
       </tr>
     );
   }
