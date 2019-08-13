@@ -11,7 +11,6 @@ import * as commonTypes from "../../types/common";
 import { API_URL, handleError } from "../../api/common";
 import { withJWT } from "../../utils";
 import "./styles.scss";
-import { number } from "prop-types";
 import { getTodayOrder } from "../../api/order";
 import { CommonError } from "../../api/CommonError";
 
@@ -141,7 +140,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
     const { selectedOrderId, orderDetail } = this.state;
     if (orderId !== selectedOrderId || orderDetail === null) {
       axios
-        .get(`http://tmonticaadmin-idev.tmon.co.kr/api/orders/detail/${orderId}`, withJWT())
+        .get(`API_URL/orders/detail/${orderId}`, withJWT())
         .then((res: AxiosResponse) => {
           this.setState({
             orderDetail: res.data,
@@ -150,7 +149,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
           });
         })
         .catch((err: AxiosError) => {
-          alert(err);
+          alert(err.response && err.response.data.message);
         });
     } else {
       this.setState({
@@ -231,7 +230,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
     if (orders && statusCount) {
       axios
         .put(
-          "http://tmonticaadmin-idev.tmon.co.kr/api/orders/status",
+          `${API_URL}/orders/status`,
           {
             orderIds: checkedOrderIds,
             status: selectedSelectStatus
@@ -287,7 +286,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
           }
           alert("주문상태가 변경되었습니다.");
         })
-        .catch((err: AxiosError) => alert(err.response));
+        .catch((err: AxiosError) => alert(err.response && err.response.data.message));
     } else {
       alert("문제가 발생했습니다.");
     }
