@@ -89,20 +89,6 @@ public class BannerServiceTest {
         verify(bannerDao, atLeastOnce()).addBanner(banner);
     }
 
-    @Test
-    public void userPage로_배너_가져오기() {
-        List<Banner> mainTopBanners = banners.stream().filter(b -> b.getUsePage().equals(UsePage.main_top.toString())).collect(Collectors.toList());
-
-        //given
-        given(bannerDao.getBannersByUsePage(UsePage.main_top.toString())).willReturn(mainTopBanners);
-
-        //when
-        List<Banner> result = bannerService.getBannersByPage(UsePage.main_top);
-
-        //then
-        verify(bannerDao, atLeastOnce()).getBannersByUsePage(anyString());
-        assertEquals(mainTopBanners, result);
-    }
 
     @Test
     public void 모든_배너_가져오기() {

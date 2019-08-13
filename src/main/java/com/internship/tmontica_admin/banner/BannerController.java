@@ -34,7 +34,7 @@ public class BannerController {
         dataBinder.addValidators(bannerValidator);
     }
 
-    @InitBinder("bannerUpdateReuqest")
+    @InitBinder("bannerUpdateRequest")
     private void initUpdateBinder(WebDataBinder dataBinder){ dataBinder.addValidators(bannerUpdateValidator);}
 
     /**  배너 추가하기 **/
