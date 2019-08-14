@@ -89,7 +89,6 @@ public class BannerServiceTest {
         verify(bannerDao, atLeastOnce()).addBanner(banner);
     }
 
-
     @Test
     public void 모든_배너_가져오기() {
         //given
