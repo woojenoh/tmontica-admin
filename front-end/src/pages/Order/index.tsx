@@ -281,6 +281,7 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
                       name="startDate"
                       value={startDate}
                       onChange={e => handleInputChange(e)}
+                      aria-label="검색 시작일자"
                     />
                     <input
                       type="date"
@@ -288,6 +289,7 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
                       name="endDate"
                       value={endDate}
                       onChange={e => handleInputChange(e)}
+                      aria-label="검색 종료일자"
                     />
                   </div>
                   <div className="order-search d-flex">
@@ -295,6 +297,7 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
                       className="custom-select mr-2 w-25"
                       value={searchType}
                       onChange={e => handleSearchTypeChange(e)}
+                      aria-label="검색조건 선택"
                     >
                       {searchTypes.map((s: string, index: number) => {
                         return (
@@ -311,6 +314,7 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
                       name="searchValue"
                       value={searchValue}
                       onChange={e => handleInputChange(e)}
+                      aria-label="검색할 내용"
                     />
                     <input type="submit" value="검색" className="btn btn-primary w-25" />
                   </div>

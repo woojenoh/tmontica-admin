@@ -42,6 +42,7 @@ export default class OrderRow extends React.Component<IOrderRowProps, IOrderRowS
                 onChange={() =>
                   isChecked ? handleUncheckRow(order.orderId) : handleCheckRow(order.orderId)
                 }
+                aria-label={`${order.orderId}번 주문 체크`}
               />
             </td>
             <td className="order__td order-id" onClick={() => handleModalOpen(order.orderId)}>
