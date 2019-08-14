@@ -123,6 +123,7 @@ export default class StatItem extends React.PureComponent<IStatItemProps, IStatI
               name="selectName"
               value={selectName}
               onChange={e => handleSelectChange(e)}
+              aria-label="통계에 넣을 항목 선택"
               required
             >
               <option value="">선택</option>
@@ -147,6 +148,7 @@ export default class StatItem extends React.PureComponent<IStatItemProps, IStatI
               type="date"
               value={startDate}
               onChange={e => handleInputChange(e)}
+              aria-label="통계 시작일자"
               required
             />
             <input
@@ -155,6 +157,7 @@ export default class StatItem extends React.PureComponent<IStatItemProps, IStatI
               type="date"
               value={endDate}
               onChange={e => handleInputChange(e)}
+              aria-label="통계 종료일자"
               required
             />
             <input className="btn btn-primary w-100 mb-4" type="submit" value="적용" />
