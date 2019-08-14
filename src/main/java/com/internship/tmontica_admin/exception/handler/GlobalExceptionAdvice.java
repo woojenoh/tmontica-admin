@@ -75,7 +75,7 @@ public class GlobalExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public TmonTicaExceptionFormat handleMenuValidException(MenuValidException e) {
         log.info("MenuExceptionMessage : {}" , e.getMessage());
-        return new TmonTicaExceptionFormat(e.getField(), e.getExceptionMessage(), e.getBindingResult());
+        return new TmonTicaExceptionFormat(e.getField(), e.getMessage(), e.getBindingResult());
     }
 
     @ExceptionHandler(SaveImgException.class)
@@ -86,8 +86,8 @@ public class GlobalExceptionAdvice {
 
     @ExceptionHandler(MenuException.class)
     public ResponseEntity<TmonTicaExceptionFormat> handleMenuException(MenuException e){
-        log.info("MenuException : {}" , e.getErrorMessage());
-        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getErrorMessage()), e.getMenuExceptionType().getResponseType());
+        log.info("MenuException : {}" , e.getMessage());
+        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getMessage()), e.getMenuExceptionType().getResponseType());
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
@@ -100,13 +100,13 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(BannerValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public TmonTicaExceptionFormat handleBannerValidException(BannerValidException e){
-        return new TmonTicaExceptionFormat(e.getField(), e.getExceptionMessage(), e.getBindingResult());
+        return new TmonTicaExceptionFormat(e.getField(), e.getMessage(), e.getBindingResult());
     }
 
     @ExceptionHandler(BannerException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<TmonTicaExceptionFormat> handleBannerException(BannerException e){
-        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getErrorMessage()), e.getBannerExceptionType().getResponseType());
+        return new ResponseEntity<>(new TmonTicaExceptionFormat(e.getField(), e.getMessage()), e.getBannerExceptionType().getResponseType());
     }
 
     @ExceptionHandler(StatisticValidException.class)

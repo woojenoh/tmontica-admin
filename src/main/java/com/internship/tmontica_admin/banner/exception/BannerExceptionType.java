@@ -11,6 +11,6 @@ public enum BannerExceptionType {
     ADD_BANNER_EXCEPTION("addBanner", "배너 추가하기가 실패했습니다.", HttpStatus.BAD_REQUEST);
 
     private String field;
-    private String errorMessage;
+    private String message;
     private HttpStatus responseType;
 }

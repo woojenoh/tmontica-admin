@@ -7,12 +7,12 @@ import lombok.Getter;
 public class MenuException extends  RuntimeException {
 
     private String field;
-    private String errorMessage;
+    private String message;
     private MenuExceptionType menuExceptionType;
 
     public MenuException(MenuExceptionType menuExceptionType){
         this.field = menuExceptionType.getField();
-        this.errorMessage = menuExceptionType.getErrorMessage();
+        this.message = menuExceptionType.getMessage();
         this.menuExceptionType = menuExceptionType;
     }
 }

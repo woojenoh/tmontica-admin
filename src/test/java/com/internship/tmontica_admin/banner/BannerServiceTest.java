@@ -1,9 +1,12 @@
 package com.internship.tmontica_admin.banner;
 
+import com.internship.tmontica_admin.banner.exception.BannerException;
 import com.internship.tmontica_admin.security.JwtService;
 import com.internship.tmontica_admin.util.SaveImageFile;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,10 +16,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
@@ -37,6 +38,9 @@ public class BannerServiceTest {
     private BannerService bannerService;
 
     private List<Banner> banners = new ArrayList<>();
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception{
@@ -87,6 +91,32 @@ public class BannerServiceTest {
 
         //then
         verify(bannerDao, atLeastOnce()).addBanner(banner);
+    }
+
+    @Test
+    public void 배너_등록하기_예외() throws Exception{
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Banner banner = Banner.builder().link("http://tmontica-idev.tmon.co.kr/")
+                .usePage("main").creatorId("admin")
+                .startDate(sdf.parse("2018-08-28 17:22:21"))
+                .endDate(sdf.parse("2020-08-28 17:22:21")).number(1).build();
+
+        //given
+        given(jwtService.getUserInfo("userInfo")).willReturn("{ \"id\" : \"admin\"}");
+        MockMultipartFile mockMultipartFile =
+                new MockMultipartFile("mainbanner","mainbanner.png","image/png",new byte[]{1,2,3,4,5,66,7,7,8,9,77,8,9,0});
+
+        given(saveImageFile.saveImg(mockMultipartFile, banner.getUsePage() , "/images/")).willReturn("/imagefiles/2019/8/10/main-top123123123.png");
+        given(bannerDao.addBanner(banner)).willReturn(1);
+
+        expectedEx.expect(BannerException.class);
+        expectedEx.expectMessage("존재하지 않는 페이지 타입 입니다.");
+
+        //when
+        bannerService.addBanner(banner, mockMultipartFile);
+
     }
 
     @Test
