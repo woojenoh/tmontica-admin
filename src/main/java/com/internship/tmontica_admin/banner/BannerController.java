@@ -34,7 +34,7 @@ public class BannerController {
         dataBinder.addValidators(bannerValidator);
     }
 
-    @InitBinder("bannerUpdateReuqest")
+    @InitBinder("bannerUpdateRequest")
     private void initUpdateBinder(WebDataBinder dataBinder){ dataBinder.addValidators(bannerUpdateValidator);}
 
     /**  배너 추가하기 **/
@@ -56,13 +56,6 @@ public class BannerController {
         Banner banner = bannerService.getBannerById(id);
         banner.setImgUrl("/images/".concat(banner.getImgUrl()));
         return new ResponseEntity<>(banner, HttpStatus.OK);
-    }
-
-    /** usePage에 맞는 배너 가져오기.**/
-    @GetMapping("/{usePage}")
-    public ResponseEntity<List<Banner>> getBannerByUsePage(@PathVariable UsePage usePage){
-        List<Banner> banners = bannerService.getBannersByPage(usePage);
-        return new ResponseEntity<>(banners, HttpStatus.OK);
     }
 
     /** 전체 배너 가져오기 **/

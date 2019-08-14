@@ -93,6 +93,9 @@ public class OrderServiceTest {
 
         when(jwtService.getUserInfo("userInfo")).thenReturn("{\"id\":\"testid\"}");
 
+        when(orderDao.getOrderByOrderId(1)).thenReturn(order1);
+        when(orderDao.getOrderByOrderId(2)).thenReturn(order2);
+
         List<OrderStatusLogResp> orderStatusLogRespList = new ArrayList<>();
         orderStatusLogRespList.add(new OrderStatusLogResp("미결제", "admin", new Date()));
         orderStatusLogRespList.add(new OrderStatusLogResp("결제완료", "admin", new Date()));

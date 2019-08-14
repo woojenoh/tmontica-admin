@@ -2,13 +2,16 @@ package com.internship.tmontica_admin.order;
 
 import com.internship.tmontica_admin.option.Option;
 import com.internship.tmontica_admin.option.OptionDao;
+import com.internship.tmontica_admin.option.OptionType;
 import com.internship.tmontica_admin.order.model.request.OrderStatusReq;
 import com.internship.tmontica_admin.order.model.response.*;
 import com.internship.tmontica_admin.paging.Pagination;
 import com.internship.tmontica_admin.point.Point;
+import com.internship.tmontica_admin.point.PointDao;
 import com.internship.tmontica_admin.point.PointLogType;
 import com.internship.tmontica_admin.point.PointService;
 import com.internship.tmontica_admin.security.JwtService;
+import com.internship.tmontica_admin.user.UserDao;
 import com.internship.tmontica_admin.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,8 @@ public class OrderService {
 
     private final OrderDao orderDao;
     private final OptionDao optionDao;
+    private final UserDao userDao;
+    private final PointDao pointDao;
     private static final double RESERVE_RATE = 10.0;
     private final PointService pointService;
     private final JwtService jwtService;
@@ -37,16 +42,33 @@ public class OrderService {
         // orderId 리스트 가져오기
         List<Integer> orderIds = orderStatusReq.getOrderIds();
         for (int orderId : orderIds) {
+            Order order = orderDao.getOrderByOrderId(orderId);
+
             //로그중에 픽업완료인 애의 리스트
             List<OrderStatusLogResp> orderStatusLogList = orderDao.getOrderStatusLogByOrderId(orderId).stream()
                     .filter(OrderStatusLogResp::isPickUp)
                     .collect(Collectors.toList());
             // "픽업완료" 상태로 바뀌면 포인트 적립 (최초 한번)
             if(orderStatusLogList.isEmpty() && orderStatusReq.getStatus().equals(OrderStatusType.PICK_UP.getStatus())){
-                Order order = orderDao.getOrderByOrderId(orderId);
                 Point point = new Point(order.getUserId(), PointLogType.GET_POINT.getType(),
                         String.valueOf((int)(order.getRealPrice()*(RESERVE_RATE)/100)), "결제 적립금 적립.");
                 pointService.updateUserPoint(point);
+            }
+
+            // 이전상태가 주문취소에서 다른상태로 변경할 경우에는 환불해줬던 포인트를 다시 회수해야 함
+            if(order.getStatus().equals(OrderStatusType.CANCEL.getStatus()) && !orderStatusReq.getStatus().equals(OrderStatusType.CANCEL.getStatus())){
+                // 포인트 반환
+                userDao.updateUserPoint(userDao.getUserPointByUserId(order.getUserId()) - order.getUsedPoint(), order.getUserId());
+                // 포인트 사용 로그에 추가
+                pointDao.addPoint(new Point(order.getUserId(), PointLogType.USE_POINT.getType(), order.getUsedPoint(), "환불된 포인트 회수"));
+            }
+
+            // 주문 취소일 경우에 포인트 반환
+            if(orderStatusReq.getStatus().equals(OrderStatusType.CANCEL.getStatus()) && order.getUsedPoint() > 0){
+                // 포인트 반환
+                userDao.updateUserPoint(userDao.getUserPointByUserId(order.getUserId()) + order.getUsedPoint(), order.getUserId());
+                // 포인트 사용 로그에 추가
+                pointDao.addPoint(new Point(order.getUserId(), PointLogType.GET_POINT.getType(), order.getUsedPoint(), "주문취소 환불"));
             }
 
             // orders 테이블에서 status 수정
@@ -187,14 +209,14 @@ public class OrderService {
             String[] oneOption = opStr.split("__");
             Option tmpOption = optionDao.getOptionById(Integer.parseInt(oneOption[0]));
 
-            if (tmpOption.getType().equals("Temperature")) {
+            if (tmpOption.getType().equals(OptionType.TEMPERATURE.getType())) {
                 convert.append(tmpOption.getName());
-            } else if(tmpOption.getType().equals("Shot")){
-                convert.append("/샷추가("+oneOption[1]+"개)");
-            } else if(tmpOption.getType().equals("Syrup")){
-                convert.append("/시럽추가("+oneOption[1]+"개)");
-            } else if(tmpOption.getType().equals("Size")){
-                convert.append("/사이즈업");
+            } else if(tmpOption.getType().equals(OptionType.SHOT.getType())){
+                convert.append("/"+OptionType.SHOT.getName()+"("+oneOption[1]+"개)");
+            } else if(tmpOption.getType().equals(OptionType.SYRUP.getType())){
+                convert.append("/"+OptionType.SYRUP.getName()+"("+oneOption[1]+"개)");
+            } else if(tmpOption.getType().equals(OptionType.SIZE.getType())){
+                convert.append("/"+OptionType.SIZE.getName());
             }
         }
         return convert.toString();

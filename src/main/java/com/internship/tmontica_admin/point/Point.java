@@ -25,6 +25,13 @@ public class Point {
     private int amount;
     private String description;
 
+    public Point(String userId, @NotNull String type, @NotNull @Min(0) int amount, String description) {
+        this.userId = userId;
+        this.type = type;
+        this.amount = amount;
+        this.description = description;
+    }
+
     public Point(String type, String amount){
 
         checkPointType(type);

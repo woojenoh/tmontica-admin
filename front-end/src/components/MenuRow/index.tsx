@@ -27,7 +27,7 @@ export default class MenuRow extends Component<Props, State> {
   }
 
   render() {
-    const { menu, handleShowUpdateModal, isChecked } = this.props;
+    const { menu, handleShowUpdateModal } = this.props;
 
     return (
       <tr
