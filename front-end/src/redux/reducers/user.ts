@@ -18,15 +18,13 @@ const INITIAL_STATE = {
 
 export default function(state = INITIAL_STATE, action: userTypes.TUserAction) {
   switch (action.type) {
-    // FETCH_SIGNUP
-    case actionTypes.FETCH_SIGNUP:
-      return state;
-    case actionTypes.FETCH_SIGNUP_FULFILLED:
-      return state;
-    case actionTypes.FETCH_SIGNUP_REJECTED:
+    // SIGNOUT
+    case actionTypes.SIGNOUT:
       return {
         ...state,
-        error: action.error
+        user: null,
+        isSignin: false,
+        isAdmin: false
       };
     // FETCH_SIGNIN
     case actionTypes.FETCH_SIGNIN:
@@ -39,52 +37,6 @@ export default function(state = INITIAL_STATE, action: userTypes.TUserAction) {
         isAdmin: action.payload.isAdmin
       };
     case actionTypes.FETCH_SIGNIN_REJECTED:
-      return {
-        ...state,
-        error: action.error
-      };
-    // FETCH_SIGNIN_ACTIVE
-    case actionTypes.FETCH_SIGNIN_ACTIVE:
-      return state;
-    case actionTypes.FETCH_SIGNIN_ACTIVE_FULFILLED:
-      return state;
-    case actionTypes.FETCH_SIGNIN_ACTIVE_REJECTED:
-      return {
-        ...state,
-        error: action.error
-      };
-    case actionTypes.SIGNOUT:
-      return {
-        ...state,
-        user: null,
-        isSignin: false
-      };
-    // FETCH_FIND_ID
-    case actionTypes.FETCH_FIND_ID:
-      return state;
-    case actionTypes.FETCH_FIND_ID_FULFILLED:
-      return state;
-    case actionTypes.FETCH_FIND_ID_REJECTED:
-      return {
-        ...state,
-        error: action.error
-      };
-    // FETCH_FIND_ID_CONFIRM
-    case actionTypes.FETCH_FIND_ID_CONFIRM:
-      return state;
-    case actionTypes.FETCH_FIND_ID_CONFIRM_FULFILLED:
-      return state;
-    case actionTypes.FETCH_FIND_ID_CONFIRM_REJECTED:
-      return {
-        ...state,
-        error: action.error
-      };
-    // FETCH_FIND_PASSWORD
-    case actionTypes.FETCH_FIND_PASSWORD:
-      return state;
-    case actionTypes.FETCH_FIND_PASSWORD_FULFILLED:
-      return state;
-    case actionTypes.FETCH_FIND_PASSWORD_REJECTED:
       return {
         ...state,
         error: action.error
