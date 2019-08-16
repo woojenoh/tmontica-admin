@@ -145,7 +145,7 @@ export default class BannerModal extends PureComponent<IBannerModalProps, IBanne
       if (res instanceof CommonError) throw res;
 
       alert("배너가 수정되었습니다.");
-      this.setState({ ...initState });
+      // this.setState({ ...initState });
       this.props.getBanners();
     } catch (error) {
       const result = await handleError(error);

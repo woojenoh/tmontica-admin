@@ -377,6 +377,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
                     className="custom-select mr-2"
                     value={selectedSelectStatus}
                     onChange={e => handleChangeSelectStatus(e)}
+                    aria-label="주문상태 선택"
                   >
                     {status.map((s: string, index: number) => {
                       return (
@@ -407,6 +408,7 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
                           isCheckedAll ? handleUncheckRowAll() : handleCheckRowAll()
                         }
                         checked={isCheckedAll}
+                        aria-label="모든 주문 체크"
                       />
                     </th>
                     <th>주문번호</th>

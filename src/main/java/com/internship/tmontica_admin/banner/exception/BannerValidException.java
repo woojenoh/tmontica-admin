@@ -6,12 +6,12 @@ import org.springframework.validation.BindingResult;
 @Getter
 public class BannerValidException extends RuntimeException {
     private String field;
-    private String exceptionMessage;
+    private String message;
     private BindingResult bindingResult;
 
-    public BannerValidException(String field, String exceptionMessage, BindingResult bindingResult){
+    public BannerValidException(String field, String message, BindingResult bindingResult){
         this.field = field;
-        this.exceptionMessage = exceptionMessage;
+        this.message = message;
         this.bindingResult = bindingResult;
     }
 }
