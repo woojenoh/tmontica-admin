@@ -44,10 +44,12 @@ public class OrderScheduler {
                     .filter(x -> x.getUsedPoint() > 0)
                     .collect(Collectors.toList());
             log.info("[OrderScheduler] : {}", pointOrders.size() + "orders refunded point");
-            // 사용한 포인트 환불
-            userDao.updateUserPointList(pointOrders);
-            // 포인트 로그에 추가
-            pointDao.addPointList(pointOrders, PointLogType.GET_POINT.getType(), "주문취소 환불");
+            if (pointOrders.size() > 0){
+                // 사용한 포인트 환불
+                userDao.updateUserPointList(pointOrders);
+                // 포인트 로그에 추가
+                pointDao.addPointList(pointOrders, PointLogType.GET_POINT.getType(), "주문취소 환불");
+            }
 
         }
 
