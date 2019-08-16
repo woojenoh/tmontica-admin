@@ -2,7 +2,7 @@ package com.internship.tmontica_admin.security;
 
 import com.internship.tmontica_admin.security.exception.UnauthorizedException;
 import com.internship.tmontica_admin.user.AdminRole;
-import com.internship.tmontica_admin.user.model.response.UserTokenInfoDTO;
+import com.internship.tmontica_admin.user.User;
 import com.internship.tmontica_admin.util.JsonUtil;
 import com.internship.tmontica_admin.util.UserConfigValueName;
 import io.jsonwebtoken.*;
@@ -26,15 +26,15 @@ public class JwtServiceImpl implements JwtService{
     private static final byte[] KEY = SALT.getBytes(StandardCharsets.UTF_8);
 
     @Override
-    public String getToken(UserTokenInfoDTO userTokenInfoDTO) {
+    public String getToken(User user) {
 
-        System.out.println(userTokenInfoDTO.toJson());
+        System.out.println(user.toJson());
         return Jwts.builder()
-                .setSubject(userTokenInfoDTO.getId())
+                .setSubject(user.getId())
                 .setExpiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_TIME))
                 .setHeaderParam("typ", "JWT")
                 .setHeaderParam("regDate", System.currentTimeMillis())
-                .claim("userInfo", userTokenInfoDTO.toJson())
+                .claim("userInfo", user.toJson())
                 .signWith(signatureAlgorithm, KEY)
                 .compact();
     }

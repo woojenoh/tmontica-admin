@@ -1,8 +1,8 @@
 package com.internship.tmontica_admin.user;
 
 import com.internship.tmontica_admin.user.exception.UserValidException;
-import com.internship.tmontica_admin.user.model.request.AdminSignInReqDTO;
-import com.internship.tmontica_admin.user.model.response.AdminSignInRespDTO;
+import com.internship.tmontica_admin.user.model.request.AdminSignInRequestDTO;
+import com.internship.tmontica_admin.user.model.response.AdminSignInResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -21,14 +21,13 @@ public class UserController {
     private final ModelMapper modelMapper;
 
     @PostMapping("/signin")
-    public ResponseEntity<AdminSignInRespDTO> signIn(@RequestBody @Valid AdminSignInReqDTO adminSignInReqDTO, BindingResult bindingResult) {
+    public ResponseEntity<AdminSignInResponseDTO> signIn(@RequestBody @Valid AdminSignInRequestDTO adminSignInRequestDTO, BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()){
             throw new UserValidException("Admin Sign-in Form", "로그인 폼 데이터가 올바르지 않습니다.", bindingResult);
         }
-        User user = modelMapper.map(adminSignInReqDTO, User.class);
+        User user = modelMapper.map(adminSignInRequestDTO, User.class);
         userService.signInCheck(user);
-        AdminSignInRespDTO adminSignInRespDTO = userService.makeJwtToken(user);
-        return new ResponseEntity<>(adminSignInRespDTO, HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(userService.makeJwtToken(user), AdminSignInResponseDTO.class), HttpStatus.OK);
     }
 }
