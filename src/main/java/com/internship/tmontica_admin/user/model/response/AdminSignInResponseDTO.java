@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AdminSignInRespDTO {
+public class AdminSignInResponseDTO {
 
     private String authorization;
 }
