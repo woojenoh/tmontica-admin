@@ -48,7 +48,7 @@ export interface IOrderStatusLog {
   status: TOrderStatusKor;
 }
 
-export interface IOrderFetchData {
+export interface IOrderFetchHistory {
   pagination: commonTypes.IPagination;
   statusCount: IOrderStatusCount;
   orders: IOrder[];

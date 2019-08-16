@@ -6,6 +6,7 @@ import OrderModal from "../../components/OrderModal";
 import Pagination from "../../components/Pagination";
 import * as orderTypes from "../../types/order";
 import * as commonTypes from "../../types/common";
+import * as errorTypes from "../../types/error";
 import { API_URL } from "../../api/common";
 import { withJWT } from "../../utils";
 import "./styles.scss";
@@ -124,14 +125,14 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
                 }
               })
             )
-            .then((res: AxiosResponse) => {
+            .then((res: AxiosResponse<orderTypes.IOrderFetchHistory>) => {
               this.setState({
                 orders: res.data.orders,
                 pagination: res.data.pagination
               });
             })
-            .catch((err: AxiosError) => {
-              alert(err);
+            .catch((err: AxiosError<errorTypes.TCommonError>) => {
+              alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
             });
         }
       }
@@ -153,7 +154,7 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
           }
         })
       )
-      .then((res: AxiosResponse) => {
+      .then((res: AxiosResponse<orderTypes.IOrderFetchHistory>) => {
         this.setState({
           orders: res.data.orders,
           pagination: res.data.pagination,
@@ -169,8 +170,8 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
           }
         });
       })
-      .catch((err: AxiosError) => {
-        alert(err);
+      .catch((err: AxiosError<errorTypes.TCommonError>) => {
+        alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
       });
   };
 
@@ -179,15 +180,15 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
     if (orderId !== selectedOrderId || orderDetail === null) {
       axios
         .get(`http://tmonticaadmin-idev.tmon.co.kr/api/orders/detail/${orderId}`, withJWT())
-        .then((res: AxiosResponse) => {
+        .then((res: AxiosResponse<orderTypes.IOrderDetail>) => {
           this.setState({
             orderDetail: res.data,
             selectedOrderId: orderId,
             isModalOpen: true
           });
         })
-        .catch((err: AxiosError) => {
-          alert(err);
+        .catch((err: AxiosError<errorTypes.TCommonError>) => {
+          alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
         });
     } else {
       this.setState({
@@ -225,15 +226,15 @@ class Order extends React.PureComponent<IOrderProps, IOrderState> {
               }
             })
           )
-          .then((res: AxiosResponse) => {
+          .then((res: AxiosResponse<orderTypes.IOrderFetchHistory>) => {
             this.setState({
               orders: res.data.orders,
               pagination: res.data.pagination,
               currentPage: 1
             });
           })
-          .catch((err: AxiosError) => {
-            alert(err);
+          .catch((err: AxiosError<errorTypes.TCommonError>) => {
+            alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
           });
       }
     );

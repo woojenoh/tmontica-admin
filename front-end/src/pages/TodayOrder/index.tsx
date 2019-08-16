@@ -8,6 +8,7 @@ import TodayOrderStatus from "../../components/TodayOrderStatus";
 import Pagination from "../../components/Pagination";
 import * as orderTypes from "../../types/order";
 import * as commonTypes from "../../types/common";
+import * as errorTypes from "../../types/error";
 import { API_URL, handleError } from "../../api/common";
 import { withJWT } from "../../utils";
 import "./styles.scss";
@@ -141,15 +142,15 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
     if (orderId !== selectedOrderId || orderDetail === null) {
       axios
         .get(`${API_URL}/orders/detail/${orderId}`, withJWT())
-        .then((res: AxiosResponse) => {
+        .then((res: AxiosResponse<orderTypes.IOrderDetail>) => {
           this.setState({
             orderDetail: res.data,
             selectedOrderId: orderId,
             isModalOpen: true
           });
         })
-        .catch((err: AxiosError) => {
-          alert(err.response && err.response.data.message);
+        .catch((err: AxiosError<errorTypes.TCommonError>) => {
+          alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
         });
     } else {
       this.setState({
@@ -286,7 +287,9 @@ class TodayOrder extends React.PureComponent<ITodayOrderProps, ITodayOrderState>
           }
           alert("주문상태가 변경되었습니다.");
         })
-        .catch((err: AxiosError) => alert(err.response && err.response.data.message));
+        .catch((err: AxiosError<errorTypes.TCommonError>) => {
+          alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
+        });
     } else {
       alert("문제가 발생했습니다.");
     }

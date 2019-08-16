@@ -1,3 +1,6 @@
+import * as commonTypes from "./common";
+import * as menuTypes from "./menu";
+
 export interface IStatMenu {
   menuId: number;
   menuName: string;
@@ -30,4 +33,9 @@ export interface IPieData {
     hoverBackgroundColor: string[];
     data: number[];
   }[];
+}
+
+export interface IStatFetchMenu {
+  menus: menuTypes.IMenu[];
+  pagination: commonTypes.IPagination;
 }

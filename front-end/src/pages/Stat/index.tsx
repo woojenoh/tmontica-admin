@@ -1,9 +1,10 @@
 import * as React from "react";
-import axios from "axios";
+import axios, { AxiosResponse, AxiosError } from "axios";
 import Header from "../../components/Header";
 import StatItem from "../../components/StatItem";
 import * as menuTypes from "../../types/menu";
 import * as statTypes from "../../types/stat";
+import * as errorTypes from "../../types/error";
 import { TCapturedDate, TSetCapturedDate } from "../../components/StatItem";
 import { API_URL } from "../../api/common";
 import { withJWT } from "../../utils";
@@ -55,11 +56,16 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
 
   componentDidMount() {
     // 현재 등록돼있는 메뉴를 모두 불러온다.
-    axios.get(`${API_URL}/menus`, withJWT({ params: { size: 100 } })).then(res => {
-      this.setState({
-        menus: res.data.menus
+    axios
+      .get(`${API_URL}/menus`, withJWT({ params: { size: 100 } }))
+      .then((res: AxiosResponse<statTypes.IStatFetchMenu>) => {
+        this.setState({
+          menus: res.data.menus
+        });
+      })
+      .catch((err: AxiosError<errorTypes.TCommonError>) => {
+        alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
       });
-    });
   }
 
   // 차트에 메뉴 추가
@@ -81,7 +87,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           },
           withJWT()
         )
-        .then(res => {
+        .then((res: AxiosResponse<{ dataList: statTypes.IStatMenu[] }>) => {
           // null 체크
           if (chartMenus) {
             // 10개 이하인지 체크
@@ -103,7 +109,9 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             });
           }
         })
-        .catch(err => alert(err.response.data.message));
+        .catch((err: AxiosError<errorTypes.TCommonError>) => {
+          alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
+        });
     } else {
       alert("추가할 메뉴를 선택하세요.");
     }
@@ -149,7 +157,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             },
             withJWT()
           )
-          .then(res =>
+          .then((res: AxiosResponse<{ dataList: statTypes.IStatMenu[] }>) =>
             this.setState(
               {
                 chartMenus: res.data.dataList
@@ -157,7 +165,9 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
               () => setCapturedDate(menuStartDate, menuEndDate)
             )
           )
-          .catch(err => alert(err.response.data.message));
+          .catch((err: AxiosError<errorTypes.TCommonError>) => {
+            alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
+          });
       } else {
         alert("메뉴를 먼저 추가하세요.");
       }
@@ -181,7 +191,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             },
             withJWT()
           )
-          .then(res =>
+          .then((res: AxiosResponse<{ dataList: statTypes.IStatMenu[] }>) =>
             this.setState(
               {
                 chartMenus: res.data.dataList
@@ -189,7 +199,9 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
               () => initializeDate()
             )
           )
-          .catch(err => alert(err.response.data.message));
+          .catch((err: AxiosError<errorTypes.TCommonError>) => {
+            alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
+          });
       } else {
         alert("메뉴를 먼저 추가하세요.");
       }
@@ -217,7 +229,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           },
           withJWT()
         )
-        .then(res => {
+        .then((res: AxiosResponse<{ dataList: statTypes.IStatAge[] }>) => {
           // null 체크
           if (chartAges) {
             // 10개 이하인지 체크
@@ -239,7 +251,9 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             });
           }
         })
-        .catch(err => alert(err.response.data.message));
+        .catch((err: AxiosError<errorTypes.TCommonError>) => {
+          alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
+        });
     } else {
       alert("추가할 연령을 선택하세요.");
     }
@@ -285,7 +299,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             },
             withJWT()
           )
-          .then(res =>
+          .then((res: AxiosResponse<{ dataList: statTypes.IStatAge[] }>) =>
             this.setState(
               {
                 chartAges: res.data.dataList
@@ -293,7 +307,9 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
               () => setCapturedDate(ageStartDate, ageEndDate)
             )
           )
-          .catch(err => alert(err.response.data.message));
+          .catch((err: AxiosError<errorTypes.TCommonError>) => {
+            alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
+          });
       } else {
         alert("연령을 먼저 추가하세요.");
       }
@@ -317,7 +333,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             },
             withJWT()
           )
-          .then(res =>
+          .then((res: AxiosResponse<{ dataList: statTypes.IStatAge[] }>) =>
             this.setState(
               {
                 chartAges: res.data.dataList
@@ -325,7 +341,9 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
               () => initializeDate()
             )
           )
-          .catch(err => alert(err.response.data.message));
+          .catch((err: AxiosError<errorTypes.TCommonError>) => {
+            alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
+          });
       } else {
         alert("연령을 먼저 추가하세요.");
       }
@@ -353,7 +371,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
           },
           withJWT()
         )
-        .then(res => {
+        .then((res: AxiosResponse<{ dataList: statTypes.IStatUser[] }>) => {
           // null 체크
           if (chartUsers) {
             // 10개 이하인지 체크
@@ -375,7 +393,9 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             });
           }
         })
-        .catch(err => alert(err.response.data.message));
+        .catch((err: AxiosError<errorTypes.TCommonError>) => {
+          alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
+        });
     } else {
       alert("추가할 기기를 선택하세요.");
     }
@@ -421,7 +441,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             },
             withJWT()
           )
-          .then(res =>
+          .then((res: AxiosResponse<{ dataList: statTypes.IStatUser[] }>) =>
             this.setState(
               {
                 chartUsers: res.data.dataList
@@ -429,7 +449,9 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
               () => setCapturedDate(userStartDate, userEndDate)
             )
           )
-          .catch(err => alert(err.response.data.message));
+          .catch((err: AxiosError<errorTypes.TCommonError>) => {
+            alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
+          });
       } else {
         alert("기기를 먼저 추가하세요.");
       }
@@ -453,7 +475,7 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
             },
             withJWT()
           )
-          .then(res =>
+          .then((res: AxiosResponse<{ dataList: statTypes.IStatUser[] }>) =>
             this.setState(
               {
                 chartUsers: res.data.dataList
@@ -461,7 +483,9 @@ class Stat extends React.PureComponent<IStatProps, IStatState> {
               () => initializeDate()
             )
           )
-          .catch(err => alert(err.response.data.message));
+          .catch((err: AxiosError<errorTypes.TCommonError>) => {
+            alert(err.response ? err.response.data.message : "에러가 발생했습니다.");
+          });
       } else {
         alert("기기를 먼저 추가하세요.");
       }
